@@ -22,10 +22,18 @@ MainWindow::MainWindow(QWidget *parent) :
 
     InitOpenGLContext();
 
-    QVector2D lineOrigin(50,50);
-    QVector2D lineEnd(750,750);
-    QImage outputFrame = ScanLine(_inputFrame, lineOrigin, lineEnd);
-    outputFrame.save(QString("D:\\5_PROJETS\\5_DEV\\VirtualScanner\\outputFrame.png"));
+    QVector2D lineOrigin(currentOutputIndex,0.0f);
+    QVector2D lineEnd(currentOutputIndex,_fboSize.height());
+
+    while(currentOutputIndex <_fboSize.width() - 1)
+    {
+        ScanLine(_inputFrame, lineOrigin, lineEnd);
+        lineOrigin.setX(currentOutputIndex);
+        lineEnd.setX(currentOutputIndex);
+    }
+
+    QImage outputFrame2 = ScanLine(_inputFrame, lineOrigin, lineEnd);
+    outputFrame2.save(QString("D:\\5_PROJETS\\5_DEV\\VirtualScanner\\outputFrame_.png"));
 
     qDebug() << "DONE ! " << Qt::endl;
 }
@@ -89,19 +97,22 @@ void MainWindow::InitOpenGLContext()
     }
 
     //previous outputImage
-    /*
-    QOpenGLTexture texturePF(QOpenGLTexture::Target2D);
-    texturePF.setData(previousFrame);
-    texturePF.bind(1);
-    if(!texturePF.isBound())
+    _previousOutputTexture = new QOpenGLTexture(QOpenGLTexture::Target2D);
+    QImage *blackImage = new QImage(_fboSize,QImage::Format_ARGB32_Premultiplied);
+    blackImage->fill(Qt::black);
+    _previousOutputTexture->setData(*blackImage);
+    _previousOutputTexture->bind(1);
+    //_glContext.functions()->glFramebufferTexture2D(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,1,0);
+
+    if(!_previousOutputTexture->isBound())
     {
         qDebug() << "texturePF not bound.";
     }
-    if(!texturePF.isCreated() || !texturePF.isStorageAllocated())
+    if(!_previousOutputTexture->isCreated() || !_previousOutputTexture->isStorageAllocated())
     {
         qDebug() << "texturePF error.";
     }
-    */
+
 
     _glVertexBuffer = QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
     if(!_glVertexBuffer.create())
@@ -123,8 +134,8 @@ void MainWindow::InitOpenGLContext()
         qDebug() << "Can't bind index buffer.";
     }
 
-    _glVertexBuffer.allocate(2 * sizeof(VertexData));
-    _glFragmentBuffer.allocate(2 * sizeof(GLuint));
+    _glVertexBuffer.allocate(4 * sizeof(VertexData));
+    _glFragmentBuffer.allocate(4 * sizeof(GLuint));
 
 //    _glVertexBuffer.allocate(4 * sizeof(VertexData));
 //    _glFragmentBuffer.allocate(4 * sizeof(GLuint));
@@ -138,41 +149,58 @@ QImage MainWindow::ScanLine(const QImage& inputFrame, QVector2D lineOrigin, QVec
     QString textureVar("texture");
     QString texturePFVar("texturePF");
 
-    //_inputTexture->setData(inputFrame);
+    // Copy previous buffer
+    _glVertexBuffer.write(0,FULL_SCREEN_VERTICES_DATA, 4 * sizeof(VertexData));
+    _glFragmentBuffer.write(0,FULL_SCREEN_VERTICES_INDEXES, 4 * sizeof(GLuint));
 
+    int offset = 0;
+    _glShaderProgram.enableAttributeArray(vertexPosVar.toLatin1().data());
+    _glShaderProgram.enableAttributeArray(textureCoordVar.toLatin1().data());
+    _glShaderProgram.setAttributeBuffer(vertexPosVar.toLatin1().data(), GL_FLOAT, offset, 2, sizeof(VertexData));
+    offset += sizeof(QVector2D);
+    _glShaderProgram.setAttributeBuffer(textureCoordVar.toLatin1().data(), GL_FLOAT, offset, 2, sizeof(VertexData));
+    _glShaderProgram.setUniformValue(textureVar.toLatin1().data(), 1);
+    _glContext.functions()->glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, Q_NULLPTR);
+
+    // Sample line and draw it
     VertexData lineData[2];
-    lineData[0].position = NormalizePosition(QVector2D(currentOutputIndex, 0.0f));
-    lineData[0].texCoord = NormalizePosition(lineOrigin);
-    lineData[1].position = NormalizePosition(QVector2D(currentOutputIndex, _fboSize.height()));
-    lineData[1].texCoord = NormalizePosition(lineEnd);
+    lineData[0].position = ToVertexCoord(QVector2D(currentOutputIndex, 0.0f));
+    lineData[0].texCoord = ToTexCoord(lineOrigin);
+    lineData[1].position = ToVertexCoord(QVector2D(currentOutputIndex, _fboSize.height()));
+    lineData[1].texCoord = ToTexCoord(lineEnd);
 
     _glVertexBuffer.write(0,lineData, 2 * sizeof(VertexData));
     _glFragmentBuffer.write(0,ONE_LINE_INDEXES, 2 * sizeof(GLuint));
 
-    //_glVertexBuffer.write(0,FULL_SCREEN_VERTICES_DATA, 4 * sizeof(VertexData));
-    //_glFragmentBuffer.write(0,FULL_SCREEN_VERTICES_INDEXES, 4 * sizeof(GLuint));
-
-    int offset = 0;
-
+    offset = 0;
     _glShaderProgram.enableAttributeArray(vertexPosVar.toLatin1().data());
-    _glShaderProgram.setAttributeBuffer(vertexPosVar.toLatin1().data(), GL_FLOAT, offset, 2, sizeof(VertexData));
-
-    offset += sizeof(QVector2D);
-
     _glShaderProgram.enableAttributeArray(textureCoordVar.toLatin1().data());
+    _glShaderProgram.setAttributeBuffer(vertexPosVar.toLatin1().data(), GL_FLOAT, offset, 2, sizeof(VertexData));
+    offset += sizeof(QVector2D);
     _glShaderProgram.setAttributeBuffer(textureCoordVar.toLatin1().data(), GL_FLOAT, offset, 2, sizeof(VertexData));
     _glShaderProgram.setUniformValue(textureVar.toLatin1().data(), 0);
-    //_glShaderProgram.setUniformValue(texturePFVar.toLatin1().data(), 1);
 
     _glContext.functions()->glDrawElements(GL_LINES, 2, GL_UNSIGNED_INT, Q_NULLPTR);
-    //_glContext.functions()->glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, Q_NULLPTR);
 
     currentOutputIndex++;
 
-    return _glFrameBufferObject->toImage(false);
+    QImage currentOutput = _glFrameBufferObject->toImage(false);
+    qDebug() << currentOutput.format();
+    qDebug() << _previousOutputTexture->format();
+
+    _previousOutputTexture->setData(currentOutput);
+
+    return currentOutput;
 }
 
-QVector2D MainWindow::NormalizePosition(QVector2D position)
+QVector2D MainWindow::ToTexCoord(QVector2D position)
+{
+    QVector2D normalizedPosition = QVector2D(position);
+    normalizedPosition /= QVector2D(_fboSize.width(),_fboSize.height());
+    return normalizedPosition;
+}
+
+QVector2D MainWindow::ToVertexCoord(QVector2D position)
 {
     QVector2D normalizedPosition = QVector2D(position);
     normalizedPosition -= QVector2D(_fboSize.width()/2.0f,_fboSize.height()/2.0f);
