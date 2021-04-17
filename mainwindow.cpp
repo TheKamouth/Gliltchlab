@@ -5,6 +5,11 @@
 #include <QFileInfo>
 #include <QFileDialog>
 #include <QPushButton>
+#include <QElapsedTimer>
+#include <QDateTime>
+
+#include <math.h>       /* cos */
+#define PI 3.14159265
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -12,37 +17,13 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    _inputFrame = QImage("D:\\5_PROJETS\\5_DEV\\VirtualScanner\\input.jpg");
-    _fboSize = _inputFrame.size();
-
-    if(_inputFrame.valid(0,0) == false || _inputFrame.isNull() == true)
-    {
-       qDebug()<< "Failed to load image" << Qt::endl;
-    }
-
-    InitOpenGLContext();
-
-    QVector2D lineOrigin(currentOutputIndex,0.0f);
-    QVector2D lineEnd(currentOutputIndex,_fboSize.height());
-
-    while(currentOutputIndex <_fboSize.width() - 1)
-    {
-        ScanLine(_inputFrame, lineOrigin, lineEnd);
-        lineOrigin.setX(currentOutputIndex);
-        lineEnd.setX(currentOutputIndex);
-    }
-
-    QImage outputFrame2 = ScanLine(_inputFrame, lineOrigin, lineEnd);
-    outputFrame2.save(QString("D:\\5_PROJETS\\5_DEV\\VirtualScanner\\outputFrame_.png"));
-
-    qDebug() << "DONE ! " << Qt::endl;
+    _preferencesDialog = new PreferencesDialog( this, &_preferences);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
-
 
 void MainWindow::InitOpenGLContext()
 {
@@ -141,7 +122,7 @@ void MainWindow::InitOpenGLContext()
 //    _glFragmentBuffer.allocate(4 * sizeof(GLuint));
 }
 
-QImage MainWindow::ScanLine(const QImage& inputFrame, QVector2D lineOrigin, QVector2D lineEnd)
+void MainWindow::ScanLine(QVector2D lineOrigin, QVector2D lineEnd)
 {
 
     QString vertexPosVar("aPosition");
@@ -184,13 +165,11 @@ QImage MainWindow::ScanLine(const QImage& inputFrame, QVector2D lineOrigin, QVec
 
     currentOutputIndex++;
 
-    QImage currentOutput = _glFrameBufferObject->toImage(false);
+    QImage currentOutput(_glFrameBufferObject->toImage(false));
     qDebug() << currentOutput.format();
     qDebug() << _previousOutputTexture->format();
 
     _previousOutputTexture->setData(currentOutput);
-
-    return currentOutput;
 }
 
 QVector2D MainWindow::ToTexCoord(QVector2D position)
@@ -206,4 +185,103 @@ QVector2D MainWindow::ToVertexCoord(QVector2D position)
     normalizedPosition -= QVector2D(_fboSize.width()/2.0f,_fboSize.height()/2.0f);
     normalizedPosition /= QVector2D(_fboSize.width()/2.0f,_fboSize.height()/2.0f);
     return normalizedPosition;
+}
+
+void MainWindow::on_actionLoadInput_triggered()
+{
+    ui->statusbar->showMessage( QString("Opening file...") );
+
+    //Dialog box
+    QString directory = QString("Open file");
+
+    //QString* filter = new QString("..");
+    QString filter = _preferences.InputFolder();
+
+    QString selectedFilter = QString("Images (*.png *.xpm *.jpg)");
+
+    inputFilename = QFileDialog::getOpenFileName(this, directory, filter, selectedFilter);
+
+    if( inputFilename == "" ){
+
+        ui->statusbar->showMessage( QString("File error ()") );
+
+        return;
+    }
+
+    _inputFrame = QImage( inputFilename);
+}
+
+void MainWindow::on_actionPlay_triggered()
+{
+    //_inputFrame = QImage("D:\\5_PROJETS\\5_DEV\\VirtualScanner\\y0_0.JPG");
+    _fboSize = _inputFrame.size();
+
+    if(_inputFrame.valid(0,0) == false || _inputFrame.isNull() == true)
+    {
+       qDebug()<< "Failed to load image" << Qt::endl;
+    }
+
+    InitOpenGLContext();
+
+    QElapsedTimer timer;
+    timer.start();
+
+    float r = _fboSize.height()/2.0f;
+    float theta = 0.0f;
+    float deltaTheta = 2.0 * PI / _fboSize.height();
+
+    //Circle from center
+
+    QVector2D lineOrigin(_fboSize.height()/2.0f,_fboSize.height()/2.0f);
+    QVector2D lineEnd(r * cos(theta)+ r,r * sin(theta)+ r);
+    for(int i = 0; i < _fboSize.height(); i++)
+    {
+        lineEnd = QVector2D(r * cos(theta) + r,r * sin(theta) + r);
+        ScanLine(lineOrigin, lineEnd);
+        theta += deltaTheta;
+    }
+    lineEnd = QVector2D(r * cos(theta) + r,r * sin(theta) + r);
+
+
+
+    //Circle
+/*
+    deltaTheta =2.0* PI / _fboSize.height();
+    float thetaOrigin = 0.0f;
+    float thetaEnd = -PI;
+    QVector2D lineOrigin;
+    QVector2D lineEnd;
+    for(int i = 0; i < _fboSize.height(); i++)
+    {
+        lineOrigin = QVector2D(r * cos(thetaOrigin) + r,r * sin(thetaOrigin) + r);
+        lineEnd = QVector2D(r * cos(thetaEnd) + r,r * sin(thetaEnd) + r);
+
+        ScanLine(lineOrigin, lineEnd);
+
+        thetaOrigin += deltaTheta;
+        thetaEnd += deltaTheta;
+    }
+    lineOrigin = QVector2D(r * cos(thetaOrigin) + r,r * sin(thetaOrigin) + r);
+    lineEnd = QVector2D(r * cos(thetaEnd) + r,r * sin(thetaEnd) + r);
+*/
+
+
+
+    ScanLine(lineOrigin, lineEnd);
+
+    qDebug() << "Took " << timer.elapsed() << " ms to scan." << Qt::endl;
+
+    QString inputFilenameNoExtension = inputFilename.left(inputFilename.length()-4);
+    QString outputFilename = QString(inputFilenameNoExtension + "_scanned"+ ".png");
+    _glFrameBufferObject->toImage(false).save(outputFilename);
+    qDebug() << "saved in "<< outputFilename << Qt::endl;
+
+    qDebug() << "DONE ! " << Qt::endl;
+}
+
+void MainWindow::on_actionPreferences_triggered()
+{
+    _preferencesDialog->GetTmpPref();
+    _preferencesDialog->show();
+    _preferencesDialog->setWindowTitle( QString("Preferences"));
 }

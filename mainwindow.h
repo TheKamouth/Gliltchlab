@@ -1,6 +1,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "CommonPreferences.h"
+#include "preferencesdialog.h"
+
 #include <QMainWindow>
 #include <QImage>
 #include <QOpenGLContext>
@@ -34,11 +37,23 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void on_actionLoadInput_triggered();
+
+    void on_actionPlay_triggered();
+
+    void on_actionPreferences_triggered();
+
 private:
     Ui::MainWindow *ui;
     QImage _inputFrame;
     int currentOutputIndex = 0;
 
+    QString inputFilename;
+    CommonPreferences _preferences;
+    PreferencesDialog * _preferencesDialog;
+
+    // OpenGL
     QSize _fboSize;
     QOpenGLContext _glContext;
     QOffscreenSurface _offScreenSurface;
@@ -62,7 +77,7 @@ private:
     const GLuint ONE_LINE_INDEXES[2] = {0, 1};
 
     void InitOpenGLContext();
-    QImage ScanLine(const QImage& inputFrame, QVector2D lineOrigin, QVector2D lineEnd);
+    void ScanLine(QVector2D lineOrigin, QVector2D lineEnd);
     QVector2D ToTexCoord(QVector2D position);
     QVector2D ToVertexCoord(QVector2D position);
 };
