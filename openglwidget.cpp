@@ -88,12 +88,13 @@ void OpenGLWidget::paintGL(){
 
 OpenGLWidget::~OpenGLWidget()
 {
-    delete displayedPixmap;
+    if( _displayedPixmap != nullptr)
+        delete _displayedPixmap;
 }
 
 void OpenGLWidget::SetDisplayedImg( QPixmap *pixmap){
 
-    displayedPixmap = pixmap;
+    _displayedPixmap = pixmap;
 
     paintGL();
     update();

@@ -4,7 +4,7 @@
 #include <QStringList>
 
 DesaturateFilterNode::DesaturateFilterNode(QWidget *parent) :
-    Node(),
+    ImagePeakNode(),
     ui(new Ui::DesaturateFilterNode)
 {
     ui->setupUi(this);
@@ -33,7 +33,7 @@ QWidget * DesaturateFilterNode::SpecificUI()
     return ui->widget;
 }
 
-QWidget *DesaturateFilterNode::GetPeakWidget()
+QWidget *DesaturateFilterNode::InstantiatePeakWidget()
 {
     // TODO
     // return glWidget with filter output shown;

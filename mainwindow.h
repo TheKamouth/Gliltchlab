@@ -46,7 +46,6 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    void OnInputLoaded(QImage* input, int flowIndex);
     void OnOutputProcessed(QImage * output);
 
 private slots:
@@ -71,5 +70,8 @@ private:
     PreferencesDialog _preferencesDialog;
 
     ProcessorFlow _processorFlow;
+
+    QWidget * _currentPeakWidget;
+    void OnPeakNode(Node * node);
 };
 #endif // MAINWINDOW_H

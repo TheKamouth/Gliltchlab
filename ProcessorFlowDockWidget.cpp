@@ -43,7 +43,7 @@ void ProcessorFlowDockWidget::OnAddNodeClicked()
     }
 
     QObject::connect(node->CommonWidget(), &NodeCommonWidget::DeleteClicked, this, &ProcessorFlowDockWidget::DeleteNode);
-    QObject::connect(node->CommonWidget(), &NodeCommonWidget::OnPeakClicked, this, &ProcessorFlowDockWidget::OnPeakNodeClicked);
+    QObject::connect(node->CommonWidget(), &NodeCommonWidget::PeakClicked, this, &ProcessorFlowDockWidget::OnPeakNodeClicked);
 
     //ui->vboxLayoutProcessors->addWidget(node->Widget());
     ui->vboxLayoutProcessors->insertWidget(_nodeWidgets.count(), node->Widget());
@@ -65,6 +65,15 @@ void ProcessorFlowDockWidget::DeleteNode(Node* node)
 
 void ProcessorFlowDockWidget::OnPeakNodeClicked(Node * node)
 {
+    for(int i = 0 ; i < _nodeWidgets.count(); i++ )
+    {
+        Node * n = _nodeWidgets.at(i);
+        if(n != node)
+        {
+            n->CommonWidget()->SetIsPeaked(false);
+        }
+    }
+
     emit PeakNode(node);
 }
 

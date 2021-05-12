@@ -3,6 +3,8 @@
 
 #include "Node.h"
 
+#include "ImagePeakNode.h"
+
 #include <QWidget>
 
 namespace Ui {
@@ -18,7 +20,7 @@ enum DesaturationMethod
     DesaturationMethodCount
 };
 
-class DesaturateFilterNode : public Node
+class DesaturateFilterNode : public ImagePeakNode
 {
     Q_OBJECT
 
@@ -31,7 +33,7 @@ public:
     virtual QWidget * NodeUiBaseWidgetInForm() override;
     virtual QLayout* NodeUiBaseLayoutInForm() override;
     virtual QWidget * SpecificUI() override;
-    virtual QWidget * GetPeakWidget() override;
+    virtual QWidget * InstantiatePeakWidget() override;
 
 private:
     Ui::DesaturateFilterNode *ui;

@@ -12,8 +12,8 @@ NodeCommonWidget::NodeCommonWidget(Node * node):
     ui->setupUi(this);
 
     // Connect NodeCommonWidget
-    QObject::connect( ui->pb_delete, &QPushButton::click, this, &NodeCommonWidget::OnDeleteNodeClicked);
-    QObject::connect( ui->pb_peak, &QPushButton::click, node, &NodeCommonWidget::OnPeakClicked);
+    QObject::connect( ui->pb_delete, &QPushButton::clicked, this, &NodeCommonWidget::OnDeleteNodeClicked);
+    QObject::connect( ui->pb_peak, &QPushButton::clicked, this, &NodeCommonWidget::OnPeakClicked);
 
     //QObject::connect( ui->pb_settings, &QPushButton::clicked, node, &Node::OnProcessorSettingsClicked);
     QObject::connect( ui->cb_enabled, &QPushButton::toggled, node, &Node::OnEnableProcessorCheckboxClicked);
@@ -70,7 +70,7 @@ void NodeCommonWidget::SetWidgetVisible(bool visible)
 {
 }
 
-void NodeCommonWidget::SetPeakedStatus(bool isPeakedAt)
+void NodeCommonWidget::SetIsPeaked(bool isPeakedAt)
 {
     ui->pb_peak->setChecked(isPeakedAt);
 }

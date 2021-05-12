@@ -2,6 +2,7 @@
 #define IMAGEINPUTNODE_H
 
 #include "Node.h"
+#include "ImagePeakNode.h"
 
 #include "NodeCommonWidget.h"
 
@@ -12,7 +13,7 @@ namespace Ui {
 class ImageInputNode;
 }
 
-class ImageInputNode : public Node
+class ImageInputNode : public ImagePeakNode
 {
     Q_OBJECT
 
@@ -26,7 +27,6 @@ public:
     virtual QWidget * NodeUiBaseWidgetInForm() override;
     virtual QLayout* NodeUiBaseLayoutInForm() override;
     virtual QWidget * SpecificUI() override;
-    virtual QWidget * GetPeakWidget() override;
 
     void OnLoadInputClicked();
     void OnReloadClicked();
@@ -40,7 +40,6 @@ private:
 
     //NodeUiBase * _nodeCommonUi;
 
-    QImage * _input;
     QString _inputFileName;
     QPixmap * _previewPixMap;
 

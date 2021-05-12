@@ -5,7 +5,7 @@
 #include <QDebug>
 
 ImageInputNode::ImageInputNode(QWidget * parent) :
-    Node(),
+    ImagePeakNode(),
     ui(new Ui::ImageInputNode),
     _previewPixMap(nullptr)
 {
@@ -37,12 +37,6 @@ QLayout *ImageInputNode::NodeUiBaseLayoutInForm()
 QWidget * ImageInputNode::SpecificUI()
 {
     return ui->widget;
-}
-
-QWidget *ImageInputNode::GetPeakWidget()
-{
-    // TODO
-    // return glWidget with filter output shown;
 }
 
 void ImageInputNode::OnLoadInputClicked()

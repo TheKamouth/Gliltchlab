@@ -13,7 +13,7 @@ SOURCES += \
     FlowGraph.cpp \
     Nodes/DesaturateFilterNode.cpp \
     Nodes/ImageInputNode.cpp \
-    Nodes/ImagePeak.cpp \
+    Nodes/ImagePeakNode.cpp \
     Nodes/Node.cpp \
     Nodes/NodeCommonWidget.cpp \
     Nodes/NodeFactory.cpp \
@@ -37,7 +37,7 @@ HEADERS += \
     ImageProcessors/Scanner.h \
     Nodes/DesaturateFilterNode.h \
     Nodes/ImageInputNode.h \
-    Nodes/ImagePeak.h \
+    Nodes/ImagePeakNode.h \
     Nodes/Node.h \
     Nodes/NodeCommonWidget.h \
     Nodes/NodeFactory.h \

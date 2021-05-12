@@ -3,12 +3,15 @@
 
 #include "openglwidget.h"
 
-class ImagePeak
+#include  "Node.h"
+
+class ImagePeakNode : public Node
 {
 public:
-    ImagePeak();
+    ImagePeakNode();
+    ~ImagePeakNode();
 
-    //GetPeakWidget
+    QWidget * InstantiatePeakWidget();
 
 private:
     OpenGLWidget * _glWidget;

@@ -19,7 +19,8 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    _preferencesDialog(parent, &_preferences)
+    _preferencesDialog(parent, &_preferences),
+    _currentPeakWidget(nullptr)
 {
     ui->setupUi(this);
 
@@ -27,25 +28,16 @@ MainWindow::MainWindow(QWidget *parent) :
     _processorFlowDockWidget->show();
 
     QObject::connect(_processorFlowDockWidget, &ProcessorFlowDockWidget::PeakNode, this, &MainWindow::OnPeakNode);
-    QObject::connect(_processorFlowDockWidget, &ProcessorFlowDockWidget::InputLoaded, this, &MainWindow::OnInputLoaded);
     QObject::connect(_processorFlowDockWidget, &ProcessorFlowDockWidget::OutputProcessed, this, &MainWindow::OnOutputProcessed);
 
-    _glWidget = new OpenGLWidget(this);
+    //_glWidget = new OpenGLWidget(this);
 
-    this->setCentralWidget(_glWidget);
+    //this->setCentralWidget(_glWidget);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-}
-
-void MainWindow::OnInputLoaded(QImage* input, int flowIndex)
-{
-
-    _glWidget->SetDisplayedImage(*input);
-
-    //_processorFlow.PlayFlow();
 }
 
 void MainWindow::OnOutputProcessed(QImage * output)
@@ -67,4 +59,19 @@ void MainWindow::on_actionPreferences_triggered()
     _preferencesDialog.GetTmpPref();
     _preferencesDialog.show();
     _preferencesDialog.setWindowTitle( QString("Preferences"));
+}
+
+void MainWindow::OnPeakNode(Node *node)
+{
+    if( _currentPeakWidget != nullptr)
+    {
+        delete _currentPeakWidget;
+    }
+
+    // hm, this does not feel right
+    _glWidget = dynamic_cast<OpenGLWidget*>(node->InstantiatePeakWidget());
+
+    //_glWidget->setParent(this);
+    setCentralWidget(_glWidget);
+    //_glWidget->setVisible(true);
 }

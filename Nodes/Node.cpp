@@ -8,6 +8,10 @@ Node::Node()
 {
     _isEnabled = true;
     _nodeCommonWidget = nullptr;
+    _peakWidget = nullptr;
+
+    _input = nullptr;
+    _output = nullptr;
 }
 
 Node::~Node()

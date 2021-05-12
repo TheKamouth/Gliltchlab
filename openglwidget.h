@@ -25,7 +25,8 @@ class OpenGLWidget : public QOpenGLWidget
     Q_OBJECT
 
 public:
-    OpenGLWidget( QWidget *parent) : QOpenGLWidget( parent),
+    OpenGLWidget( QWidget *parent = nullptr) : QOpenGLWidget( parent),
+        _displayedPixmap(nullptr),
         zoom(0.15),
         zoomMin(0.1),
         zoomMax(10),
@@ -54,7 +55,7 @@ public:
     ViewInfo* getViewInfo();
     void setViewInfo(ViewInfo* viewInfo);
 
-    QPixmap * getDisplayedPixmap(){return displayedPixmap;}
+    QPixmap * getDisplayedPixmap(){return _displayedPixmap;}
 
     QPointF getSortingCenter();
     void ShowSortingCenter( bool show);
@@ -77,7 +78,7 @@ private:
 
     QPainter *painter;
 
-    QPixmap * displayedPixmap;
+    QPixmap * _displayedPixmap;
 
     QImage displayedImage;
 

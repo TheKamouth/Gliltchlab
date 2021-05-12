@@ -24,7 +24,7 @@ public:
     void OnArrowClicked();
 
     void SetWidgetVisible(bool visible);
-    void SetPeakedStatus(bool isPeakedAt);
+    void SetIsPeaked(bool isPeakedAt);
 
     Node * GetNode(){ return _node; }
 
