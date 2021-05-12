@@ -8,6 +8,8 @@ PreferencesDialog::PreferencesDialog(QWidget * parent, CommonPreferences * prefe
 {
     ui->setupUi(this);
 
+    ptrPreferences = new CommonPreferences();
+
     this->setMaximumSize(390, 235);
     this->setMinimumSize(390, 235);
 

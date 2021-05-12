@@ -13,7 +13,28 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
-  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="spacing">
+     <number>2</number>
+    </property>
+    <property name="leftMargin">
+     <number>2</number>
+    </property>
+    <property name="topMargin">
+     <number>2</number>
+    </property>
+    <property name="rightMargin">
+     <number>2</number>
+    </property>
+    <property name="bottomMargin">
+     <number>2</number>
+    </property>
+    <item>
+     <widget class="QWidget" name="glWidget" native="true"/>
+    </item>
+   </layout>
+  </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
@@ -30,12 +51,6 @@
     <addaction name="actionLoadInput"/>
     <addaction name="actionSave_output"/>
    </widget>
-   <widget class="QMenu" name="menuScan">
-    <property name="title">
-     <string>Scan</string>
-    </property>
-    <addaction name="actionPlay"/>
-   </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
      <string>Edit</string>
@@ -43,18 +58,17 @@
     <addaction name="actionPreferences"/>
    </widget>
    <addaction name="menuFile"/>
-   <addaction name="menuScan"/>
    <addaction name="menuEdit"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionLoadInput">
    <property name="text">
-    <string>Load input</string>
+    <string>Load flow</string>
    </property>
   </action>
   <action name="actionSave_output">
    <property name="text">
-    <string>Save output</string>
+    <string>Save flow</string>
    </property>
   </action>
   <action name="actionPlay">

@@ -1,0 +1,26 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>Icons/icons8-closed-eye-50.png</file>
+        <file>Icons/icons8-creek-50.png</file>
+        <file>Icons/icons8-delete-bin-50.png</file>
+        <file>Icons/icons8-eye-50.png</file>
+        <file>Icons/icons8-eye-50-2.png</file>
+        <file>Icons/icons8-folder-50.png</file>
+        <file>Icons/icons8-rotate-page-clockwise-50.png</file>
+        <file>Icons/icons8-save-50.png</file>
+        <file>Icons/icons8-settings-50.png</file>
+        <file>Icons/icons8-settings-50-2.png</file>
+        <file>Icons/icons8-update-50.png</file>
+        <file>Icons/001-arrow-down-sign-to-navigate.png</file>
+        <file>Icons/002-right-arrow.png</file>
+        <file>Icons/001-picture - Copie.png</file>
+        <file>Icons/002-insert-picture-icon - Copie.png</file>
+        <file>Icons/003-video-player - Copie.png</file>
+        <file>Icons/004-video - Copie.png</file>
+        <file>Icons/001-plus.png</file>
+        <file>Icons/002-plus-1.png</file>
+        <file>Icons/003-plus-2.png</file>
+        <file>Icons/004-add.png</file>
+    </qresource>
+    <qresource prefix="/"/>
+</RCC>

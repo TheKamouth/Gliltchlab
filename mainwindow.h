@@ -4,6 +4,13 @@
 #include "CommonPreferences.h"
 #include "preferencesdialog.h"
 
+#include "openglwidget.h"
+
+#include "ImageProcessors/Scanner.h"
+
+#include "ProcessorFlow.h"
+#include "ProcessorFlowDockWidget.h"
+
 #include <QMainWindow>
 #include <QImage>
 #include <QOpenGLContext>
@@ -18,6 +25,8 @@
 #include <QMovie>
 
 #include <QDebug>
+
+/// Icons from _scanned2021_05_03_23_19_50_788
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -37,48 +46,30 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    void OnInputLoaded(QImage* input, int flowIndex);
+    void OnOutputProcessed(QImage * output);
+
 private slots:
-    void on_actionLoadInput_triggered();
-
     void on_actionPlay_triggered();
-
     void on_actionPreferences_triggered();
 
 private:
     Ui::MainWindow *ui;
-    QImage _inputFrame;
-    int currentOutputIndex = 0;
 
-    QString inputFilename;
+    // UI
+    //QOpenGLWidget _inputWidget;
+    //
+    //QOpenGLWidget _outputWidget;
+
+    OpenGLWidget* _glWidget;
+
+    ProcessorFlowDockWidget * _processorFlowDockWidget;
+
+
+    // Preferences
     CommonPreferences _preferences;
-    PreferencesDialog * _preferencesDialog;
+    PreferencesDialog _preferencesDialog;
 
-    // OpenGL
-    QSize _fboSize;
-    QOpenGLContext _glContext;
-    QOffscreenSurface _offScreenSurface;
-    QOpenGLShaderProgram _glShaderProgram;
-    QOpenGLFramebufferObject * _glFrameBufferObject;
-    QOpenGLTexture * _inputTexture ;
-    QOpenGLTexture * _previousOutputTexture ;
-    QOpenGLBuffer _glVertexBuffer;
-    QOpenGLBuffer _glFragmentBuffer;    
-
-    const QString VERTEX_SHADER_PATH = "D:\\5_PROJETS\\5_DEV\\VirtualScanner\\sources\\VirtualScanner\\VertexShader.vert";
-    const QString FRAGMENT_SHADER_PATH = "D:\\5_PROJETS\\5_DEV\\VirtualScanner\\sources\\VirtualScanner\\FragmentShader.frag";
-    const VertexData FULL_SCREEN_VERTICES_DATA[4] =
-    {
-        {{ -1.0f, +1.0f }, { 0.0f, 1.0f }}, // top-left
-        {{ +1.0f, +1.0f }, { 1.0f, 1.0f }}, // top-right
-        {{ -1.0f, -1.0f }, { 0.0f, 0.0f }}, // bottom-left
-        {{ +1.0f, -1.0f }, { 1.0f, 0.0f }}  // bottom-right
-    };
-    const GLuint FULL_SCREEN_VERTICES_INDEXES[4] = { 0, 1, 2, 3 };
-    const GLuint ONE_LINE_INDEXES[2] = {0, 1};
-
-    void InitOpenGLContext();
-    void ScanLine(QVector2D lineOrigin, QVector2D lineEnd);
-    QVector2D ToTexCoord(QVector2D position);
-    QVector2D ToVertexCoord(QVector2D position);
+    ProcessorFlow _processorFlow;
 };
 #endif // MAINWINDOW_H
