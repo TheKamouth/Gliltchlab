@@ -23,6 +23,8 @@ public:
 
     void OnAddNodeClicked();
     void OnProcessFlowClicked();
+    void OnPeakNodeClicked(Node * node);
+    void PeakLastFlowNode();
 
 signals:
     void InputLoaded(QImage* input, int flowIndex);
@@ -47,7 +49,6 @@ private:
 
     void InitNodeTypeComboBox();
     void DeleteNode(Node* node);
-    void OnPeakNodeClicked(Node * node);
 
 };
 

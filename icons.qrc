@@ -21,6 +21,12 @@
         <file>Icons/002-plus-1.png</file>
         <file>Icons/003-plus-2.png</file>
         <file>Icons/004-add.png</file>
+        <file>Icons/001-mute.png</file>
+        <file>Icons/002-volume.png</file>
+        <file>Icons/003-audio.png</file>
+        <file>Icons/004-animation.png</file>
+        <file>Icons/005-timeline.png</file>
+        <file>Icons/006-priority.png</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

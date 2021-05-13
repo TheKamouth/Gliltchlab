@@ -42,6 +42,8 @@ void ProcessorFlowDockWidget::OnAddNodeClicked()
         return;
     }
 
+    node->Initialize();
+
     QObject::connect(node->CommonWidget(), &NodeCommonWidget::DeleteClicked, this, &ProcessorFlowDockWidget::DeleteNode);
     QObject::connect(node->CommonWidget(), &NodeCommonWidget::PeakClicked, this, &ProcessorFlowDockWidget::OnPeakNodeClicked);
 
@@ -51,6 +53,8 @@ void ProcessorFlowDockWidget::OnAddNodeClicked()
     // Should Node be a QWidget ? Or handle one ?
     _nodes.append(node);
     _flowGraph->AddNode(node);
+
+    OnProcessFlowClicked();
 }
 
 void ProcessorFlowDockWidget::DeleteNode(Node* node)
@@ -77,6 +81,13 @@ void ProcessorFlowDockWidget::OnPeakNodeClicked(Node * node)
     emit PeakNode(node);
 }
 
+void ProcessorFlowDockWidget::PeakLastFlowNode()
+{
+    int nodeCount = _nodes.count();
+    Node * lastNode = _nodes[nodeCount - 1];
+    OnPeakNodeClicked(lastNode);
+}
+
 void ProcessorFlowDockWidget::InitNodeTypeComboBox()
 {
     QStringList availableNodeTypesNames = _nodeFactory.AvailableNodeTypesNames();
@@ -91,16 +102,19 @@ void ProcessorFlowDockWidget::OnProcessFlowClicked()
         return;
     }
 
-    Node * previousNode = _nodes[0];
     if(_nodes.count() == 1)
     {
-        emit OutputProcessed(previousNode->Output());
+        emit OutputProcessed(_nodes[0]->Output());
         return;
     }
 
+    Node * previousNode = nullptr;
+    Node * lastNode = nullptr;
+    Node * node;
     for(int i = 1 ; i < _nodes.count() ; i++)
     {
-        Node * node = _nodes[i];
+        previousNode = _nodes[i-1];
+        node = _nodes[i];
         node->SetInput( previousNode->Output());
 
         if( node->TryProcess() == false)
@@ -109,6 +123,6 @@ void ProcessorFlowDockWidget::OnProcessFlowClicked()
         }
     }
 
-    Node * lastNode = _nodes[_nodes.count() - 1];
+    lastNode = node;
     emit OutputProcessed(lastNode->Output());
 }

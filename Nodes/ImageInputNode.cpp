@@ -11,8 +11,6 @@ ImageInputNode::ImageInputNode(QWidget * parent) :
 {
     ui->setupUi(this);
 
-    Initialize();
-
     QObject::connect( ui->pb_loadInput, &QPushButton::clicked, this, &ImageInputNode::OnLoadInputClicked);
     QObject::connect( ui->pb_reload, &QPushButton::clicked, this, &ImageInputNode::OnReloadClicked);
 

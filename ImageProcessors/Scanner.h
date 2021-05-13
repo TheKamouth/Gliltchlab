@@ -41,12 +41,15 @@ public:
     void Scan();
     void ScanOneDrawCall();
 
-    void SetInput(QImage* input) override;
-    void SetParameters() override;
-    void BeforeProcessing() override;
-    void AfterProcessing() override;
-    void ProcessInternal() override;
-    QImage * Output() override;
+    // ImageProcessorBase / Filter
+    virtual void SetParameters() override;
+    virtual void BeforeProcessing() override;
+    virtual void AfterProcessing() override;
+    virtual void ProcessInternal() override;
+    virtual QImage * Output() override;
+
+    // Node override
+    void SetInput(QImage* input);
 
 private :
 

@@ -10,8 +10,6 @@ ImageOutputNode::ImageOutputNode(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    Initialize();
-
     QObject::connect(ui->pb_loadInput, &QPushButton::clicked, this, &ImageOutputNode::OnChoseSaveDirClicked);
     QObject::connect(ui->pb_save, &QPushButton::clicked, this, &ImageOutputNode::OnSaveClicked);
 
@@ -64,6 +62,7 @@ void ImageOutputNode::OnSaveClicked()
 
     QString timeStamp = QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm_mm_ss");
     _input->save(_outputDirName + "/gliltched_" + timeStamp + ".png");
+    qDebug() << _outputDirName+"/gliltched_" + timeStamp + ".png saved.";
 }
 
 QWidget * ImageOutputNode::NodeUiBaseWidgetInForm()

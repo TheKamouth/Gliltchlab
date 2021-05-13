@@ -19,6 +19,7 @@ enum NodeType
     AllRed,
 
     // TODO
+    PixelSort,
     InputColor,
     Contrast,
     Curves,

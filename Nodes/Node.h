@@ -15,7 +15,11 @@ public:
 
     virtual QWidget * Widget(){ return nullptr;}
     virtual QString Name() { return "unnamed node"; }
-    virtual bool TryProcess() {return false;}
+    virtual bool TryProcess()
+    {
+        _output = new QImage(*_input);
+        return true;
+    }
 
     virtual QWidget * NodeUiBaseWidgetInForm() = 0;
     virtual QLayout* NodeUiBaseLayoutInForm() = 0;

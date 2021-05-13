@@ -42,7 +42,9 @@ MainWindow::~MainWindow()
 
 void MainWindow::OnOutputProcessed(QImage * output)
 {
-    _glWidget->SetDisplayedImage(*output);
+
+
+    qDebug() << "Flow processed.";
 }
 
 void MainWindow::on_actionPlay_triggered()

@@ -6,7 +6,7 @@
 class Node;
 
 namespace Ui {
-class NodeUiBase;
+class NodeCommonWidget;
 }
 
 class NodeCommonWidget : public QWidget
@@ -35,7 +35,7 @@ signals:
     void ArrowClicked(bool isExpanded);
 
 private:
-    Ui::NodeUiBase *ui;
+    Ui::NodeCommonWidget *ui;
 
     Node * _node;
 

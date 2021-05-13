@@ -1,12 +1,12 @@
 #include "NodeCommonWidget.h"
-#include "ui_NodeUiBase.h"
+#include "ui_NodeCommonWidget.h"
 
 #include "Node.h"
 
 #include <QDebug>
 
 NodeCommonWidget::NodeCommonWidget(Node * node):
-    ui(new Ui::NodeUiBase),
+    ui(new Ui::NodeCommonWidget),
     _node(node)
 {
     ui->setupUi(this);
@@ -28,7 +28,7 @@ NodeCommonWidget::NodeCommonWidget(Node * node):
         UpdateNodeName(_node->Name());
     }
 
-    _isExpanded = false;
+    _isExpanded = true;
 }
 
 NodeCommonWidget::~NodeCommonWidget()

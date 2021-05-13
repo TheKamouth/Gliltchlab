@@ -37,7 +37,7 @@ void Node::Initialize()
     //layout->addWidget(NodeUiBaseWidgetInForm());
 
     _nodeCommonWidget->setVisible(true);
-    SpecificUI()->setVisible(false);
+    //SpecificUI()->setVisible(false);
 }
 
 void Node::OnEnableProcessorCheckboxClicked(bool toggled)

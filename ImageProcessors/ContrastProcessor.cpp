@@ -10,7 +10,8 @@ ContrastProcessor::ContrastProcessor()
 
 void ContrastProcessor::SetInput(QImage* input)
 {
-    _inputFrame = input;
+    ImageProcessorBase::SetInput(input);
+
     _fboSize = _inputFrame->size();
 
     // init shaders ?
