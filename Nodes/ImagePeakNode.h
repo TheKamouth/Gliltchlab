@@ -11,7 +11,7 @@ public:
     ImagePeakNode();
     ~ImagePeakNode();
 
-    QWidget * InstantiatePeakWidget();
+    virtual QWidget * InstantiatePeakWidget() override;
 
 private:
     OpenGLWidget * _glWidget;

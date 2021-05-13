@@ -21,7 +21,6 @@ public:
     explicit ImageInputNode(QWidget *parent = nullptr);
     ~ImageInputNode();
 
-
     virtual QString Name() override { return "Image input"; }
     virtual QWidget * Widget() override { return this; };
     virtual QWidget * NodeUiBaseWidgetInForm() override;
@@ -32,7 +31,6 @@ public:
     void OnReloadClicked();
 
 signals:
-
     void InputLoaded(QImage* input, int flowIndex);
 
 private:
@@ -41,6 +39,8 @@ private:
     //NodeUiBase * _nodeCommonUi;
 
     QString _inputFileName;
+    QString _outputFileName;
+
     QPixmap * _previewPixMap;
 
     void UpdatePreview();

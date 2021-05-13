@@ -61,6 +61,9 @@ void ImageInputNode::OnLoadInputClicked()
     _inputFileName = inputFilename;
     _input = new QImage(_inputFileName);
 
+    _outputFileName = inputFilename;
+    _output = new QImage(_outputFileName);
+
     ui->label->setText(_inputFileName);
     ui->pb_reload->setEnabled(true);
 

@@ -33,7 +33,7 @@ private:
     Ui::ProcessorFlowDockWidget *ui;
 
     QList<ProcessorCommonUI *> _processorsUIs;
-    QList<Node *> _nodeWidgets;
+    QList<Node *> _nodes;
 
     // WIP: Replace ProcessorFlow by more generic GraphFlow that handles Node (input, filters, output, ...)
     ProcessorFlow * _processorFlow;

@@ -46,10 +46,10 @@ void ProcessorFlowDockWidget::OnAddNodeClicked()
     QObject::connect(node->CommonWidget(), &NodeCommonWidget::PeakClicked, this, &ProcessorFlowDockWidget::OnPeakNodeClicked);
 
     //ui->vboxLayoutProcessors->addWidget(node->Widget());
-    ui->vboxLayoutProcessors->insertWidget(_nodeWidgets.count(), node->Widget());
+    ui->vboxLayoutProcessors->insertWidget(_nodes.count(), node->Widget());
 
     // Should Node be a QWidget ? Or handle one ?
-    _nodeWidgets.append(node);
+    _nodes.append(node);
     _flowGraph->AddNode(node);
 }
 
@@ -57,17 +57,17 @@ void ProcessorFlowDockWidget::DeleteNode(Node* node)
 {
     QObject::disconnect(node->CommonWidget(), &NodeCommonWidget::DeleteClicked, this, &ProcessorFlowDockWidget::DeleteNode);
 
-    _flowGraph->RemoveNode(_nodeWidgets.indexOf(node));
-    _nodeWidgets.removeAll(node);
+    _flowGraph->RemoveNode(_nodes.indexOf(node));
+    _nodes.removeAll(node);
 
     delete node;
 }
 
 void ProcessorFlowDockWidget::OnPeakNodeClicked(Node * node)
 {
-    for(int i = 0 ; i < _nodeWidgets.count(); i++ )
+    for(int i = 0 ; i < _nodes.count(); i++ )
     {
-        Node * n = _nodeWidgets.at(i);
+        Node * n = _nodes.at(i);
         if(n != node)
         {
             n->CommonWidget()->SetIsPeaked(false);
@@ -85,25 +85,30 @@ void ProcessorFlowDockWidget::InitNodeTypeComboBox()
 
 void ProcessorFlowDockWidget::OnProcessFlowClicked()
 {
-    if(_processorsUIs.count() == 0)
+    if(_nodes.count() == 0)
     {
-        qDebug() << "No effect to process." << Qt::endl;
+        qDebug() << "No node to process." << Qt::endl;
         return;
     }
 
-    if(_input->isNull())
+    Node * previousNode = _nodes[0];
+    if(_nodes.count() == 1)
     {
-        qDebug() << "No valid input to process." << Qt::endl;
+        emit OutputProcessed(previousNode->Output());
         return;
     }
 
-    for(int i = 0 ; i < _processorsUIs.count() ; i++)
+    for(int i = 1 ; i < _nodes.count() ; i++)
     {
-        ImageProcessorBase * processor = _processorsUIs[i]->Processor();
-        processor->SetInput(_input);
-        processor->Process();
-        _output = new QImage(*processor->Output());
+        Node * node = _nodes[i];
+        node->SetInput( previousNode->Output());
+
+        if( node->TryProcess() == false)
+        {
+            qDebug() << "Failed to process node: " << node->Name();
+        }
     }
 
-    emit OutputProcessed(_output);
+    Node * lastNode = _nodes[_nodes.count() - 1];
+    emit OutputProcessed(lastNode->Output());
 }

@@ -1,6 +1,7 @@
 #include "NodeFactory.h"
 
 #include "ImageInputNode.h"
+#include "ImageOutputNode.h"
 #include "DesaturateFilterNode.h"
 
 #include <QDebug>
@@ -16,6 +17,9 @@ Node * NodeFactory::CreateNode(NodeType type)
     {
         case InputImage:
             return new ImageInputNode();
+
+        case OutputImage:
+            return new ImageOutputNode();
 
         case Desaturate:
             return new DesaturateFilterNode();

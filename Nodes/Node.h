@@ -15,9 +15,12 @@ public:
 
     virtual QWidget * Widget(){ return nullptr;}
     virtual QString Name() { return "unnamed node"; }
+    virtual bool TryProcess() {return false;}
+
     virtual QWidget * NodeUiBaseWidgetInForm() = 0;
     virtual QLayout* NodeUiBaseLayoutInForm() = 0;
     virtual QWidget * SpecificUI() = 0;
+
 
     // Peak widget is instantiated wjen needed and deleted when not visible
     virtual QWidget * InstantiatePeakWidget() = 0;
@@ -25,6 +28,7 @@ public:
     // This could be generic
     QImage * Input() { return _input; }
     QImage * Output() { return _output; }
+    void SetInput(QImage * input) {_input = input;}
 
     NodeCommonWidget * CommonWidget() { return _nodeCommonWidget;}
 

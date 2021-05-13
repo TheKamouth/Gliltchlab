@@ -13,6 +13,7 @@ SOURCES += \
     FlowGraph.cpp \
     Nodes/DesaturateFilterNode.cpp \
     Nodes/ImageInputNode.cpp \
+    Nodes/ImageOutputNode.cpp \
     Nodes/ImagePeakNode.cpp \
     Nodes/Node.cpp \
     Nodes/NodeCommonWidget.cpp \
@@ -37,6 +38,7 @@ HEADERS += \
     ImageProcessors/Scanner.h \
     Nodes/DesaturateFilterNode.h \
     Nodes/ImageInputNode.h \
+    Nodes/ImageOutputNode.h \
     Nodes/ImagePeakNode.h \
     Nodes/Node.h \
     Nodes/NodeCommonWidget.h \
@@ -51,6 +53,7 @@ HEADERS += \
 FORMS += \
     Nodes/DesaturateFilterNode.ui \
     Nodes/ImageInputNode.ui \
+    Nodes/ImageOutputNode.ui \
     Nodes/NodeCommonWidget.ui \
     ProcessorCommonUI.ui \
     ProcessorFlowDockWidget.ui \
