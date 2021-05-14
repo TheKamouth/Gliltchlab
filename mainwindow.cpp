@@ -1,9 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include "ImageProcessors/ContrastProcessor.h"
-#include "ImageProcessors/Scanner.h"
-
 #include "ProcessorFlowDockWidget.h"
 
 #include <QDir>
@@ -19,8 +16,7 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    _preferencesDialog(parent, &_preferences),
-    _currentPeakWidget(nullptr)
+    _preferencesDialog(parent, &_preferences)
 {
     ui->setupUi(this);
 
@@ -29,10 +25,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QObject::connect(_processorFlowDockWidget, &ProcessorFlowDockWidget::PeakNode, this, &MainWindow::OnPeakNode);
     QObject::connect(_processorFlowDockWidget, &ProcessorFlowDockWidget::OutputProcessed, this, &MainWindow::OnOutputProcessed);
-
-    //_glWidget = new OpenGLWidget(this);
-
-    //this->setCentralWidget(_glWidget);
 }
 
 MainWindow::~MainWindow()
@@ -42,15 +34,11 @@ MainWindow::~MainWindow()
 
 void MainWindow::OnOutputProcessed(QImage * output)
 {
-
-
     qDebug() << "Flow processed.";
 }
 
 void MainWindow::on_actionPlay_triggered()
 {
-    //_scanner.ScanOneDrawCall();
-
     _processorFlow.PlayFlow();
 
     _glWidget->SetDisplayedImage(*_processorFlow.Output());
@@ -65,15 +53,18 @@ void MainWindow::on_actionPreferences_triggered()
 
 void MainWindow::OnPeakNode(Node *node)
 {
-    if( _currentPeakWidget != nullptr)
+    ViewInfo * viewInfo = nullptr;
+    if(_glWidget != nullptr)
     {
-        delete _currentPeakWidget;
+        viewInfo = _glWidget->GetViewInfo();
     }
 
     // hm, this does not feel right
     _glWidget = dynamic_cast<OpenGLWidget*>(node->InstantiatePeakWidget());
 
-    //_glWidget->setParent(this);
+    if(viewInfo != nullptr)
+    {
+        _glWidget->SetViewInfo(viewInfo);
+    }
     setCentralWidget(_glWidget);
-    //_glWidget->setVisible(true);
 }

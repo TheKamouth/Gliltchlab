@@ -17,9 +17,10 @@ class ImageInputNode : public ImagePeakNode
 {
     Q_OBJECT
 
+
 public:
     explicit ImageInputNode(QWidget *parent = nullptr);
-    ~ImageInputNode();
+    virtual ~ImageInputNode();
 
     virtual QString Name() override { return "Image input"; }
     virtual QWidget * Widget() override { return this; };
@@ -29,6 +30,7 @@ public:
 
     void OnLoadInputClicked();
     void OnReloadClicked();
+    void SetInputFilePath(QString filePath);
 
 signals:
     void InputLoaded(QImage* input, int flowIndex);

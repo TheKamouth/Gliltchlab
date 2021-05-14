@@ -9,9 +9,22 @@ class ImagePeakNode : public Node
 {
 public:
     ImagePeakNode();
-    ~ImagePeakNode();
+    virtual ~ImagePeakNode();
 
     virtual QWidget * InstantiatePeakWidget() override;
+
+protected:
+    void Update()
+    {
+        if(Output() != nullptr)
+        {
+            _glWidget->SetDisplayedImage(*Output());
+        }
+        else if (Input() != nullptr)
+        {
+            _glWidget->SetDisplayedImage(*Input());
+        }
+    }
 
 private:
     OpenGLWidget * _glWidget;

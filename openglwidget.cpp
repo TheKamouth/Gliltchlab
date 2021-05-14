@@ -1,16 +1,18 @@
 #include "openglwidget.h"
 #include <algorithm>
 
-static const QColor PINK(255,20,147);
+static const QColor PINK(255,0,255);
 
-void OpenGLWidget::initializeGL(){
+void OpenGLWidget::initializeGL()
+{
 
     // Set up the rendering context, clearColor
     QOpenGLFunctions *f = QOpenGLContext::currentContext()->functions();
     f->glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
-void OpenGLWidget::resizeGL(int w, int h){
+void OpenGLWidget::resizeGL(int w, int h)
+{
 
     //avoiding warnings
     Q_UNUSED(w)
@@ -19,38 +21,41 @@ void OpenGLWidget::resizeGL(int w, int h){
     update();
 }
 
-void OpenGLWidget::paintGL(){            
+void OpenGLWidget::paintGL()
+{
 
     //if(displayedPixmap.isNull()){
-    if( displayedImage.isNull()){
+    if( displayedImage.isNull())
+    {
         return;
     }
 
-    painter = new QPainter( this);    
+    painter = new QPainter( this);
 
     //zoom limit:
     if( !displayedImage.isNull()){
 
-        int onScreenImgWidth = displayedImage.width() * zoom;
+        int onScreenImgWidth = displayedImage.width() * _viewInfo->Zoom;
 
         if( onScreenImgWidth < this->width() * 0.25){
 
-            zoom = this->width() * 0.25 / displayedImage.width();
+            _viewInfo->Zoom = this->width() * 0.25 / displayedImage.width();
         }
     }
 
-    float width = displayedImage.width() * zoom;
-    float height = displayedImage.height() * zoom;
+    float width = displayedImage.width() * _viewInfo->Zoom;
+    float height = displayedImage.height() * _viewInfo->Zoom;
 
-    float posX =  this->width() / 2.0 - width / 2.0 + viewCenter.x();
-    float posY =  this->height() / 2.0 -height / 2.0 + viewCenter.y();
+    float posX =  this->width() / 2.0 - width / 2.0 + _viewInfo->ViewCenter.x();
+    float posY =  this->height() / 2.0 -height / 2.0 + _viewInfo->ViewCenter.y();
 
     QRect imgRect = QRect(posX, posY, width, height);
 
     painter->drawImage(imgRect, displayedImage);
 
     //draw image framing lines
-    if( displayFramingLines){
+    if( displayFramingLines)
+    {
 
         QLine horizontalTopLine = QLine(0, posY, this->width(), posY);
         QLine horizontalBotLine = QLine(0, posY + height, this->width(), posY + height);
@@ -80,7 +85,6 @@ void OpenGLWidget::paintGL(){
         painter->drawEllipse(QPointF(posX + sortingCenter.x() * width, posY + sortingCenter.y() * height), 1, 1);
     }
 
-
     painter->end();
 
     delete painter;
@@ -99,6 +103,7 @@ void OpenGLWidget::SetDisplayedImg( QPixmap *pixmap){
     paintGL();
     update();
     //viewChange();
+    emit viewChange();
 }
 
 void OpenGLWidget::SetDisplayedImage( QImage &image){
@@ -107,8 +112,16 @@ void OpenGLWidget::SetDisplayedImage( QImage &image){
 
     paintGL();
 
-    update();
+    Update();
     //viewChange();
+    emit viewChange();
+}
+
+void OpenGLWidget::Update()
+{
+    update();
+
+    emit viewChange();
 }
 
 void OpenGLWidget::AddRect(std::pair< QRectF, QColor> newRect){
@@ -125,15 +138,18 @@ void OpenGLWidget::wheelEvent( QWheelEvent * event){
 
     double angleDelta = event->angleDelta().y();
 
-    zoom += angleDelta * 0.0005;
+    _viewInfo->Zoom += angleDelta * 0.0005 ;//* _viewInfo->Zoom;
 
-    if(zoom < zoomMin){
-        zoom = zoomMin;
+    if(_viewInfo->Zoom < _viewInfo->ZoomMin)
+    {
+        _viewInfo->Zoom = _viewInfo->ZoomMin;
     }
-    if(zoom > zoomMax){
-        zoom = zoomMax;
+    else if(_viewInfo->Zoom > _viewInfo->ZoomMax)
+    {
+        _viewInfo->Zoom = _viewInfo->ZoomMax;
     }
 
+    paintGL();
     update();
 
     emit viewChange();
@@ -143,13 +159,13 @@ void OpenGLWidget::mouseMoveEvent(QMouseEvent *event)
 {
     if( rightClickPressed){
 
-        viewCenter = lastViewCenter + event->pos() - lastClickPosition;
+        _viewInfo->ViewCenter = _lastViewCenter + event->pos() - lastClickPosition;
 
-        if(viewCenter.x() > this->width() * 2 ){ viewCenter.setX( this->width() * 2); }
-        if(viewCenter.x() < -this->width() * 2){ viewCenter.setX( -this->width() * 2); }
+        if(_viewInfo->ViewCenter.x() > this->width() * 2 ){ _viewInfo->ViewCenter.setX( this->width() * 2); }
+        if(_viewInfo->ViewCenter.x() < -this->width() * 2){ _viewInfo->ViewCenter.setX( -this->width() * 2); }
 
-        if(viewCenter.y() > this->height() * 2){ viewCenter.setY( this->height() * 2); }
-        if(viewCenter.y() < -this->height() * 2){ viewCenter.setY( -this->height() * 2); }
+        if(_viewInfo->ViewCenter.y() > this->height() * 2){ _viewInfo->ViewCenter.setY( this->height() * 2); }
+        if(_viewInfo->ViewCenter.y() < -this->height() * 2){ _viewInfo->ViewCenter.setY( -this->height() * 2); }
 
         update();
 
@@ -157,20 +173,21 @@ void OpenGLWidget::mouseMoveEvent(QMouseEvent *event)
     }
 }
 
-void OpenGLWidget::mousePressEvent(QMouseEvent * event){
+void OpenGLWidget::mousePressEvent(QMouseEvent * event)
+{
 
     if(event->buttons() == Qt::RightButton){
 
         rightClickPressed = true;
         lastClickPosition = event->pos();
-        lastViewCenter = viewCenter;        
+        _lastViewCenter = _viewInfo->ViewCenter;
     }
     else if(event->buttons() == Qt::LeftButton){
 
-        float width = displayedImage.width() * zoom;
-        float height = displayedImage.height() * zoom;
-        float posX =  this->width() / 2.0 - width / 2.0 + viewCenter.x();
-        float posY =  this->height() / 2.0 -height / 2.0 + viewCenter.y();
+        float width = displayedImage.width() * _viewInfo->Zoom;
+        float height = displayedImage.height() * _viewInfo->Zoom;
+        float posX =  this->width() / 2.0 - width / 2.0 + _viewInfo->ViewCenter.x();
+        float posY =  this->height() / 2.0 -height / 2.0 + _viewInfo->ViewCenter.y();
 
 
         QPoint clickPosition = event->pos() - QPoint(posX, posY);
@@ -189,10 +206,10 @@ void OpenGLWidget::mousePressEvent(QMouseEvent * event){
     }
 }
 
-void OpenGLWidget::mouseReleaseEvent(QMouseEvent * event){
-
-        rightClickPressed = false;
-        lastViewCenter = viewCenter;                
+void OpenGLWidget::mouseReleaseEvent(QMouseEvent * event)
+{
+    rightClickPressed = false;
+    _lastViewCenter = _viewInfo->ViewCenter;
 }
 
 void OpenGLWidget::ShowFramingLines( bool show){
@@ -202,24 +219,19 @@ void OpenGLWidget::ShowFramingLines( bool show){
     update();
 }
 
-ViewInfo* OpenGLWidget::getViewInfo(){
-
-    ViewInfo* viewInfo =  new ViewInfo();
-    viewInfo->zoom = zoom;
-    viewInfo->zoomMin = zoomMin;
-    viewInfo->zoomMax = zoomMax;
-    viewInfo->viewCenter = viewCenter;
-
-    return viewInfo;
+ViewInfo * OpenGLWidget::GetViewInfo()
+{
+    return _viewInfo;
 }
 
-void OpenGLWidget::setViewInfo(ViewInfo* viewInfo)
+void OpenGLWidget::SetViewInfo(ViewInfo * viewInfo)
 {
-    zoom = viewInfo->zoom;
-    zoomMin = viewInfo->zoomMin;
-    zoomMax = viewInfo->zoomMax;
-    viewCenter = viewInfo->viewCenter;
+    _viewInfo->Zoom = viewInfo->Zoom;
+    _viewInfo->ZoomMin = viewInfo->ZoomMin;
+    _viewInfo->ZoomMax = viewInfo->ZoomMax;
+    _viewInfo->ViewCenter = viewInfo->ViewCenter;
 
+    paintGL();
     update();
 }
 

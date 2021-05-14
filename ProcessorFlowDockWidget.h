@@ -1,9 +1,8 @@
 #ifndef PROCESSORFLOWDOCKWIDGET_H
 #define PROCESSORFLOWDOCKWIDGET_H
 
-#include "ProcessorCommonUI.h"
 #include "ProcessorFlow.h"
-#include "ImageProcessors/ImageProcessorBase.h"
+#include "Nodes/FilterNodes/ImageProcessorBase.h"
 #include "Nodes/NodeFactory.h"
 #include "FlowGraph.h"
 
@@ -34,7 +33,6 @@ signals:
 private:
     Ui::ProcessorFlowDockWidget *ui;
 
-    QList<ProcessorCommonUI *> _processorsUIs;
     QList<Node *> _nodes;
 
     // WIP: Replace ProcessorFlow by more generic GraphFlow that handles Node (input, filters, output, ...)

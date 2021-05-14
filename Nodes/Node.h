@@ -15,11 +15,7 @@ public:
 
     virtual QWidget * Widget(){ return nullptr;}
     virtual QString Name() { return "unnamed node"; }
-    virtual bool TryProcess()
-    {
-        _output = new QImage(*_input);
-        return true;
-    }
+    virtual bool TryProcess();
 
     virtual QWidget * NodeUiBaseWidgetInForm() = 0;
     virtual QLayout* NodeUiBaseLayoutInForm() = 0;
@@ -30,9 +26,20 @@ public:
     virtual QWidget * InstantiatePeakWidget() = 0;
 
     // This could be generic
-    QImage * Input() { return _input; }
-    QImage * Output() { return _output; }
-    void SetInput(QImage * input) {_input = input;}
+    // And in cpp file
+    QImage * Input()
+    {
+        return _input;
+    }
+
+    QImage * Output()
+    {
+        return _output;
+    }
+    virtual void SetInput(QImage * input)
+    {
+        _input = input;
+    }
 
     NodeCommonWidget * CommonWidget() { return _nodeCommonWidget;}
 
@@ -50,6 +57,8 @@ signals:
     void OnProcessorSettingsClicked();
 
 protected :
+    QString GetTempImageOutputFilePath();
+
     QString _name;
     bool _isEnabled;
 

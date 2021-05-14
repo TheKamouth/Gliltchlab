@@ -1,8 +1,9 @@
 #include "NodeFactory.h"
 
-#include "ImageInputNode.h"
-#include "ImageOutputNode.h"
-#include "DesaturateFilterNode.h"
+#include "Nodes/ImageInputNode.h"
+#include "Nodes/ImageOutputNode.h"
+#include "Nodes/FilterNodes/DesaturateFilterNode.h"
+#include "Nodes/FilterNodes/ScannerFilterNode.h"
 
 #include <QDebug>
 
@@ -16,13 +17,24 @@ Node * NodeFactory::CreateNode(NodeType type)
     switch(type)
     {
         case InputImage:
-            return new ImageInputNode();
+        {
+            ImageInputNode * imageInputNode = new ImageInputNode();
+            imageInputNode->SetInputFilePath(DEFAULT_IMAGE_INPUT_PATH);
+            return imageInputNode;
+        }
 
         case OutputImage:
-            return new ImageOutputNode();
+        {
+            ImageOutputNode * imageOutputNode = new ImageOutputNode();
+            imageOutputNode->SetOutputFilePath(DEFAULT_IMAGE_OUTPUT_PATH);
+            return imageOutputNode;
+        }
 
         case Desaturate:
             return new DesaturateFilterNode();
+
+        case ScannerFilter:
+            return new ScannerFilterNode();
 
         default:
             qDebug() << "NodeFactory does not handle this NodeType";
@@ -61,11 +73,11 @@ QString NodeFactory::NodeTypeName(NodeType nodeType)
         case AllRed:
             return "All Red";
 
-        case Scanner:
+        case ScannerFilter:
             return "Scanner";
 
         default:
-            qDebug() << "NodeFactory does not handle this NodeType";
+            qDebug() << "unnamed";
             return "no name";
     }
 }

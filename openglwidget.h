@@ -12,12 +12,12 @@
 
 #include <iostream>
 
-struct ViewInfo{
-    double zoom;
-    double zoomMin;
-    double zoomMax;
-
-    QPoint viewCenter;
+struct ViewInfo
+{
+    double Zoom = 0.15;
+    double ZoomMin = 0.01;;
+    double ZoomMax = 100.0;
+    QPoint ViewCenter = QPoint(0, 0);
 };
 
 class OpenGLWidget : public QOpenGLWidget
@@ -27,16 +27,13 @@ class OpenGLWidget : public QOpenGLWidget
 public:
     OpenGLWidget( QWidget *parent = nullptr) : QOpenGLWidget( parent),
         _displayedPixmap(nullptr),
-        zoom(0.15),
-        zoomMin(0.1),
-        zoomMax(10),
+        _lastViewCenter(),
         rightClickPressed(false),
         displayFramingLines(true),
         showSortingCenter(false),
         sortingCenter(0.5,0.5)
     {
-
-        viewCenter = QPoint( 0, 0);
+        _viewInfo = new ViewInfo();
     }
 
     ~OpenGLWidget();
@@ -52,8 +49,8 @@ public:
 
     void ShowFramingLines( bool show);
 
-    ViewInfo* getViewInfo();
-    void setViewInfo(ViewInfo* viewInfo);
+    ViewInfo * GetViewInfo();
+    void SetViewInfo(ViewInfo* viewInfo);
 
     QPixmap * getDisplayedPixmap(){return _displayedPixmap;}
 
@@ -75,20 +72,16 @@ signals:
 
 private:
     QMatrix4x4 projectionMatrix;
-
     QPainter *painter;
 
-    QPixmap * _displayedPixmap;
+    ViewInfo * _viewInfo;
 
+    QPixmap * _displayedPixmap;
     QImage displayedImage;
 
     std::vector< std::pair< QRectF, QColor> > rects;
 
-    double zoom;
-    double zoomMin;
-    double zoomMax;
-
-    QPoint lastViewCenter, viewCenter;
+    QPoint _lastViewCenter;
     bool rightClickPressed;
     QPoint lastClickPosition;
 

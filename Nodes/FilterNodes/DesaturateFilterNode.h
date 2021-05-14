@@ -1,9 +1,9 @@
 #ifndef CONTRASTFILTERNODE_H
 #define CONTRASTFILTERNODE_H
 
-#include "Node.h"
+#include "Nodes/Node.h"
 
-#include "ImageProcessors/ImageProcessorBase.h"
+#include "Nodes/FilterNodes/ImageProcessorBase.h"
 
 #include <QWidget>
 
@@ -28,6 +28,9 @@ enum DesaturationMethod
     Average,
     Min,
     Max,
+    HslAverageToRgb,
+    HslMinToRgb,
+    HslMaxToRgb,
     DesaturationMethodCount
 };
 
@@ -37,7 +40,7 @@ class DesaturateFilterNode : public ImageProcessorBase
 
 public:
     explicit DesaturateFilterNode(QWidget *parent = nullptr);
-    ~DesaturateFilterNode();
+    virtual ~DesaturateFilterNode();
 
     // Node
     virtual QString Name() override { return "Desaturate"; }
@@ -45,31 +48,34 @@ public:
     virtual QWidget * NodeUiBaseWidgetInForm() override;
     virtual QLayout* NodeUiBaseLayoutInForm() override;
     virtual QWidget * SpecificUI() override;
-
-    // ImageProcessorBase
     virtual bool TryProcess() override;
+
+    // ImageProcessorBase / Filter
     virtual void SetParameters() override;
     virtual void BeforeProcessing() override;
+    virtual void ProcessInternal() override;
     virtual void AfterProcessing() override;
-    virtual QImage * Output() override;
 
     //
-    void ProcessInternal() override;
+    void OnCurrentIndexChanged(int index);
+    void OnSaturationValueChanged(int value);
 
 private:
-    Ui::DesaturateFilterNode *ui;
+    Ui::DesaturateFilterNode * ui;
 
+    // Desaturation parameters
     DesaturationMethod _desaturationMode;
+    float _desaturationValue;
 
+    //
     void InitNodeTypeComboBox();
-
     QStringList AvailableDesaturationMethodNames();
     QString AvailableDesaturationMethodName(int index);
     QString AvailableDesaturationMethodName(DesaturationMethod desaturationMethod);
 
     // constants
-    const QString VERTEX_SHADER_PATH = "D:\\5_PROJETS\\5_DEV\\VirtualScanner\\sources\\VirtualScanner\\ImageProcessors\\VertexShader.vert";
-    const QString CONTRAST_FRAGMENT_SHADER_PATH = "D:\\5_PROJETS\\5_DEV\\VirtualScanner\\sources\\VirtualScanner\\ImageProcessors\\Contrast.frag";
+    const QString VERTEX_SHADER_PATH = "D:\\5_PROJETS\\5_DEV\\VirtualScanner\\sources\\VirtualScanner\\Shaders\\VertexShader.vert";
+    const QString CONTRAST_FRAGMENT_SHADER_PATH = "D:\\5_PROJETS\\5_DEV\\VirtualScanner\\sources\\VirtualScanner\\Shaders\\Desaturate.frag";
 
     struct VertexData
     {

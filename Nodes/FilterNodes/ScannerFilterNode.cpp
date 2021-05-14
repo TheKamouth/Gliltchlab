@@ -1,25 +1,57 @@
-#include "Scanner.h"
+#include "ScannerFilterNode.h"
+#include"ui_ScannerFilterNode.h"
 
 #include <QElapsedTimer>
 #include <QDateTime>
 
 #include <math.h>       /* cos */
 #define PI 3.14159265
-Scanner::Scanner()
+
+ScannerFilterNode::ScannerFilterNode() :
+    ui(new Ui::ScannerFilterNode),
+    _glContext(nullptr),
+    _glShaderProgram(nullptr),
+    _glFrameBufferObject(nullptr)
 {
+    ui->setupUi(this);
+
     _scanMode = Rotation360;
+    _sensorAnimationMethod = RotateAroundSensorCentered;
+
+    InitSensorAnimationMethodComboBox();
 }
 
-
-void Scanner::Scan()
+QWidget *ScannerFilterNode::NodeUiBaseWidgetInForm()
 {
-    if(_inputFrame->isNull() == true)
+    return ui->NodeUiBase;
+}
+
+QLayout *ScannerFilterNode::NodeUiBaseLayoutInForm()
+{
+    return ui->NodeCommonWidgetLayout;
+}
+
+QWidget *ScannerFilterNode::SpecificUI()
+{
+    return ui->widget;
+}
+
+bool ScannerFilterNode::TryProcess()
+{
+    Process();
+
+    return true;
+}
+
+void ScannerFilterNode::Scan()
+{
+    if(_input->isNull() == true)
     {
         qDebug() << "No input." << Qt::endl;
         return;
     }
 
-    if(_inputFrame->valid(0,0) == false || _inputFrame->isNull() == true)
+    if(_input->valid(0,0) == false || _input->isNull() == true)
     {
         qDebug()<< "Failed to load image" << Qt::endl;
     }
@@ -75,49 +107,42 @@ void Scanner::Scan()
 
     qDebug() << "Took " << timer.elapsed() << " ms to scan." << Qt::endl;
 
-    QString timeStamp = QDateTime::currentDateTime().toString();
-    QString inputFilenameNoExtension = _inputFilename.left(_inputFilename.length()-4);
-    QString outputFilename = QString(inputFilenameNoExtension + "_scanned" + timeStamp + ".png");
-    _glFrameBufferObject->toImage(false).save(outputFilename);
-    qDebug() << "saved in "<< outputFilename << Qt::endl;
+    QString tempImageOutputFilePath = GetTempImageOutputFilePath();
+    _glFrameBufferObject->toImage(false).save(tempImageOutputFilePath);
 
-    qDebug() << "DONE ! " << Qt::endl;
+    qDebug() << "saved in "<< tempImageOutputFilePath << Qt::endl;
 }
 
-void Scanner::SetInput(QImage* input)
+void ScannerFilterNode::SetInput(QImage* input)
 {
-    _inputFrame = input;
-    _fboSize = _inputFrame->size();
+    Node::SetInput(input);
+
+    _fboSize = _input->size();
 
     Init();
 }
 
-void Scanner::SetParameters()
+void ScannerFilterNode::SetParameters()
 {
 
 }
 
-void Scanner::BeforeProcessing()
+void ScannerFilterNode::BeforeProcessing()
 {
-
+    Init();
 }
 
-void Scanner::AfterProcessing()
+void ScannerFilterNode::AfterProcessing()
 {
-
+    qDebug() << "Scanner node processed, " ;
 }
 
-void Scanner::ProcessInternal()
+void ScannerFilterNode::ProcessInternal()
 {
     ScanOneDrawCall();
 }
 
-QImage * Scanner::Output()
-{
-    return _output;
-}
-
-void Scanner::ScanLine(QVector2D lineOrigin, QVector2D lineEnd)
+void ScannerFilterNode::ScanLine(QVector2D lineOrigin, QVector2D lineEnd)
 {
 
     QString vertexPosVar("aPosition");
@@ -168,15 +193,15 @@ void Scanner::ScanLine(QVector2D lineOrigin, QVector2D lineEnd)
     _previousOutputTexture->setData(*_output);
 }
 
-void Scanner::ScanOneDrawCall()
+void ScannerFilterNode::ScanOneDrawCall()
 {
-    if(_inputFrame->isNull() == true)
+    if(_input->isNull() == true)
     {
         qDebug() << "No input." << Qt::endl;
         return;
     }
 
-    if(_inputFrame->valid(0,0) == false || _inputFrame->isNull() == true)
+    if(_input->valid(0,0) == false || _input->isNull() == true)
     {
         qDebug()<< "Failed to load image" << Qt::endl;
         return;
@@ -186,26 +211,6 @@ void Scanner::ScanOneDrawCall()
     QString textureCoordVar("aTexCoord");
     QString textureVar("texture");
     QString texturePFVar("texturePF");
-
-    // Copy previous buffer
-    /*
-    _glVertexBuffer.write(0,FULL_SCREEN_VERTICES_DATA, 4 * sizeof(VertexData));
-    _glFragmentBuffer.write(0,FULL_SCREEN_VERTICES_INDEXES, 4 * sizeof(GLuint));
-
-    int offset = 0;
-
-    _glShaderProgram->enableAttributeArray(vertexPosVar.toLatin1().data());
-    _glShaderProgram->enableAttributeArray(textureCoordVar.toLatin1().data());
-    _glShaderProgram->setAttributeBuffer(vertexPosVar.toLatin1().data(), GL_FLOAT, offset, 2, sizeof(VertexData));
-
-    offset += sizeof(QVector2D);
-
-    _glShaderProgram->setAttributeBuffer(textureCoordVar.toLatin1().data(), GL_FLOAT, offset, 2, sizeof(VertexData));
-
-    _glShaderProgram->setUniformValue(textureVar.toLatin1().data(), 1);
-
-    _glContext.functions()->glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, Q_NULLPTR);
-    */
 
     // TODO : draw multiple lines at once
     float r = _fboSize.height()/2.0f;
@@ -244,14 +249,14 @@ void Scanner::ScanOneDrawCall()
     int offset = 0;
     _glShaderProgram->enableAttributeArray(vertexPosVar.toLatin1().data());
     _glShaderProgram->enableAttributeArray(textureCoordVar.toLatin1().data());
+
     _glShaderProgram->setAttributeBuffer(vertexPosVar.toLatin1().data(), GL_FLOAT, offset, 2 * lineCount, sizeof(VertexData));
-
     offset += sizeof(QVector2D);
-
     _glShaderProgram->setAttributeBuffer(textureCoordVar.toLatin1().data(), GL_FLOAT, offset, 2 * lineCount, sizeof(VertexData));
+
     _glShaderProgram->setUniformValue(textureVar.toLatin1().data(), 0);
 
-    _glContext.functions()->glDrawElements(GL_LINES,2, GL_UNSIGNED_INT, Q_NULLPTR);
+    _glContext.functions()->glDrawElements(GL_LINES,2 * lineCount, GL_UNSIGNED_INT, Q_NULLPTR);
 
     QImage currentOutput(_glFrameBufferObject->toImage(false));
     qDebug() << currentOutput.format();
@@ -259,18 +264,15 @@ void Scanner::ScanOneDrawCall()
 
     _previousOutputTexture->setData(currentOutput);
 
-    QString timeStamp = QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm_ss_z");
-    QString inputFilenameNoExtension = _inputFilename.left(_inputFilename.length()-4);
-    QString outputFilename = QString(inputFilenameNoExtension + "_scanned" + timeStamp + ".png");
+    QString tempImageOutputFilePath = GetTempImageOutputFilePath();
+    _glFrameBufferObject->toImage(false).save(tempImageOutputFilePath);
 
-    _glFrameBufferObject->toImage(false).save(outputFilename);
+    qDebug() << "saved in "<< tempImageOutputFilePath << Qt::endl;
 
-    qDebug() << "saved in "<< outputFilename << Qt::endl;
-
-    qDebug() << "DONE ! " << Qt::endl;
+    _output = new QImage(_glFrameBufferObject->toImage());
 }
 
-void Scanner::Init()
+void ScannerFilterNode::Init()
 {
     if(!_glContext.create())
     {
@@ -293,8 +295,20 @@ void Scanner::Init()
         qDebug() << "Can't make context current.";
     }
 
+    if(_glFrameBufferObject != nullptr)
+    {
+        delete _glFrameBufferObject ;
+    }
+
     _glFrameBufferObject = new QOpenGLFramebufferObject(_fboSize);
     _glContext.functions()->glViewport(0, 0,_fboSize.width(), _fboSize.height());
+
+    if(_glShaderProgram != nullptr)
+    {   // Not necessary after the realease of parent glContext
+        //_glShaderProgram->release();
+
+        //delete _glShaderProgram;
+    }
 
     _glShaderProgram = new QOpenGLShaderProgram();
     _glShaderProgram->setParent(&_glContext);
@@ -315,8 +329,14 @@ void Scanner::Init()
         qDebug() << "Can't bind program.";
     }
 
+    if(_inputTexture != nullptr)
+    {
+        //_inputTexture->release();
+        //delete _inputTexture;
+    }
+
     _inputTexture = new QOpenGLTexture(QOpenGLTexture::Target2D);
-    _inputTexture->setData(*_inputFrame);
+    _inputTexture->setData(*_input);
     _inputTexture->bind(0);
     if(!_inputTexture->isBound())
     {
@@ -341,7 +361,6 @@ void Scanner::Init()
     }
 
 
-    _glVertexBuffer = QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
     if(!_glVertexBuffer.create())
     {
         qDebug() << "Can't create vertex buffer.";
@@ -351,7 +370,6 @@ void Scanner::Init()
         qDebug() << "Can't bind vertex buffer.";
     }
 
-    _glFragmentBuffer = QOpenGLBuffer(QOpenGLBuffer::IndexBuffer);
     if(!_glFragmentBuffer.create())
     {
         qDebug() << "Can't create index buffer.";
@@ -368,27 +386,61 @@ void Scanner::Init()
     //    _glFragmentBuffer.allocate(4 * sizeof(GLuint));
 }
 
-void Scanner::LoadFile(QString filename)
-{
-    _inputFilename = filename;
-
-    _inputFrame = new QImage( _inputFilename);
-    _fboSize = _inputFrame->size();
-
-    Init();
-}
-
-QVector2D Scanner::ToTexCoord(QVector2D position)
+QVector2D ScannerFilterNode::ToTexCoord(QVector2D position)
 {
     QVector2D normalizedPosition = QVector2D(position);
     normalizedPosition /= QVector2D(_fboSize.width(),_fboSize.height());
     return normalizedPosition;
 }
 
-QVector2D Scanner::ToVertexCoord(QVector2D position)
+QVector2D ScannerFilterNode::ToVertexCoord(QVector2D position)
 {
     QVector2D normalizedPosition = QVector2D(position);
     normalizedPosition -= QVector2D(_fboSize.width()/2.0f,_fboSize.height()/2.0f);
     normalizedPosition /= QVector2D(_fboSize.width()/2.0f,_fboSize.height()/2.0f);
     return normalizedPosition;
+}
+
+void ScannerFilterNode::InitSensorAnimationMethodComboBox()
+{
+    QStringList availableDesaturationMethodNames = AvailableSensorAnimationMethodNames();
+    ui->cb_sensorAnimationPreset->addItems(availableDesaturationMethodNames);
+}
+
+QStringList ScannerFilterNode::AvailableSensorAnimationMethodNames()
+{
+    QStringList availableNodeTypesNames;
+
+    for(int i = 0 ; i < SensorAnimationMethodCount ; i++)
+    {
+        availableNodeTypesNames.append(AvailableSensorAnimationMethodName(i));
+    }
+
+    return availableNodeTypesNames;
+}
+
+QString ScannerFilterNode::AvailableSensorAnimationMethodName(int index)
+{
+    return AvailableSensorAnimationMethodName((SensorAnimationMethod)index);
+}
+
+QString ScannerFilterNode::AvailableSensorAnimationMethodName(SensorAnimationMethod animationMethod)
+{
+    switch(animationMethod)
+    {
+        case RotateAroundSensorCentered:
+            return "RotateAroundSensorCentered";
+
+        case RotateAroundSensorEdge:
+            return "RotateAroundSensorEdge";
+
+        case TimelineAnimation:
+            return "TODO";
+
+        case SensorAnimationMethodCount:
+            return "this should not happen";
+
+        default:
+            return "Default sensor animation method name";
+    }
 }

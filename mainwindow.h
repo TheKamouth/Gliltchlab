@@ -6,7 +6,7 @@
 
 #include "openglwidget.h"
 
-#include "ImageProcessors/Scanner.h"
+#include "Nodes/FilterNodes/ScannerFilterNode.h"
 
 #include "ProcessorFlow.h"
 #include "ProcessorFlowDockWidget.h"
@@ -55,6 +55,8 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
+    void OnPeakNode(Node * node);
+
     // UI
     //QOpenGLWidget _inputWidget;
     //
@@ -64,14 +66,11 @@ private:
 
     ProcessorFlowDockWidget * _processorFlowDockWidget;
 
-
     // Preferences
     CommonPreferences _preferences;
     PreferencesDialog _preferencesDialog;
 
     ProcessorFlow _processorFlow;
 
-    QWidget * _currentPeakWidget;
-    void OnPeakNode(Node * node);
 };
 #endif // MAINWINDOW_H

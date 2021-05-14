@@ -1,0 +1,49 @@
+######################
+Gliltchlab TODO list : 
+######################
+
+# MainWindow :
+	- save and load flow file (See AudioAnnot)
+	- preferences window
+	
+# Node CommonWidget :
+	- Add context menu button on right. Move action add to timeline and delete there.
+
+# OpenGLWidget :
+	- add horizontal and vertical rules the size of the image, showing cursor position on them
+	- improve zoom :
+		- zoom scaling function of current zoom
+		- zoom on cursor position
+	
+	- add PeakInfoWidget showing : 
+		- node name
+		- specific info :
+			- all: time to process, 
+			- image: size, format/encoder,
+			- video: length, format/encoder 
+			- audio: length, format, encoder,
+			
+# Animating parameters :
+	- Parameters Animating mode :
+		- Constant (No animation)
+		- Automation (in a timeline)
+		- From input (from an input connected node)
+	
+# Node :
+	- Expose Node::Parameters::SetTime(t) 
+	- Each node contains a set of parameters. Some of these parameters are animatable
+
+# Desaturate Node :
+	- FragmentShader input int not working => Desaturation mode change broken
+		Change it a to a uniform float ?
+		
+# Scanner Node :
+	- Broken right now
+	- Add specific PeakWidget override that shows sensor preset animation
+
+
+
+
+
+
+

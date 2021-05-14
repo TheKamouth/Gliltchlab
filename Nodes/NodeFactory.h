@@ -13,7 +13,7 @@ enum NodeType
 
     // Images processors
     Desaturate,
-    Scanner,
+    ScannerFilter,
 
     // Debug/Test
     AllRed,
@@ -30,6 +30,9 @@ enum NodeType
 class NodeFactory
 {
 public:
+    const QString DEFAULT_IMAGE_INPUT_PATH = QString("D:/5_PROJETS/5_DEV/VirtualScanner/test video/frame1.png");
+    const QString DEFAULT_IMAGE_OUTPUT_PATH = QString("D:/5_PROJETS/5_DEV/VirtualScanner/output");
+
     NodeFactory();
 
     Node * CreateNode(NodeType type);

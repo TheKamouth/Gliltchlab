@@ -1,99 +1,31 @@
-#include "DesaturateFilterNode.h"
-#include "ui_DesaturateFilterNode.h"
+#include "ContrastProcessor.h"
 
 #include <QDateTime>
-#include <QString>
-#include <QStringList>
-#include <QDir>
 
-DesaturateFilterNode::DesaturateFilterNode(QWidget *parent) :
-    ImageProcessorBase(),
-    ui(new Ui::DesaturateFilterNode)
+ContrastProcessor::ContrastProcessor()
 {
-    ui->setupUi(this);
-
-    InitNodeTypeComboBox();
+    _initialized = false;
+    _desaturationMode = NoSaturation;
 }
 
-DesaturateFilterNode::~DesaturateFilterNode()
+void ContrastProcessor::SetInput(QImage* input)
 {
-    delete ui;
+    ImageProcessorBase::SetInput(input);
+
+    _fboSize = _inputFrame->size();
+
+    // init shaders ?
+    //Init();
 }
 
-QWidget * DesaturateFilterNode::NodeUiBaseWidgetInForm()
-{
-    return ui->NodeUiBase;
-}
-
-QLayout *DesaturateFilterNode::NodeUiBaseLayoutInForm()
-{
-    return ui->NodeCommonWidgetLayout;
-}
-
-QWidget * DesaturateFilterNode::SpecificUI()
-{
-    return ui->widget;
-}
-
-bool DesaturateFilterNode::TryProcess()
-{
-    Process();
-
-    return true;
-}
-
-void DesaturateFilterNode::SetParameters()
+void ContrastProcessor::SetParameters()
 {
 
 }
 
-void DesaturateFilterNode::InitNodeTypeComboBox()
+void ContrastProcessor::BeforeProcessing()
 {
-    QStringList availableDesaturationMethodNames = AvailableDesaturationMethodNames();
-    ui->cb_desaturationMethod->addItems(availableDesaturationMethodNames);
-}
-
-QStringList DesaturateFilterNode::AvailableDesaturationMethodNames()
-{
-    QStringList availableNodeTypesNames;
-
-    for(int i = 0 ; i < DesaturationMethodCount ; i++)
-    {
-        availableNodeTypesNames.append(AvailableDesaturationMethodName(i));
-    }
-
-    return availableNodeTypesNames;
-}
-
-QString DesaturateFilterNode::AvailableDesaturationMethodName(int index)
-{
-    return AvailableDesaturationMethodName((DesaturationMethod)index);
-}
-
-QString DesaturateFilterNode::AvailableDesaturationMethodName(DesaturationMethod desaturationMethod)
-{
-    switch(desaturationMethod)
-    {
-        case Lightness:
-            return "Lightness";
-
-        case Average:
-            return "Average";
-
-        case Min:
-            return "Min";
-
-        case Max:
-            return "Max";
-
-        default:
-            return "Default desaturation method name";
-    }
-}
-
-void DesaturateFilterNode::BeforeProcessing()
-{
-    _fboSize = _input->size();
+    _fboSize = _inputFrame->size();
 
     qDebug() << "with "<< Name();
 
@@ -144,7 +76,7 @@ void DesaturateFilterNode::BeforeProcessing()
     }
 
     _inputTexture = new QOpenGLTexture(QOpenGLTexture::Target2D);
-    _inputTexture->setData(*_input);
+    _inputTexture->setData(*_inputFrame);
     _inputTexture->bind(0);
     if(!_inputTexture->isBound())
     {
@@ -197,28 +129,19 @@ void DesaturateFilterNode::BeforeProcessing()
 
 }
 
-void DesaturateFilterNode::AfterProcessing()
+void ContrastProcessor::AfterProcessing()
 {
-    // Get a temporary dir somwhere ?
-    QString dirPath= QDir::currentPath();
     QString timeStamp = QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm_ss_z");
-    QString outputFilenameNoExtension = "desaturationNodeOutput";
-
-    QString outputFilename = dirPath + '/' + outputFilenameNoExtension + timeStamp + ".png";
+    QString inputFilenameNoExtension = _inputFilename.left(_inputFilename.length()-4);
+    QString outputFilename = QString(inputFilenameNoExtension + "_scanned" + timeStamp + ".png");
 
     _glFrameBufferObject->toImage(false).save(outputFilename);
 
-    _output = new QImage(outputFilename);
-
-    qDebug() << "Desaturate node processed, "<< outputFilename << " wrote";
+    qDebug() << "After processing: " << _inputFilename;
+    qDebug() << "and writing "<< outputFilename;
 }
 
-QImage *DesaturateFilterNode::Output()
-{
-    return _output;
-}
-
-void DesaturateFilterNode::ProcessInternal()
+void ContrastProcessor::ProcessInternal()
 {
     QString vertexPosVar("aPosition");
     QString textureCoordVar("aTexCoord");
@@ -229,7 +152,7 @@ void DesaturateFilterNode::ProcessInternal()
     _glVertexBuffer.write(0,FULL_SCREEN_VERTICES_DATA, 4 * sizeof(VertexData));
     _glFragmentBuffer.write(0,FULL_SCREEN_VERTICES_INDEXES, 4 * sizeof(GLuint));
 
-    _desaturationMode = (DesaturationMethod)0;
+    _desaturationMode = (int)MaxRGB;
 
     _glContext.functions()->glVertexAttribPointer( 0, 1, GL_INT,GL_FALSE, 0, &_desaturationMode);
 
@@ -245,14 +168,14 @@ void DesaturateFilterNode::ProcessInternal()
     _output = new QImage(_glFrameBufferObject->toImage(false));
 }
 
-QVector2D DesaturateFilterNode::ToTexCoord(QVector2D position)
+QVector2D ContrastProcessor::ToTexCoord(QVector2D position)
 {
     QVector2D normalizedPosition = QVector2D(position);
     normalizedPosition /= QVector2D(_fboSize.width(),_fboSize.height());
     return normalizedPosition;
 }
 
-QVector2D DesaturateFilterNode::ToVertexCoord(QVector2D position)
+QVector2D ContrastProcessor::ToVertexCoord(QVector2D position)
 {
     QVector2D normalizedPosition = QVector2D(position);
     normalizedPosition -= QVector2D(_fboSize.width()/2.0f,_fboSize.height()/2.0f);

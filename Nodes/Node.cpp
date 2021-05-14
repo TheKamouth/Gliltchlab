@@ -3,6 +3,8 @@
 #include "NodeCommonWidget.h"
 
 #include <QLayout>
+#include <QDateTime>
+#include <QDebug>
 
 Node::Node()
 {
@@ -17,6 +19,19 @@ Node::Node()
 Node::~Node()
 {
     delete _nodeCommonWidget;
+
+    if(_peakWidget != nullptr)
+    {
+        delete _peakWidget;
+    }
+}
+
+bool Node::TryProcess()
+{
+    qDebug() << "TryProcess: " << Name() ;
+
+    _output = new QImage(*_input);
+    return true;
 }
 
 void Node::Initialize()
@@ -48,4 +63,11 @@ void Node::OnEnableProcessorCheckboxClicked(bool toggled)
 void Node::OnExpandCollapseArrowClicked(bool isSpecificWidgetExpanded)
 {
     SpecificUI()->setVisible(isSpecificWidgetExpanded);
+}
+
+QString Node::GetTempImageOutputFilePath()
+{
+    QString nodeName = Name();
+    QString timeStamp = QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm_ss_z");
+    return "nodeName_image_output" + timeStamp + ".png";
 }

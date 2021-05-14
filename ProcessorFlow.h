@@ -1,7 +1,7 @@
 #ifndef PROCESSORFLOW_H
 #define PROCESSORFLOW_H
 
-#include "ImageProcessors/ImageProcessorBase.h"
+#include "Nodes/FilterNodes/ImageProcessorBase.h"
 
 #include <QList>
 

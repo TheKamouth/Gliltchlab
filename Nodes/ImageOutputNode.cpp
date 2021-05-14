@@ -40,10 +40,7 @@ void ImageOutputNode::OnChoseSaveDirClicked()
         return;
     }
 
-    _outputDirName = outputDir;
-    _outputFolder = QDir(_outputDirName);
-
-    ui->label->setText(_outputDirName);
+    SetOutputFilePath(outputDir);
 }
 
 void ImageOutputNode::OnSaveClicked()
@@ -60,7 +57,7 @@ void ImageOutputNode::OnSaveClicked()
         return;
     }
 
-    QString timeStamp = QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm_mm_ss");
+    QString timeStamp = QDateTime::currentDateTime().toString("_dd_MM_yyyy_hh_mm_ss");
     _input->save(_outputDirName + "/gliltched_" + timeStamp + ".png");
     qDebug() << _outputDirName+"/gliltched_" + timeStamp + ".png saved.";
 }
@@ -82,6 +79,8 @@ QWidget * ImageOutputNode::SpecificUI()
 
 bool ImageOutputNode::TryProcess()
 {
+    // Copies _input to _output
+    Node::TryProcess();
 
     if(_input == nullptr)
     {
@@ -89,7 +88,24 @@ bool ImageOutputNode::TryProcess()
         return false;
     }
 
-    OnSaveClicked();
-
     return true;
+}
+
+void ImageOutputNode::AfterProcessing()
+{
+    OnSaveClicked();
+}
+
+void ImageOutputNode::SetInput(QImage *input)
+{
+    _input = input;
+}
+
+
+void ImageOutputNode::SetOutputFilePath(QString filePath)
+{
+    _outputDirName = filePath;
+    _outputFolder = QDir(_outputDirName);
+
+    ui->label->setText(_outputDirName);
 }

@@ -13,6 +13,9 @@ class ImageProcessorBase : public ImagePeakNode
 public:
     // Node
     virtual QString Name() override { return "image processor base";}
+    virtual bool TryProcess() override { Process(); };
+
+virtual
 
     virtual void SetParameters()= 0;
     virtual void BeforeProcessing() = 0;

@@ -52,17 +52,24 @@ void ImageInputNode::OnLoadInputClicked()
     if( inputFilename == "" )
     {
         qDebug() << "Error loading file: " << inputFilename << Qt::endl;
-        _input = nullptr;
+        _output = nullptr;
         return;
     }
 
-    _inputFileName = inputFilename;
-    _input = new QImage(_inputFileName);
+    // should input node be output only ?
+    // weird vocabulary
+    _output = new QImage(inputFilename);
 
-    _outputFileName = inputFilename;
+    SetInputFilePath(inputFilename);
+}
+
+void ImageInputNode::SetInputFilePath(QString filePath)
+{
+    _inputFileName = filePath;
+    _outputFileName = filePath;
     _output = new QImage(_outputFileName);
 
-    ui->label->setText(_inputFileName);
+    ui->label->setText(_outputFileName);
     ui->pb_reload->setEnabled(true);
 
     UpdatePreview();
@@ -98,6 +105,6 @@ void ImageInputNode::UpdatePreview()
     }
 
     _previewPixMap = new QPixmap;
-    _previewPixMap->convertFromImage(*_input);
+    _previewPixMap->convertFromImage(*_output);
     ui->lb_preview->setPixmap(*_previewPixMap);
 }

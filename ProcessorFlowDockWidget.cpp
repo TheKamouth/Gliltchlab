@@ -3,8 +3,8 @@
 
 #include "Nodes/NodeCommonWidget.h"
 
-#include "ImageProcessors/ContrastProcessor.h"
-#include "ImageProcessors/Scanner.h"
+#include "Nodes/FilterNodes/ContrastProcessor.h"
+#include "Nodes/FilterNodes/ScannerFilterNode.h"
 
 #include <QFileDialog>
 
@@ -55,6 +55,8 @@ void ProcessorFlowDockWidget::OnAddNodeClicked()
     _flowGraph->AddNode(node);
 
     OnProcessFlowClicked();
+
+    OnPeakNodeClicked(node);
 }
 
 void ProcessorFlowDockWidget::DeleteNode(Node* node)
@@ -69,6 +71,8 @@ void ProcessorFlowDockWidget::DeleteNode(Node* node)
 
 void ProcessorFlowDockWidget::OnPeakNodeClicked(Node * node)
 {
+    node->CommonWidget()->SetIsPeaked(true);
+
     for(int i = 0 ; i < _nodes.count(); i++ )
     {
         Node * n = _nodes.at(i);
@@ -121,6 +125,9 @@ void ProcessorFlowDockWidget::OnProcessFlowClicked()
         {
             qDebug() << "Failed to process node: " << node->Name();
         }
+
+
+        lastNode = node;
     }
 
     lastNode = node;

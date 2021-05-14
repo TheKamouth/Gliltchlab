@@ -29,4 +29,11 @@
         <file>Icons/006-priority.png</file>
     </qresource>
     <qresource prefix="/"/>
+    <qresource prefix="/shaders">
+        <file>Shaders/AllRed.frag</file>
+        <file>Shaders/Contrast.frag</file>
+        <file>Shaders/FragmentShader.frag</file>
+        <file>Shaders/FullScreenTextureCopy.frag</file>
+        <file>Shaders/VertexShader.vert</file>
+    </qresource>
 </RCC>
