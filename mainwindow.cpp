@@ -25,10 +25,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     _flowGraphDockWidget = new ProcessorFlowDockWidget(this);
-    _flowGraphDockWidget->setWidget(this);
     _flowGraphDockWidget->hide();
+    addDockWidget(Qt::RightDockWidgetArea, _flowGraphDockWidget);
+
+    _timeLineWidget = new TimelineWidget(this);
+    _timeLineWidget->hide();
+    addDockWidget(Qt::BottomDockWidgetArea, _timeLineWidget);
+
     _timeControlWidget.hide();
-    _timeLineWidget.hide();
 
     QObject::connect(_flowGraphDockWidget, &ProcessorFlowDockWidget::PeakNode, this, &MainWindow::OnPeakNode);
     QObject::connect(_flowGraphDockWidget, &ProcessorFlowDockWidget::OutputProcessed, this, &MainWindow::OnOutputProcessed);
@@ -37,6 +41,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->actionSaveFlow, &QAction::triggered ,this, &MainWindow::OnSaveFlowGraphFileTriggered);
     QObject::connect(ui->actionLoadFlow, &QAction::triggered ,this, &MainWindow::OnLoadFlowGraphFileTriggered);
 
+    QObject::connect(ui->actionFlow_widget, &QAction::triggered ,this, &MainWindow::OnViewFlowWidgetTriggered);
     QObject::connect(ui->actionTime_controls, &QAction::triggered ,this, &MainWindow::OnViewTimeControlsTriggered);
     QObject::connect(ui->actionTimeline, &QAction::triggered ,this, &MainWindow::OnViewTimeControlsTriggered);
 }
@@ -125,6 +130,12 @@ void MainWindow::OnSaveFlowGraphFileTriggered()
     _flowGraphDockWidget->CurrentFlowGraph()->SaveFlowGraphFile(inputFilename);
 }
 
+void MainWindow::OnViewFlowWidgetTriggered(bool checked)
+{
+    _flowGraphDockWidget->setVisible(checked);
+}
+
+
 void MainWindow::OnViewTimeControlsTriggered(bool checked)
 {
     _timeControlWidget.setVisible(checked);
@@ -132,7 +143,7 @@ void MainWindow::OnViewTimeControlsTriggered(bool checked)
 
 void MainWindow::OnViewTimeLineTriggered(bool checked)
 {
-    _timeLineWidget.setVisible(checked);
+    _timeLineWidget->setVisible(checked);
 }
 
 void MainWindow::OnPeakNode(Node *node)

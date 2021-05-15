@@ -41,9 +41,10 @@ ScannerFilterNode::ScannerFilterNode() :
     ui->setupUi(this);
 
     _scanMode = Rotation360;
-    _sensorAnimationMethod = RotateAroundSensorCentered;
+    _sensorAnimationMethod = RotateAroundSensorEdge;
 
     InitSensorAnimationMethodComboBox();
+    QObject::connect(ui->cb_sensorAnimationPreset, QOverload<int>::of(&QComboBox::activated), this, &ScannerFilterNode::OnSensorAnimationPresetCurrentIndexChanged);
 }
 
 QWidget *ScannerFilterNode::NodeUiBaseWidgetInForm()
@@ -197,73 +198,103 @@ void ScannerFilterNode::ScanOneDrawCall()
     QString vertexPosVar("aPosition");
     QString textureCoordVar("aTexCoord");
     QString textureVar("texture");
-    QString texturePFVar("texturePF");
 
     // TODO : draw multiple lines at once
     // r should be min( height, widht)
     float r = std::max(_fboSize.width(), _fboSize.height())/2.0f;
     float theta = 0.0f;
-    float deltaTheta = 2.0 * PI / _fboSize.height();
 
     QVector2D lineOrigin;
     QVector2D lineEnd;
-    lineOrigin = QVector2D( _fboSize.width()/2.0f, _fboSize.height()/2.0f);
-    lineEnd = QVector2D( r * cos(theta) + _fboSize.width()/2.0f, r * sin(theta) + _fboSize.height()/2.0f);
 
-    int lineCount = _fboSize.height();
+    int lineCount = _fboSize.width();
+
+    //
+    //lineCount = 20;
+
+    float deltaTheta;
+    switch(_sensorAnimationMethod)
+    {
+        case RotateAroundSensorCentered:
+            deltaTheta = PI / lineCount;
+            break;
+
+        case RotateAroundSensorEdge:
+            deltaTheta = 2.0 * PI / lineCount;
+            break;
+    }
 
     _glVertexBuffer.allocate(lineCount * 2 * sizeof(VertexData));
+    CheckGLError();
     _glFragmentBuffer.allocate(lineCount * 2 * sizeof(GLuint));
-
     CheckGLError();
 
     // Sample line and draw it
     VertexData lineData[2 * lineCount];
     GLuint indexData[2 * lineCount];
-    for(int i = 0; i < lineCount; i++)
+    for(int i = 0; i < lineCount - 1; i++)
     {
-        lineEnd = QVector2D( r * cos(theta) + _fboSize.width()/2.0f, r * sin(theta) + _fboSize.height()/2.0f);
+        if(_sensorAnimationMethod == RotateAroundSensorCentered)
+        {
+            lineOrigin = QVector2D( r * cos(PI - theta) + _fboSize.width()/2.0f, r * sin(PI - theta) + _fboSize.height()/2.0f);
+            lineEnd = QVector2D( r * cos(theta) + _fboSize.width()/2.0f, r * sin(theta) + _fboSize.height()/2.0f);
+        }
+        else if( _sensorAnimationMethod == RotateAroundSensorEdge)
+        {
+            lineOrigin = QVector2D( _fboSize.width()/2.0f, _fboSize.height()/2.0f);
+            lineEnd = QVector2D( r * cos(theta) + _fboSize.width()/2.0f, r * sin(theta) + _fboSize.height()/2.0f);
+        }
+        else
+        {
+            qDebug() << "This should not happen.";
+            return;
+        }
+
         theta += deltaTheta;
 
-        lineData[i].position = ToVertexCoord(QVector2D(i, 0.0f));
-        lineData[i].texCoord = ToTexCoord(lineOrigin);
-        indexData[i] = i;
-        //_vertexData.at(i).texCoord = ToTexCoord(lineOrigin);
+        lineData[i*2].position = ToVertexCoord( QVector2D(i, 0.0f));
+        lineData[i*2].texCoord = ToTexCoord( lineOrigin);
+        indexData[i*2] = i * 2;
 
-        lineData[i+1].position = ToVertexCoord(QVector2D(i, _fboSize.height()));
-        lineData[i+1].texCoord = ToTexCoord(lineEnd);
-        indexData[i+1] = i+1;
+        lineData[i*2+1].position = ToVertexCoord(QVector2D(i, _fboSize.height()));
+        lineData[i*2+1].texCoord = ToTexCoord(lineEnd);
+        indexData[i*2+1] = i * 2 + 1;
 
         // Debug output
+        /*
         qDebug() << "##########" ;
-        qDebug() << i ;
+        qDebug() << lineOrigin;
+        qDebug() << lineEnd;
+
+        qDebug() << "line begin : " << i ;
         qDebug() << lineData[i].position.x() << " " << lineData[i].position.y();
         qDebug() << lineData[i].texCoord.x() << " " << lineData[i].texCoord.y();
 
-        qDebug() << "##########" ;
-        qDebug() << i +1;
+        qDebug() << "line end : " << i +1;
         qDebug() << lineData[i+1].position.x() << " " << lineData[i+1].position.y();
         qDebug() << lineData[i+1].texCoord.x() << " " << lineData[i+1].texCoord.y();
+        */
     }
 
     _glVertexBuffer.write( 0, lineData, 2 * lineCount * sizeof(VertexData));
     CheckGLError();
     _glFragmentBuffer.write( 0, indexData, 2 * lineCount * sizeof(GLuint));
+    CheckGLError();
 
     //_glContext.functions()->glVertexAttribPointer( 0, 1, GL_INT,GL_FALSE, 0, 0);
-    CheckGLError();
+    //CheckGLError();
 
     _glShaderProgram->enableAttributeArray( vertexPosVar.toLatin1().data());
     CheckGLError();
     _glShaderProgram->enableAttributeArray( textureCoordVar.toLatin1().data());
     CheckGLError();
 
-    _glShaderProgram->setAttributeBuffer(vertexPosVar.toLatin1().data(), GL_FLOAT, offsetof(VertexData, position), 2, sizeof(VertexData));
+    _glShaderProgram->setAttributeBuffer( vertexPosVar.toLatin1().data(), GL_FLOAT, offsetof(VertexData, position), 2, sizeof(VertexData));
     CheckGLError();
-    _glShaderProgram->setAttributeBuffer(textureCoordVar.toLatin1().data(), GL_FLOAT, offsetof(VertexData, texCoord), 2 , sizeof(VertexData));
+    _glShaderProgram->setAttributeBuffer( textureCoordVar.toLatin1().data(), GL_FLOAT, offsetof(VertexData, texCoord), 2 , sizeof(VertexData));
     CheckGLError();
 
-    // input bind to 0
+    // input image bound to 0
     _glShaderProgram->setUniformValue(textureVar.toLatin1().data(), 0);
 
     _glContext.functions()->glDrawElements(GL_LINES, 2 * lineCount, GL_UNSIGNED_INT, Q_NULLPTR);
@@ -280,6 +311,13 @@ void ScannerFilterNode::ScanOneDrawCall()
     _output = new QImage(_glFrameBufferObject->toImage());
 }
 
+void ScannerFilterNode::OnSensorAnimationPresetCurrentIndexChanged(int index)
+{
+    _sensorAnimationMethod = (SensorAnimationMethod)index;
+
+    EmitNodeChanged();
+}
+
 QVector2D ScannerFilterNode::ToTexCoord(QVector2D position)
 {
     QVector2D normalizedPosition = QVector2D(position);
@@ -287,11 +325,13 @@ QVector2D ScannerFilterNode::ToTexCoord(QVector2D position)
     return normalizedPosition;
 }
 
+// [0;fbo.width] [0;fbo.height] -> [-1,1] [-1,1]
 QVector2D ScannerFilterNode::ToVertexCoord(QVector2D position)
 {
     QVector2D normalizedPosition = QVector2D(position);
-    normalizedPosition -= QVector2D(_fboSize.width()/2.0f,_fboSize.height()/2.0f);
-    normalizedPosition /= QVector2D(_fboSize.width()/2.0f,_fboSize.height()/2.0f);
+    normalizedPosition /= QVector2D( _fboSize.width(), _fboSize.height());
+    normalizedPosition *= QVector2D( 2.0f, 2.0f);
+    normalizedPosition -= QVector2D( 1.0f, 1.0f);
     return normalizedPosition;
 }
 

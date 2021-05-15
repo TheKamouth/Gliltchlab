@@ -48,6 +48,9 @@ public:
     ~MainWindow();
 
     void OnOutputProcessed();
+    void OnViewFlowWidgetTriggered(bool checked);
+    void OnViewTimeControlsTriggered(bool checked);
+    void OnViewTimeLineTriggered(bool checked);
 
 private slots:
     void on_actionPlay_triggered();
@@ -55,15 +58,13 @@ private slots:
     void OnNewFlowGraphFileTriggered();
     void OnLoadFlowGraphFileTriggered();
     void OnSaveFlowGraphFileTriggered();
-    void OnViewTimeControlsTriggered(bool checked);
-    void OnViewTimeLineTriggered(bool checked);
 
 private:
     Ui::MainWindow *ui;
 
     ProcessorFlowDockWidget * _flowGraphDockWidget;
     TimeControlWidget _timeControlWidget;
-    TimelineWidget _timeLineWidget;
+    TimelineWidget * _timeLineWidget;
 
     // Preferences
     CommonPreferences _preferences;

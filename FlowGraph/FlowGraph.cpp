@@ -192,7 +192,8 @@ Node * FlowGraph::InsertNode(NodeType nodeType, int index)
 
 void FlowGraph::RemoveNode(Node * node)
 {
-    _nodes.removeAll(node);
+    _nodes.removeAt(node->Position());
+    delete node;
 }
 
 void FlowGraph::RemoveNode(int index)

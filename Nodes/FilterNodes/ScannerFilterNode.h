@@ -16,6 +16,7 @@
 #include <QList>
 #include <QVector>
 
+// Get rid of one og those:
 enum ScanMode
 {
     Rotation360,
@@ -26,8 +27,8 @@ enum ScanMode
 
 enum SensorAnimationMethod
 {
-    RotateAroundSensorCentered,
     RotateAroundSensorEdge,
+    RotateAroundSensorCentered,
 
     // TODO
     TimelineAnimation,
@@ -69,6 +70,8 @@ public:
     //
     void ScanOneDrawCall();
 
+    void OnSensorAnimationPresetCurrentIndexChanged(int index);
+
 private :
     Ui::ScannerFilterNode *ui;
 
@@ -77,21 +80,6 @@ private :
     // constants
     const QString VERTEX_SHADER_PATH = "D:\\5_PROJETS\\5_DEV\\VirtualScanner\\sources\\VirtualScanner\\Shaders\\VertexShader.vert";
     const QString FRAGMENT_SHADER_PATH = "D:\\5_PROJETS\\5_DEV\\VirtualScanner\\sources\\VirtualScanner\\Shaders\\Scanner.frag";
-    const GLuint ONE_LINE_INDEXES[2] = {0, 1};
-    const GLuint FULL_SCREEN_VERTICES_INDEXES[4] =
-    {
-        0,
-        1,
-        2,
-        3
-    };
-    const VertexData FULL_SCREEN_VERTICES_DATA[4] =
-    {
-        {{ -1.0f, +1.0f }, { 0.0f, 1.0f }}, // top-left
-        {{ +1.0f, +1.0f }, { 1.0f, 1.0f }}, // top-right
-        {{ -1.0f, -1.0f }, { 0.0f, 0.0f }}, // bottom-left
-        {{ +1.0f, -1.0f }, { 1.0f, 0.0f }}  // bottom-right
-    };
 
     QVector<VertexData*> * _vertexData;
     QList<GLuint> * _vertexindexes;

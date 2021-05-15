@@ -86,6 +86,7 @@ private:
 
     const VertexData FULL_SCREEN_VERTICES_DATA[4] =
     {
+        // vertex coord    / input tex coord
         {{ -1.0f, +1.0f }, { 0.0f, 1.0f }}, // top-left
         {{ +1.0f, +1.0f }, { 1.0f, 1.0f }}, // top-right
         {{ -1.0f, -1.0f }, { 0.0f, 0.0f }}, // bottom-left
