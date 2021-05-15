@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>153</width>
-    <height>96</height>
+    <width>157</width>
+    <height>106</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -21,19 +21,19 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
-    <number>0</number>
+    <number>2</number>
    </property>
    <property name="leftMargin">
-    <number>0</number>
+    <number>2</number>
    </property>
    <property name="topMargin">
-    <number>0</number>
+    <number>2</number>
    </property>
    <property name="rightMargin">
-    <number>0</number>
+    <number>2</number>
    </property>
    <property name="bottomMargin">
-    <number>0</number>
+    <number>2</number>
    </property>
    <item>
     <widget class="QWidget" name="NodeUiBase" native="true">
@@ -46,7 +46,13 @@
      <property name="minimumSize">
       <size>
        <width>0</width>
-       <height>24</height>
+       <height>26</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>26</height>
       </size>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_5">

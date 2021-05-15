@@ -23,6 +23,8 @@ ProcessorFlowDockWidget::ProcessorFlowDockWidget(QWidget *parent) :
     InitNodeTypeComboBox();
 
     _flowGraph = new FlowGraph();
+
+    QObject::connect( _flowGraph, &FlowGraph::NodeAdded, this, &ProcessorFlowDockWidget::OnNodeAdded);
 }
 
 ProcessorFlowDockWidget::~ProcessorFlowDockWidget()
@@ -39,8 +41,23 @@ void ProcessorFlowDockWidget::OnAddNodeClicked()
     // Create Node and add to flow
     Node* node = _flowGraph->AddNode(nodeType);
 
+    AddNodeWidget(node);
+
+    OnProcessFlowClicked();
+
+    OnPeakNodeClicked(node);
+}
+
+void ProcessorFlowDockWidget::OnNodeAdded(Node * node)
+{
+    AddNodeWidget( node);
+}
+
+void ProcessorFlowDockWidget::AddNodeWidget(Node *node)
+{
     if(node == nullptr)
     {
+        qDebug() << __FUNCTION__ << " node is nullptr";
         return;
     }
 
@@ -50,10 +67,6 @@ void ProcessorFlowDockWidget::OnAddNodeClicked()
     QObject::connect(node->CommonWidget(), &NodeCommonWidget::PeakClicked, this, &ProcessorFlowDockWidget::OnPeakNodeClicked);
 
     ui->vboxLayoutProcessors->insertWidget(_flowGraph->NodeCount() - 1, node->Widget());
-
-    OnProcessFlowClicked();
-
-    OnPeakNodeClicked(node);
 }
 
 void ProcessorFlowDockWidget::DeleteNode(Node* node)
@@ -65,7 +78,7 @@ void ProcessorFlowDockWidget::DeleteNode(Node* node)
 
 void ProcessorFlowDockWidget::OnPeakNodeClicked(Node * node)
 {
-    node->CommonWidget()->SetIsPeaked(true);
+    node->CommonWidget()->SetIsPeakedAt(true);
 
     /*
     for(int i = 0 ; i < _nodes.count(); i++ )

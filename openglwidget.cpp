@@ -3,6 +3,17 @@
 
 static const QColor PINK(255,0,255);
 
+OpenGLWidget::OpenGLWidget( QWidget *parent) : QOpenGLWidget( parent),
+    _displayedImage(nullptr),
+    _lastViewCenter(),
+    rightClickPressed(false),
+    displayFramingLines(true),
+    showSortingCenter(false),
+    sortingCenter(0.5,0.5)
+{
+    _viewInfo = new ViewInfo();
+}
+
 void OpenGLWidget::initializeGL()
 {
 
@@ -25,7 +36,7 @@ void OpenGLWidget::paintGL()
 {
 
     //if(displayedPixmap.isNull()){
-    if( displayedImage.isNull())
+    if( _displayedImage->isNull())
     {
         return;
     }
@@ -33,25 +44,25 @@ void OpenGLWidget::paintGL()
     painter = new QPainter( this);
 
     //zoom limit:
-    if( !displayedImage.isNull()){
+    if( !_displayedImage->isNull()){
 
-        int onScreenImgWidth = displayedImage.width() * _viewInfo->Zoom;
+        int onScreenImgWidth = _displayedImage->width() * _viewInfo->Zoom;
 
         if( onScreenImgWidth < this->width() * 0.25){
 
-            _viewInfo->Zoom = this->width() * 0.25 / displayedImage.width();
+            _viewInfo->Zoom = this->width() * 0.25 / _displayedImage->width();
         }
     }
 
-    float width = displayedImage.width() * _viewInfo->Zoom;
-    float height = displayedImage.height() * _viewInfo->Zoom;
+    float width = _displayedImage->width() * _viewInfo->Zoom;
+    float height = _displayedImage->height() * _viewInfo->Zoom;
 
     float posX =  this->width() / 2.0 - width / 2.0 + _viewInfo->ViewCenter.x();
     float posY =  this->height() / 2.0 -height / 2.0 + _viewInfo->ViewCenter.y();
 
     QRect imgRect = QRect(posX, posY, width, height);
 
-    painter->drawImage(imgRect, displayedImage);
+    painter->drawImage(imgRect, *_displayedImage);
 
     //draw image framing lines
     if( displayFramingLines)
@@ -92,23 +103,11 @@ void OpenGLWidget::paintGL()
 
 OpenGLWidget::~OpenGLWidget()
 {
-    if( _displayedPixmap != nullptr)
-        delete _displayedPixmap;
 }
 
-void OpenGLWidget::SetDisplayedImg( QPixmap *pixmap){
+void OpenGLWidget::SetDisplayedImage( QImage * image){
 
-    _displayedPixmap = pixmap;
-
-    paintGL();
-    update();
-    //viewChange();
-    emit viewChange();
-}
-
-void OpenGLWidget::SetDisplayedImage( QImage &image){
-
-    displayedImage = image;
+    _displayedImage = image;
 
     paintGL();
 
@@ -184,8 +183,8 @@ void OpenGLWidget::mousePressEvent(QMouseEvent * event)
     }
     else if(event->buttons() == Qt::LeftButton){
 
-        float width = displayedImage.width() * _viewInfo->Zoom;
-        float height = displayedImage.height() * _viewInfo->Zoom;
+        float width = _displayedImage->width() * _viewInfo->Zoom;
+        float height = _displayedImage->height() * _viewInfo->Zoom;
         float posX =  this->width() / 2.0 - width / 2.0 + _viewInfo->ViewCenter.x();
         float posY =  this->height() / 2.0 -height / 2.0 + _viewInfo->ViewCenter.y();
 

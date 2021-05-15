@@ -5,13 +5,16 @@
 
 #include <QList>
 #include <QImage>
+#include <QObject>
 
 #include <QDomDocument>
 
 class Node;
 
-class FlowGraph
+class FlowGraph : public QObject
 {
+    Q_OBJECT
+
 public:
     FlowGraph();
 
@@ -24,8 +27,10 @@ public:
     int NodeCount(){ return _nodes.count();}
     Node * GetNode(int index){return _nodes[index];}
 
+    void OnNodeChanged(Node * node);
+
     Node * AddNode(NodeType nodeType);
-    void InsertNode(Node * node, int index);
+    Node * InsertNode(NodeType nodeType, int index);
     void RemoveNode(int index);
     void Process();
     QImage * Output();
@@ -41,6 +46,10 @@ public:
     QDomDocument * _domDocument;
 
     void RemoveNode(Node *node);
+
+signals:
+    void NodeAdded(Node * node);
+
 private:
     NodeFactory _nodeFactory;
 
@@ -48,6 +57,7 @@ private:
     void AddNodeToDom(Node *node);
     void UpdateDomWithFgfFile();
     void UpdateFlowGraph();
+    void SaveDialogBeforeChangingCurrentFile();
 };
 
 #endif // FLOWGRAPH_H

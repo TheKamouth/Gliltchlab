@@ -70,7 +70,7 @@ void NodeCommonWidget::SetWidgetVisible(bool visible)
 {
 }
 
-void NodeCommonWidget::SetIsPeaked(bool isPeakedAt)
+void NodeCommonWidget::SetIsPeakedAt(bool isPeakedAt)
 {
     ui->pb_peak->setChecked(isPeakedAt);
 }

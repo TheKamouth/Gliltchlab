@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>286</width>
-    <height>380</height>
+    <width>265</width>
+    <height>349</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -15,6 +15,18 @@
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>100</width>
+    <height>111</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>300</width>
+    <height>524287</height>
+   </size>
   </property>
   <property name="floating">
    <bool>true</bool>
@@ -29,7 +41,7 @@
    <string>Process flow</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
-   <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1,0,0,0">
+   <layout class="QVBoxLayout" name="verticalLayout" stretch="1,0,0">
     <property name="spacing">
      <number>4</number>
     </property>
@@ -45,40 +57,6 @@
     <property name="bottomMargin">
      <number>4</number>
     </property>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <property name="spacing">
-       <number>0</number>
-      </property>
-      <property name="sizeConstraint">
-       <enum>QLayout::SetMinimumSize</enum>
-      </property>
-      <property name="bottomMargin">
-       <number>0</number>
-      </property>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
-        <item>
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>Flow file name : </string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string>no file loaded</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </item>
     <item>
      <widget class="QFrame" name="vboxLayoutProcessorsFrame">
       <property name="sizePolicy">
@@ -174,7 +152,7 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="icons.qrc">
+         <iconset resource="../icons.qrc">
           <normaloff>:/icons/Icons/002-plus-1.png</normaloff>:/icons/Icons/002-plus-1.png</iconset>
         </property>
         <property name="iconSize">
@@ -209,30 +187,11 @@
       </property>
      </widget>
     </item>
-    <item>
-     <widget class="QPushButton" name="pushButton">
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>Save output</string>
-      </property>
-     </widget>
-    </item>
    </layout>
   </widget>
  </widget>
  <resources>
-  <include location="icons.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -14,17 +14,8 @@ public:
     virtual QWidget * InstantiatePeakWidget() override;
 
 protected:
-    void Update()
-    {
-        if(Output() != nullptr)
-        {
-            _glWidget->SetDisplayedImage(*Output());
-        }
-        else if (Input() != nullptr)
-        {
-            _glWidget->SetDisplayedImage(*Input());
-        }
-    }
+    virtual void UpdatePeakWidget() override;
+    virtual void ReleasePeakWidget() override;
 
 private:
     OpenGLWidget * _glWidget;

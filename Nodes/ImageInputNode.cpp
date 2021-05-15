@@ -74,8 +74,10 @@ void ImageInputNode::SetInputFilePath(QString filePath)
 
     UpdatePreview();
 
+    EmitNodeChanged();
+
     // only one flow for now
-    emit InputLoaded(_input, 0);
+    //emit InputLoaded(_input, 0);
 }
 
 // Reload _inputFileName
@@ -88,13 +90,14 @@ void ImageInputNode::OnReloadClicked()
     }
 
     _input = new QImage(_inputFileName);
-
     ui->label->setText(_inputFileName);
 
     UpdatePreview();
 
+    EmitNodeChanged();
+
     // only one flow for now
-    emit InputLoaded(_input, 0);
+    //emit InputLoaded(_input, 0);
 }
 
 void ImageInputNode::UpdatePreview()

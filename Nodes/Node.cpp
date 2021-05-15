@@ -39,6 +39,8 @@ bool Node::TryProcess()
 
     AfterProcessing();
 
+    UpdatePeakWidget();
+
     return true;
 }
 
@@ -60,6 +62,8 @@ bool Node::AfterProcessing()
         qDebug() << "_ouput is null";
         return false;
     }
+
+    update();
 
     return true;
 }
@@ -98,4 +102,9 @@ QString Node::GetTempImageOutputFilePath()
     QString nodeName = Name();
     QString timeStamp = QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm_ss_z");
     return "nodeName_image_output" + timeStamp + ".png";
+}
+
+void Node::EmitNodeChanged()
+{
+    emit NodeChanged(this);
 }

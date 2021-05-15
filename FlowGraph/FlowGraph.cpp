@@ -6,8 +6,10 @@
 
 #include <QDebug>
 #include <QFile>
+#include <QMessageBox>
 
 FlowGraph::FlowGraph() :
+    QObject(),
     _flowName("flow name"),
     _domDocumentFilePath(""),
     _flowGraphFileDevice(nullptr),
@@ -17,6 +19,12 @@ FlowGraph::FlowGraph() :
 
 void FlowGraph::CreateNewFlowGraphFile(QString filePath)
 {
+    // Clear previous nodes
+    for(int i = _nodes.count() - 1 ; i >= 0 ; i--)
+    {
+        RemoveNode(i);
+    }
+
     _domDocumentFilePath = filePath;
 
     _domDocument = new QDomDocument(XML_FGF_ROOT);
@@ -43,7 +51,7 @@ void FlowGraph::UpdateFgfFileWithCurrentDom()
 
     _flowGraphFileDevice->close();
 
-    // UpdateUI
+    UpdateFlowGraph();
 }
 
 void FlowGraph::UpdateDomWithFgfFile()
@@ -68,14 +76,13 @@ void FlowGraph::UpdateDomWithFgfFile()
 
     _flowGraphFileDevice->close();
 
-    // UpdateUI
     UpdateFlowGraph();
 }
 
 void FlowGraph::UpdateFlowGraph()
 {
     // Clear previous nodes
-    for(int i = _nodes.count() - 1 ; i >= 0 ; i++)
+    for(int i = _nodes.count() - 1 ; i >= 0 ; i--)
     {
         RemoveNode(i);
     }
@@ -89,7 +96,8 @@ void FlowGraph::UpdateFlowGraph()
     QDomNode root = _domDocument->firstChild();
     QDomNodeList nodeList = _domDocument->elementsByTagName(XML_FGF_NODE_ELEMENT);
 
-    for(int i = 0 ; i < nodeList.count(); i++)
+    int nodeCount = nodeList.count();
+    for(int i = 0 ; i < nodeCount ; i++)
     {
         QDomNode domNode = nodeList.at(i);
         QStringList attributes;
@@ -104,6 +112,8 @@ void FlowGraph::UpdateFlowGraph()
 
         node->SetPosition(nodePosition.toInt());
         //node->SetName(nodeName);
+
+        emit NodeAdded(node);
     }
 }
 
@@ -121,11 +131,43 @@ void FlowGraph::LoadFlowGraphFile(QString filePath)
     _domDocumentFilePath = filePath;
 
     UpdateDomWithFgfFile();
+
+    Process();
+}
+
+void FlowGraph::OnNodeChanged(Node * node)
+{
+    // Reprocess all dependent nodes
+    int position = node->Position();
+
+    if (position >= _nodes.count() || position < 0)
+    {
+        qDebug() << __FUNCTION__ << " invalid position." ;
+        return;
+    }
+
+    Node * previousNode = nullptr;
+    for(int i = std::max(1, position) ; i < _nodes.count() ; i++)
+    {
+        previousNode = _nodes[i-1];
+        node = _nodes[i];
+        node->SetInput( previousNode->Output());
+
+        if( node->TryProcess() == false)
+        {
+            qDebug() << "Failed to process node: " << node->Name();
+        }
+    }
+
+    qDebug() << __FUNCTION__<< "Reprocessed, node changed: " << node->Name();
 }
 
 Node * FlowGraph::AddNode(NodeType nodeType)
 {
     Node * node =_nodeFactory.CreateNode(nodeType);
+    node->SetPosition(_nodes.count());
+
+    QObject::connect(node , &Node::NodeChanged, this, &FlowGraph::OnNodeChanged);
 
     AddNodeToDom(node);
 
@@ -134,9 +176,18 @@ Node * FlowGraph::AddNode(NodeType nodeType)
     return node;
 }
 
-void FlowGraph::InsertNode(Node * node, int index)
+Node * FlowGraph::InsertNode(NodeType nodeType, int index)
 {
+    Node * node =_nodeFactory.CreateNode(nodeType);
+    node->SetPosition(_nodes.count());
+
+    QObject::connect(node , &Node::NodeChanged, this, &FlowGraph::OnNodeChanged);
+
+    AddNodeToDom(node);
+
     _nodes.insert(index, node);
+
+    return node;
 }
 
 void FlowGraph::RemoveNode(Node * node)
@@ -163,7 +214,6 @@ void FlowGraph::Process()
     }
 
     Node * previousNode = nullptr;
-    Node * lastNode = nullptr;
     Node * node;
     for(int i = 1 ; i < _nodes.count() ; i++)
     {
@@ -175,12 +225,7 @@ void FlowGraph::Process()
         {
             qDebug() << "Failed to process node: " << node->Name();
         }
-
-
-        lastNode = node;
     }
-
-    lastNode = node;
 }
 
 QImage *FlowGraph::Output()
@@ -213,7 +258,33 @@ void FlowGraph::AddNodeToDom(Node * node)
     nodeDomElement.setAttribute(XML_FGF_NODE_ATTRIBUTE_POSITION, node->FlowGraphNodePosition());
 
     root.appendChild(nodeDomElement);
+}
 
-    UpdateFgfFileWithCurrentDom();
+void FlowGraph::SaveDialogBeforeChangingCurrentFile()
+{
+    if( _domDocument != nullptr)
+    {
+        QMessageBox msgBox;
+        msgBox.setText("The document has been modified.");
+        msgBox.setInformativeText("Do you want to save your changes?");
+        msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+        msgBox.setDefaultButton(QMessageBox::Save);
+        int ret = msgBox.exec();
+
+        if(ret == 0)
+        {
+            // Save
+            SaveFlowGraphFile(_domDocumentFilePath);
+        }
+        if(ret == 1)
+        {
+            // Discard
+        }
+        else
+        {
+            // Cancel
+            return;
+        }
+    }
 }
 

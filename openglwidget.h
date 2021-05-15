@@ -25,21 +25,10 @@ class OpenGLWidget : public QOpenGLWidget
     Q_OBJECT
 
 public:
-    OpenGLWidget( QWidget *parent = nullptr) : QOpenGLWidget( parent),
-        _displayedPixmap(nullptr),
-        _lastViewCenter(),
-        rightClickPressed(false),
-        displayFramingLines(true),
-        showSortingCenter(false),
-        sortingCenter(0.5,0.5)
-    {
-        _viewInfo = new ViewInfo();
-    }
-
+    OpenGLWidget( QWidget *parent = nullptr);
     ~OpenGLWidget();
 
-    void SetDisplayedImg( QPixmap * pixmap);
-    void SetDisplayedImage( QImage &image);
+    void SetDisplayedImage( QImage * image);
 
     void Update();
 
@@ -51,8 +40,6 @@ public:
 
     ViewInfo * GetViewInfo();
     void SetViewInfo(ViewInfo* viewInfo);
-
-    QPixmap * getDisplayedPixmap(){return _displayedPixmap;}
 
     QPointF getSortingCenter();
     void ShowSortingCenter( bool show);
@@ -76,8 +63,7 @@ private:
 
     ViewInfo * _viewInfo;
 
-    QPixmap * _displayedPixmap;
-    QImage displayedImage;
+    QImage * _displayedImage;
 
     std::vector< std::pair< QRectF, QColor> > rects;
 

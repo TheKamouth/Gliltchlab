@@ -61,14 +61,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
-    // UI
-    //QOpenGLWidget _inputWidget;
-    //
-    //QOpenGLWidget _outputWidget;
-
-    OpenGLWidget* _glWidget;
-
-    ProcessorFlowDockWidget * _processorFlowDockWidget;
+    ProcessorFlowDockWidget * _flowGraphDockWidget;
     TimeControlWidget _timeControlWidget;
     TimelineWidget _timeLineWidget;
 
@@ -77,7 +70,10 @@ private:
     PreferencesDialog _preferencesDialog;
 
     void OnPeakNode(Node * node);
-    void SaveDialogBeforeChangingCurrentFile();
+
+
+    Node * _nodePeaked;
+    QWidget * _peakWidget;
 
 };
 #endif // MAINWINDOW_H

@@ -42,8 +42,10 @@ public:
     virtual QLayout* NodeUiBaseLayoutInForm() = 0;
     virtual QWidget * SpecificUI() = 0;
 
-    // Peak widget is instantiated wjen needed and deleted when not visible
+    // Peak widget is instantiated when needed and deleted when not visible
     virtual QWidget * InstantiatePeakWidget() = 0;
+    virtual void UpdatePeakWidget() = 0;
+    virtual void ReleasePeakWidget() = 0;
 
     // This could be generic
     // And in cpp file
@@ -62,7 +64,10 @@ public:
         _input = input;
     }
 
-    NodeCommonWidget * CommonWidget() { return _nodeCommonWidget;}
+    NodeCommonWidget * CommonWidget()
+    {
+        return _nodeCommonWidget;
+    }
 
     // Is SUpposed to be called in Node implementation constructor
     virtual void InitializeNodeCommonWidget();
@@ -75,6 +80,7 @@ public:
 
 signals:
     void OnDeleteProcessorClicked(Node * node);
+    void NodeChanged(Node * node);
     void OnProcessorSettingsClicked();
 
 protected :
@@ -98,6 +104,7 @@ protected :
     QImage * _output;
 
     QString GetTempImageOutputFilePath();
+    void EmitNodeChanged();
 };
 
 #endif // NODE_H

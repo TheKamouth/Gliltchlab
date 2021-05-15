@@ -20,6 +20,9 @@ public:
     ~ProcessorFlowDockWidget();
 
     void OnAddNodeClicked();
+    void OnNodeAdded(Node * node);
+    void AddNodeWidget(Node * node);
+
     void OnProcessFlowClicked();
     void OnPeakNodeClicked(Node * node);
     void PeakLastFlowNode();

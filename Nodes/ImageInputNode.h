@@ -32,8 +32,8 @@ public:
     void OnReloadClicked();
     void SetInputFilePath(QString filePath);
 
-signals:
-    void InputLoaded(QImage* input, int flowIndex);
+//signals:
+    //void InputLoaded(QImage* input, int flowIndex);
 
 private:
     Ui::ImageInputNode *ui;

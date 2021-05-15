@@ -58,9 +58,7 @@ void DesaturateFilterNode::OnCurrentIndexChanged(int index)
 {
     _desaturationMode = (DesaturationMethod)index;
 
-    TryProcess();
-
-    Update();
+     EmitNodeChanged();
 }
 
 void DesaturateFilterNode::OnSaturationValueChanged(int value)
@@ -68,24 +66,18 @@ void DesaturateFilterNode::OnSaturationValueChanged(int value)
     float sliderValue = ui->sl_desaturationValue->value();
     _desaturationValue = sliderValue != 0.0f ? sliderValue / 100.0f : 0.0f;
     ui->dsb_desaturationValue->setValue( _desaturationValue);
-
     qDebug() << _desaturationValue;
 
-    TryProcess();
-
-    Update();
+    EmitNodeChanged();
 }
 
 void DesaturateFilterNode::OnSaturationSpinBoxValueChanged(double value)
 {
     _desaturationValue = ui->dsb_desaturationValue->value();
     ui->sl_desaturationValue->setValue(_desaturationValue * 100.0f);
-
     qDebug() << _desaturationValue;
 
-    TryProcess();
-
-    Update();
+    EmitNodeChanged();
 }
 
 QStringList DesaturateFilterNode::AvailableDesaturationMethodNames()
@@ -256,6 +248,13 @@ bool DesaturateFilterNode::AfterProcessing()
     _output = new QImage(_glFrameBufferObject->toImage(false));
 
     qDebug() << "Desaturate node processed, " ;
+
+    if(_peakWidget != nullptr)
+    {
+        UpdatePeakWidget();
+    }
+
+    return true;
 }
 
 bool DesaturateFilterNode::ProcessInternal()
@@ -294,6 +293,13 @@ bool DesaturateFilterNode::ProcessInternal()
     _glContext.functions()->glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, Q_NULLPTR);
 
     _output = new QImage(_glFrameBufferObject->toImage(false));
+
+    if( _peakWidget != nullptr)
+    {
+        // currently peaking this
+        OpenGLWidget * glWidget = dynamic_cast<OpenGLWidget*>(_peakWidget);
+        glWidget->SetDisplayedImage(Output());
+    }
 
     return true;
 }
