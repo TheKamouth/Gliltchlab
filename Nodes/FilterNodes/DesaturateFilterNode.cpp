@@ -8,6 +8,7 @@
 #include <QWidget>
 #include <QComboBox>
 #include <QSlider>
+#include <QDoubleSpinBox>
 
 DesaturateFilterNode::DesaturateFilterNode(QWidget *parent) :
     ImageProcessorBase(),
@@ -19,6 +20,7 @@ DesaturateFilterNode::DesaturateFilterNode(QWidget *parent) :
     InitNodeTypeComboBox();
     QObject::connect( ui->cb_desaturationMethod, QOverload<int>::of(&QComboBox::activated), this, &DesaturateFilterNode::OnCurrentIndexChanged);
     QObject::connect( ui->sl_desaturationValue, &QSlider::valueChanged, this, &DesaturateFilterNode::OnSaturationValueChanged);
+    QObject::connect( ui->dsb_desaturationValue, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &DesaturateFilterNode::OnSaturationSpinBoxValueChanged);
 }
 
 DesaturateFilterNode::~DesaturateFilterNode()
@@ -39,13 +41,6 @@ QLayout *DesaturateFilterNode::NodeUiBaseLayoutInForm()
 QWidget * DesaturateFilterNode::SpecificUI()
 {
     return ui->widget;
-}
-
-bool DesaturateFilterNode::TryProcess()
-{
-    Process();
-
-    return true;
 }
 
 void DesaturateFilterNode::SetParameters()
@@ -72,6 +67,19 @@ void DesaturateFilterNode::OnSaturationValueChanged(int value)
 {
     float sliderValue = ui->sl_desaturationValue->value();
     _desaturationValue = sliderValue != 0.0f ? sliderValue / 100.0f : 0.0f;
+    ui->dsb_desaturationValue->setValue( _desaturationValue);
+
+    qDebug() << _desaturationValue;
+
+    TryProcess();
+
+    Update();
+}
+
+void DesaturateFilterNode::OnSaturationSpinBoxValueChanged(double value)
+{
+    _desaturationValue = ui->dsb_desaturationValue->value();
+    ui->sl_desaturationValue->setValue(_desaturationValue * 100.0f);
 
     qDebug() << _desaturationValue;
 
@@ -127,7 +135,7 @@ QString DesaturateFilterNode::AvailableDesaturationMethodName(DesaturationMethod
     }
 }
 
-void DesaturateFilterNode::BeforeProcessing()
+bool DesaturateFilterNode::BeforeProcessing()
 {
     _fboSize = _input->size();
 
@@ -233,7 +241,7 @@ void DesaturateFilterNode::BeforeProcessing()
 
 }
 
-void DesaturateFilterNode::AfterProcessing()
+bool DesaturateFilterNode::AfterProcessing()
 {
     // Get a temporary dir somwhere ?
     QString dirPath= QDir::currentPath();
@@ -250,7 +258,7 @@ void DesaturateFilterNode::AfterProcessing()
     qDebug() << "Desaturate node processed, " ;
 }
 
-void DesaturateFilterNode::ProcessInternal()
+bool DesaturateFilterNode::ProcessInternal()
 {
     QString vertexPosVar("aPosition");
     QString textureCoordVar("aTexCoord");
@@ -260,18 +268,16 @@ void DesaturateFilterNode::ProcessInternal()
     QString desaturationValue("desaturationValue");
 
     // Copy previous buffer
-    _glVertexBuffer.write(0,FULL_SCREEN_VERTICES_DATA, 4 * sizeof(VertexData));
-    _glFragmentBuffer.write(0,FULL_SCREEN_VERTICES_INDEXES, 4 * sizeof(GLuint));
+    _glVertexBuffer.write(0, FULL_SCREEN_VERTICES_DATA, 4 * sizeof(VertexData));
+    _glFragmentBuffer.write(0, FULL_SCREEN_VERTICES_INDEXES, 4 * sizeof(GLuint));
 
-    _glContext.functions()->glVertexAttribPointer( 0, 1, GL_INT,GL_FALSE, 0, &_desaturationMode);
+    //_glContext.functions()->glVertexAttribPointer( 0, 1, GL_INT,GL_FALSE, 0, &_desaturationMode);
 
-    int offset = 0;
     _glShaderProgram->enableAttributeArray(vertexPosVar.toLatin1().data());
     _glShaderProgram->enableAttributeArray(textureCoordVar.toLatin1().data());
 
-    _glShaderProgram->setAttributeBuffer(vertexPosVar.toLatin1().data(), GL_FLOAT, offset, 2, sizeof(VertexData));
-    offset += sizeof(QVector2D);
-    _glShaderProgram->setAttributeBuffer(textureCoordVar.toLatin1().data(), GL_FLOAT, offset, 2, sizeof(VertexData));
+    _glShaderProgram->setAttributeBuffer(vertexPosVar.toLatin1().data(), GL_FLOAT, offsetof(VertexData, position), 2/**/, sizeof(VertexData));
+    _glShaderProgram->setAttributeBuffer(textureCoordVar.toLatin1().data(), GL_FLOAT, offsetof(VertexData, texCoord), 2/**/, sizeof(VertexData));
 
     // Getting parameters
     // This could be done in BeforeProcessing()
@@ -288,6 +294,8 @@ void DesaturateFilterNode::ProcessInternal()
     _glContext.functions()->glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, Q_NULLPTR);
 
     _output = new QImage(_glFrameBufferObject->toImage(false));
+
+    return true;
 }
 
 QVector2D DesaturateFilterNode::ToTexCoord(QVector2D position)

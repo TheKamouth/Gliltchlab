@@ -32,9 +32,10 @@ Gliltchlab TODO list :
 # Node :
 	- Expose Node::Parameters::SetTime(t) 
 	- Each node contains a set of parameters. Some of these parameters are animatable
+	- Changing/Breaking flow (by editing/deleting a node) crashes
 
-# Desaturate Node :
-	- FragmentShader input int not working => Desaturation mode change broken
+# Desaturate Node :k
+x	- FragmentShader input int not working => Desaturation mode change broken
 		Change it a to a uniform float ?
 		
 # Scanner Node :

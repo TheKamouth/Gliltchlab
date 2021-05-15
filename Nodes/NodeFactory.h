@@ -36,9 +36,9 @@ public:
     NodeFactory();
 
     Node * CreateNode(NodeType type);
-    QStringList AvailableNodeTypesNames();
-    QString NodeTypeName(NodeType nodeType);
-    QString NodeTypeName(int index);
+    static QStringList AvailableNodeTypesNames();
+    static QString NodeTypeName(NodeType nodeType);
+    static QString NodeTypeName(int index);
 };
 
 #endif // NODEFACTORY_H

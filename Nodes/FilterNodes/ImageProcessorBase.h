@@ -14,14 +14,6 @@ public:
     // Node
     virtual QString Name() override { return "image processor base";}
 
-    virtual void SetParameters(){};
-    virtual void BeforeProcessing() {};
-    virtual void AfterProcessing() = 0;
-
-    void Process();
-
-protected:
-    virtual void ProcessInternal(){};
 
     QString GetTempImageOutputFilePath();
 };

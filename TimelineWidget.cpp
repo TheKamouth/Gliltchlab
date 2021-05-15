@@ -6,6 +6,7 @@ TimelineWidget::TimelineWidget(QWidget *parent) :
     ui(new Ui::TimelineWidget)
 {
     ui->setupUi(this);
+    this->setWindowFlags(Qt::Tool);
 }
 
 TimelineWidget::~TimelineWidget()

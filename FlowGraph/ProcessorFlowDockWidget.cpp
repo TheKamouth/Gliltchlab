@@ -21,6 +21,8 @@ ProcessorFlowDockWidget::ProcessorFlowDockWidget(QWidget *parent) :
     QObject::connect( ui->pb_processFlow, &QPushButton::clicked, this, &ProcessorFlowDockWidget::OnProcessFlowClicked);
 
     InitNodeTypeComboBox();
+
+    _flowGraph = new FlowGraph();
 }
 
 ProcessorFlowDockWidget::~ProcessorFlowDockWidget()
@@ -35,24 +37,19 @@ void ProcessorFlowDockWidget::OnAddNodeClicked()
     NodeType nodeType = (NodeType)currentIndex;
 
     // Create Node and add to flow
-    Node* node = _nodeFactory.CreateNode(nodeType);
+    Node* node = _flowGraph->AddNode(nodeType);
 
     if(node == nullptr)
     {
         return;
     }
 
-    node->Initialize();
+    node->InitializeNodeCommonWidget();
 
     QObject::connect(node->CommonWidget(), &NodeCommonWidget::DeleteClicked, this, &ProcessorFlowDockWidget::DeleteNode);
     QObject::connect(node->CommonWidget(), &NodeCommonWidget::PeakClicked, this, &ProcessorFlowDockWidget::OnPeakNodeClicked);
 
-    //ui->vboxLayoutProcessors->addWidget(node->Widget());
-    ui->vboxLayoutProcessors->insertWidget(_nodes.count(), node->Widget());
-
-    // Should Node be a QWidget ? Or handle one ?
-    _nodes.append(node);
-    _flowGraph->AddNode(node);
+    ui->vboxLayoutProcessors->insertWidget(_flowGraph->NodeCount() - 1, node->Widget());
 
     OnProcessFlowClicked();
 
@@ -63,16 +60,14 @@ void ProcessorFlowDockWidget::DeleteNode(Node* node)
 {
     QObject::disconnect(node->CommonWidget(), &NodeCommonWidget::DeleteClicked, this, &ProcessorFlowDockWidget::DeleteNode);
 
-    _flowGraph->RemoveNode(_nodes.indexOf(node));
-    _nodes.removeAll(node);
-
-    delete node;
+    _flowGraph->RemoveNode(node);
 }
 
 void ProcessorFlowDockWidget::OnPeakNodeClicked(Node * node)
 {
     node->CommonWidget()->SetIsPeaked(true);
 
+    /*
     for(int i = 0 ; i < _nodes.count(); i++ )
     {
         Node * n = _nodes.at(i);
@@ -81,55 +76,27 @@ void ProcessorFlowDockWidget::OnPeakNodeClicked(Node * node)
             n->CommonWidget()->SetIsPeaked(false);
         }
     }
+    */
 
     emit PeakNode(node);
 }
 
 void ProcessorFlowDockWidget::PeakLastFlowNode()
 {
-    int nodeCount = _nodes.count();
-    Node * lastNode = _nodes[nodeCount - 1];
+    int nodeCount = _flowGraph->NodeCount();
+    Node * lastNode = _flowGraph->GetNode(nodeCount - 1);
     OnPeakNodeClicked(lastNode);
 }
 
 void ProcessorFlowDockWidget::InitNodeTypeComboBox()
 {
-    QStringList availableNodeTypesNames = _nodeFactory.AvailableNodeTypesNames();
+    QStringList availableNodeTypesNames = NodeFactory::AvailableNodeTypesNames();
     ui->cb_processorType->addItems(availableNodeTypesNames);
 }
 
 void ProcessorFlowDockWidget::OnProcessFlowClicked()
 {
-    if(_nodes.count() == 0)
-    {
-        qDebug() << "No node to process." << Qt::endl;
-        return;
-    }
+    _flowGraph->Process();
 
-    if(_nodes.count() == 1)
-    {
-        emit OutputProcessed(_nodes[0]->Output());
-        return;
-    }
-
-    Node * previousNode = nullptr;
-    Node * lastNode = nullptr;
-    Node * node;
-    for(int i = 1 ; i < _nodes.count() ; i++)
-    {
-        previousNode = _nodes[i-1];
-        node = _nodes[i];
-        node->SetInput( previousNode->Output());
-
-        if( node->TryProcess() == false)
-        {
-            qDebug() << "Failed to process node: " << node->Name();
-        }
-
-
-        lastNode = node;
-    }
-
-    lastNode = node;
-    emit OutputProcessed(lastNode->Output());
+    emit OutputProcessed(_flowGraph->Output());
 }

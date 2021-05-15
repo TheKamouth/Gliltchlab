@@ -48,17 +48,17 @@ public:
     virtual QWidget * NodeUiBaseWidgetInForm() override;
     virtual QLayout* NodeUiBaseLayoutInForm() override;
     virtual QWidget * SpecificUI() override;
-    virtual bool TryProcess() override;
 
     // ImageProcessorBase / Filter
     virtual void SetParameters() override;
-    virtual void BeforeProcessing() override;
-    virtual void ProcessInternal() override;
-    virtual void AfterProcessing() override;
+    virtual bool BeforeProcessing() override;
+    virtual bool AfterProcessing() override;
+    virtual bool ProcessInternal() override;
 
     //
     void OnCurrentIndexChanged(int index);
     void OnSaturationValueChanged(int value);
+    void OnSaturationSpinBoxValueChanged(double value);
 
 private:
     Ui::DesaturateFilterNode * ui;
@@ -79,6 +79,7 @@ private:
 
     struct VertexData
     {
+        //
         QVector2D position;
         QVector2D texCoord;
     };

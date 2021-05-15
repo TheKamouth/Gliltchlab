@@ -1,0 +1,13 @@
+<!DOCTYPE FlowGraphFile>
+<FlowGraphFile filename="flow_0">
+    <node name="unamed node" type="ImageInput" flowPosition="0">
+        <inputImageFilePath></inputImageFilePath>
+    </node>
+    <node name="unamed node" type="Desaturation" flowPosition="1">
+		<desaturationMethodName>Max</desaturationMethodName>
+		<desaturationValue>0.5</desaturationValue>
+    </node>	
+	<node name="Output" type="ImageOutput" flowPosition="2">
+        <outputFolderPath></outputFolderPath>
+    </node>
+</anot>

@@ -170,13 +170,26 @@
           <property name="maximum">
            <number>100</number>
           </property>
+          <property name="value">
+           <number>100</number>
+          </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QDoubleSpinBox" name="dsb_desaturationValue"/>
+         <widget class="QDoubleSpinBox" name="dsb_desaturationValue">
+          <property name="decimals">
+           <number>3</number>
+          </property>
+          <property name="maximum">
+           <double>1.000000000000000</double>
+          </property>
+          <property name="value">
+           <double>1.000000000000000</double>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>

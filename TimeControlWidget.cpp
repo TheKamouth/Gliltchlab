@@ -6,6 +6,7 @@ TimeControlWidget::TimeControlWidget(QWidget *parent) :
     ui(new Ui::TimeControlWidget)
 {
     ui->setupUi(this);
+    this->setWindowFlags(Qt::Tool);
 }
 
 TimeControlWidget::~TimeControlWidget()

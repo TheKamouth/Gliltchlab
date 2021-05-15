@@ -13,6 +13,8 @@
 #include <QOpenGLFunctions>
 #include <QOpenGLTexture>
 #include <QOpenGLBuffer>
+#include <QList>
+#include <QVector>
 
 enum ScanMode
 {
@@ -43,7 +45,7 @@ class ScannerFilterNode;
 }
 
 
-class ScannerFilterNode : public ImageProcessorBase
+class ScannerFilterNode : public ImagePeakNode
 {
 public:
     ScannerFilterNode();
@@ -54,21 +56,17 @@ public:
     virtual QWidget * NodeUiBaseWidgetInForm() override;
     virtual QLayout* NodeUiBaseLayoutInForm() override;
     virtual QWidget * SpecificUI() override;
-    virtual bool TryProcess() override;
 
     // ImageProcessorBase / Filter
     virtual void SetParameters() override;
-    virtual void BeforeProcessing() override;
-    virtual void AfterProcessing() override;
-    virtual void ProcessInternal() override;
+    virtual bool BeforeProcessing() override;
+    virtual bool AfterProcessing() override;
+    virtual bool ProcessInternal() override;
 
     // Node override
     virtual void SetInput(QImage* input) override;
 
     //
-    void Init();
-
-    void Scan();
     void ScanOneDrawCall();
 
 private :
@@ -78,7 +76,15 @@ private :
 
     // constants
     const QString VERTEX_SHADER_PATH = "D:\\5_PROJETS\\5_DEV\\VirtualScanner\\sources\\VirtualScanner\\Shaders\\VertexShader.vert";
-    const QString FRAGMENT_SHADER_PATH = "D:\\5_PROJETS\\5_DEV\\VirtualScanner\\sources\\VirtualScanner\\Shaders\\FragmentShader.frag";
+    const QString FRAGMENT_SHADER_PATH = "D:\\5_PROJETS\\5_DEV\\VirtualScanner\\sources\\VirtualScanner\\Shaders\\Scanner.frag";
+    const GLuint ONE_LINE_INDEXES[2] = {0, 1};
+    const GLuint FULL_SCREEN_VERTICES_INDEXES[4] =
+    {
+        0,
+        1,
+        2,
+        3
+    };
     const VertexData FULL_SCREEN_VERTICES_DATA[4] =
     {
         {{ -1.0f, +1.0f }, { 0.0f, 1.0f }}, // top-left
@@ -86,8 +92,9 @@ private :
         {{ -1.0f, -1.0f }, { 0.0f, 0.0f }}, // bottom-left
         {{ +1.0f, -1.0f }, { 1.0f, 0.0f }}  // bottom-right
     };
-    const GLuint FULL_SCREEN_VERTICES_INDEXES[4] = { 0, 1, 2, 3 };
-    const GLuint ONE_LINE_INDEXES[2] = {0, 1};
+
+    QVector<VertexData*> * _vertexData;
+    QList<GLuint> * _vertexindexes;
 
     // parameters
     ScanMode _scanMode;
@@ -100,12 +107,8 @@ private :
     QOpenGLShaderProgram * _glShaderProgram;
     QOpenGLFramebufferObject * _glFrameBufferObject;
     QOpenGLTexture * _inputTexture ;
-    QOpenGLTexture * _previousOutputTexture ;
     QOpenGLBuffer _glVertexBuffer;
     QOpenGLBuffer _glFragmentBuffer;
-
-    // input / output
-    int currentOutputIndex = 0;
 
     // internal methods
     void ScanLine(QVector2D lineOrigin, QVector2D lineEnd);
@@ -117,6 +120,7 @@ private :
     QStringList AvailableSensorAnimationMethodNames();
     QString AvailableSensorAnimationMethodName(int index);
     QString AvailableSensorAnimationMethodName(SensorAnimationMethod animationMethod);
+    void _CheckGLError(const char *file, int line);
 };
 
 #endif // SCANNER_H

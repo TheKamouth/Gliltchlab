@@ -1,7 +1,6 @@
 #ifndef PROCESSORFLOWDOCKWIDGET_H
 #define PROCESSORFLOWDOCKWIDGET_H
 
-#include "ProcessorFlow.h"
 #include "Nodes/FilterNodes/ImageProcessorBase.h"
 #include "Nodes/NodeFactory.h"
 #include "FlowGraph.h"
@@ -25,6 +24,8 @@ public:
     void OnPeakNodeClicked(Node * node);
     void PeakLastFlowNode();
 
+    FlowGraph * CurrentFlowGraph() { return _flowGraph;};
+
 signals:
     void InputLoaded(QImage* input, int flowIndex);
     void OutputProcessed(QImage * output);
@@ -33,13 +34,9 @@ signals:
 private:
     Ui::ProcessorFlowDockWidget *ui;
 
-    QList<Node *> _nodes;
-
-    // WIP: Replace ProcessorFlow by more generic GraphFlow that handles Node (input, filters, output, ...)
-    ProcessorFlow * _processorFlow;
+    //QList<Node *> _nodes;
     FlowGraph * _flowGraph;
-
-    NodeFactory _nodeFactory;
+    //NodeFactory _nodeFactory;
 
     QImage * _input;
     QString _inputFileName;

@@ -77,21 +77,7 @@ QWidget * ImageOutputNode::SpecificUI()
     return ui->widget;
 }
 
-bool ImageOutputNode::TryProcess()
-{
-    // Copies _input to _output
-    Node::TryProcess();
-
-    if(_input == nullptr)
-    {
-        qDebug() << "Cannot save: _input is null";
-        return false;
-    }
-
-    return true;
-}
-
-void ImageOutputNode::AfterProcessing()
+bool ImageOutputNode::AfterProcessing()
 {
     OnSaveClicked();
 }

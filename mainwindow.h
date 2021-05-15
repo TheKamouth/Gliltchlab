@@ -5,11 +5,12 @@
 #include "preferencesdialog.h"
 
 #include "openglwidget.h"
+#include "TimeControlWidget.h"
+#include "TimelineWidget.h"
 
 #include "Nodes/FilterNodes/ScannerFilterNode.h"
 
-#include "ProcessorFlow.h"
-#include "ProcessorFlowDockWidget.h"
+#include "FlowGraph/ProcessorFlowDockWidget.h"
 
 #include <QMainWindow>
 #include <QImage>
@@ -46,16 +47,19 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    void OnOutputProcessed(QImage * output);
+    void OnOutputProcessed();
 
 private slots:
     void on_actionPlay_triggered();
     void on_actionPreferences_triggered();
+    void OnNewFlowGraphFileTriggered();
+    void OnLoadFlowGraphFileTriggered();
+    void OnSaveFlowGraphFileTriggered();
+    void OnViewTimeControlsTriggered(bool checked);
+    void OnViewTimeLineTriggered(bool checked);
 
 private:
     Ui::MainWindow *ui;
-
-    void OnPeakNode(Node * node);
 
     // UI
     //QOpenGLWidget _inputWidget;
@@ -65,12 +69,15 @@ private:
     OpenGLWidget* _glWidget;
 
     ProcessorFlowDockWidget * _processorFlowDockWidget;
+    TimeControlWidget _timeControlWidget;
+    TimelineWidget _timeLineWidget;
 
     // Preferences
     CommonPreferences _preferences;
     PreferencesDialog _preferencesDialog;
 
-    ProcessorFlow _processorFlow;
+    void OnPeakNode(Node * node);
+    void SaveDialogBeforeChangingCurrentFile();
 
 };
 #endif // MAINWINDOW_H

@@ -14,32 +14,42 @@ NodeFactory::NodeFactory()
 
 Node * NodeFactory::CreateNode(NodeType type)
 {
+    Node * node = nullptr;
+
     switch(type)
     {
         case InputImage:
         {
-            ImageInputNode * imageInputNode = new ImageInputNode();
-            imageInputNode->SetInputFilePath(DEFAULT_IMAGE_INPUT_PATH);
-            return imageInputNode;
+            node = new ImageInputNode();
+            ImageInputNode * inputImageNode = dynamic_cast<ImageInputNode *>(node);
+            inputImageNode->SetInputFilePath(DEFAULT_IMAGE_INPUT_PATH);
+            break;
         }
 
         case OutputImage:
         {
-            ImageOutputNode * imageOutputNode = new ImageOutputNode();
-            imageOutputNode->SetOutputFilePath(DEFAULT_IMAGE_OUTPUT_PATH);
-            return imageOutputNode;
+            node = new ImageOutputNode();
+            ImageOutputNode * outputImageNode = dynamic_cast<ImageOutputNode *>(node);
+            outputImageNode->SetOutputFilePath(DEFAULT_IMAGE_OUTPUT_PATH);
+            break;
         }
 
         case Desaturate:
-            return new DesaturateFilterNode();
+            node = new DesaturateFilterNode();
+            break;
 
         case ScannerFilter:
-            return new ScannerFilterNode();
+            node = new ScannerFilterNode();
+            break;
 
         default:
             qDebug() << "NodeFactory does not handle this NodeType";
             return nullptr;
+            break;
     }
+
+    node->SetType(type);
+    return node;
 }
 
 QStringList NodeFactory::AvailableNodeTypesNames()

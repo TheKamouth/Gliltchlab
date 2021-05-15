@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>143</width>
-    <height>53</height>
+    <width>128</width>
+    <height>43</height>
    </rect>
   </property>
   <property name="allowedAreas">
@@ -34,7 +34,7 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="QPushButton" name="pushButton_5">
+     <widget class="QPushButton" name="pb_firstFrame">
       <property name="maximumSize">
        <size>
         <width>24</width>
@@ -42,12 +42,19 @@
        </size>
       </property>
       <property name="text">
-       <string>&lt;&lt;</string>
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="icons.qrc">
+        <normaloff>:/icons/Icons/002-backward-button.png</normaloff>:/icons/Icons/002-backward-button.png</iconset>
+      </property>
+      <property name="flat">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QPushButton" name="pushButton_4">
+     <widget class="QPushButton" name="pb_backwardOneFrame">
       <property name="maximumSize">
        <size>
         <width>24</width>
@@ -55,12 +62,16 @@
        </size>
       </property>
       <property name="text">
-       <string>|&lt;</string>
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="icons.qrc">
+        <normaloff>:/icons/Icons/004-step-backward.png</normaloff>:/icons/Icons/004-step-backward.png</iconset>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QPushButton" name="pushButton_3">
+     <widget class="QPushButton" name="pb_playPause">
       <property name="maximumSize">
        <size>
         <width>24</width>
@@ -68,12 +79,16 @@
        </size>
       </property>
       <property name="text">
-       <string>&gt;</string>
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="icons.qrc">
+        <normaloff>:/icons/Icons/005-play-arrow.png</normaloff>:/icons/Icons/005-play-arrow.png</iconset>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QPushButton" name="pushButton_2">
+     <widget class="QPushButton" name="pb_forwardOneFrame">
       <property name="maximumSize">
        <size>
         <width>24</width>
@@ -81,12 +96,16 @@
        </size>
       </property>
       <property name="text">
-       <string>&gt;|</string>
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="icons.qrc">
+        <normaloff>:/icons/Icons/004-step-forward.png</normaloff>:/icons/Icons/004-step-forward.png</iconset>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QPushButton" name="pushButton">
+     <widget class="QPushButton" name="pb_lastFrame">
       <property name="maximumSize">
        <size>
         <width>24</width>
@@ -94,13 +113,19 @@
        </size>
       </property>
       <property name="text">
-       <string>&gt;&gt;</string>
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="icons.qrc">
+        <normaloff>:/icons/Icons/004-step-forward.png</normaloff>:/icons/Icons/004-step-forward.png</iconset>
       </property>
      </widget>
     </item>
    </layout>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="icons.qrc"/>
+ </resources>
  <connections/>
 </ui>

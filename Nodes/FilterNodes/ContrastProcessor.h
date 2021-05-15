@@ -28,15 +28,14 @@ public:
     ContrastProcessor();
 
     virtual QString Name() override { return "Contrast";}
+    // Node override
+    void SetInput(QImage* input);
 
     // ImageProcessorBase / ImageFilterNode
     virtual void SetParameters() override;
-    virtual void BeforeProcessing() override;
-    virtual void AfterProcessing() override;
-    virtual void ProcessInternal() override;
-
-    // Node override
-    void SetInput(QImage* input);
+    virtual bool BeforeProcessing() override;
+    virtual bool AfterProcessing() override;
+    virtual bool ProcessInternal() override;
 
 private :
 
@@ -82,11 +81,8 @@ private :
     QOpenGLBuffer _glFragmentBuffer;
 
     // input / output
-    QImage * _inputFrame;
     int currentOutputIndex = 0;
     QString _inputFilename;
-
-    QImage * _output;
 
     QVector2D ToTexCoord(QVector2D position);
     QVector2D ToVertexCoord(QVector2D position);

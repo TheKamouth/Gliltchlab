@@ -12,7 +12,7 @@ void ContrastProcessor::SetInput(QImage* input)
 {
     ImageProcessorBase::SetInput(input);
 
-    _fboSize = _inputFrame->size();
+    _fboSize = _input->size();
 
     // init shaders ?
     //Init();
@@ -23,9 +23,9 @@ void ContrastProcessor::SetParameters()
 
 }
 
-void ContrastProcessor::BeforeProcessing()
+bool ContrastProcessor::BeforeProcessing()
 {
-    _fboSize = _inputFrame->size();
+    _fboSize = _input->size();
 
     qDebug() << "with "<< Name();
 
@@ -76,7 +76,7 @@ void ContrastProcessor::BeforeProcessing()
     }
 
     _inputTexture = new QOpenGLTexture(QOpenGLTexture::Target2D);
-    _inputTexture->setData(*_inputFrame);
+    _inputTexture->setData(*_input);
     _inputTexture->bind(0);
     if(!_inputTexture->isBound())
     {
@@ -129,7 +129,7 @@ void ContrastProcessor::BeforeProcessing()
 
 }
 
-void ContrastProcessor::AfterProcessing()
+bool ContrastProcessor::AfterProcessing()
 {
     QString timeStamp = QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm_ss_z");
     QString inputFilenameNoExtension = _inputFilename.left(_inputFilename.length()-4);
@@ -141,7 +141,7 @@ void ContrastProcessor::AfterProcessing()
     qDebug() << "and writing "<< outputFilename;
 }
 
-void ContrastProcessor::ProcessInternal()
+bool ContrastProcessor::ProcessInternal()
 {
     QString vertexPosVar("aPosition");
     QString textureCoordVar("aTexCoord");
@@ -159,13 +159,15 @@ void ContrastProcessor::ProcessInternal()
     int offset = 0;
     _glShaderProgram->enableAttributeArray(vertexPosVar.toLatin1().data());
     _glShaderProgram->enableAttributeArray(textureCoordVar.toLatin1().data());
-    _glShaderProgram->setAttributeBuffer(vertexPosVar.toLatin1().data(), GL_FLOAT, offset, 2, sizeof(VertexData));
+    _glShaderProgram->setAttributeBuffer(vertexPosVar.toLatin1().data(), GL_FLOAT, offset, 2, 0);
     offset += sizeof(QVector2D);
-    _glShaderProgram->setAttributeBuffer(textureCoordVar.toLatin1().data(), GL_FLOAT, offset, 2, sizeof(VertexData));
+    _glShaderProgram->setAttributeBuffer(textureCoordVar.toLatin1().data(), GL_FLOAT, offset, 2, 0);
     _glShaderProgram->setUniformValue(textureVar.toLatin1().data(), 0);
     _glContext.functions()->glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, Q_NULLPTR);
 
     _output = new QImage(_glFrameBufferObject->toImage(false));
+
+    return true;
 }
 
 QVector2D ContrastProcessor::ToTexCoord(QVector2D position)

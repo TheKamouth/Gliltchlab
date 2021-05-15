@@ -1,6 +1,6 @@
 QT       += core gui opengl multimedia multimediawidgets
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets xml gui multimedia
 
 CONFIG += c++11
 
@@ -10,7 +10,7 @@ CONFIG += c++11
 
 SOURCES += \
     CommonPreferences.cpp \
-    FlowGraph.cpp \
+	FlowGraph/FlowGraph.cpp \
     Nodes/FilterNodes/ScannerFilterNode.cpp \
     Nodes/Node.cpp \
     Nodes/NodeCommonWidget.cpp \
@@ -18,11 +18,9 @@ SOURCES += \
 	Nodes/ImageInputNode.cpp \
 	Nodes/ImageOutputNode.cpp \
 	Nodes/ImagePeakNode.cpp \
-	Nodes/FilterNodes/ImageProcessorBase.cpp \
 	Nodes/FilterNodes/ContrastProcessor.cpp \
 	Nodes/FilterNodes/DesaturateFilterNode.cpp \
-    ProcessorFlow.cpp \
-    ProcessorFlowDockWidget.cpp \
+	FlowGraph/ProcessorFlowDockWidget.cpp \
     TimeControlWidget.cpp \
     TimelineWidget.cpp \
     main.cpp \
@@ -33,10 +31,10 @@ SOURCES += \
 
 HEADERS += \
     CommonPreferences.h \
-    FlowGraph.h \
+	FlowGraph/FlowGraph.h \
+    FlowGraph/FlowGraphXmlConstants.h \
     ImageProcessorWrapper.h \
 	Nodes/FilterNodes/ContrastProcessor.h \
-	Nodes/FilterNodes/ImageProcessorBase.h \
 	Nodes/FilterNodes/DesaturateFilterNode.h \
     Nodes/FilterNodes/ScannerFilterNode.h \
     Nodes/ImageInputNode.h \
@@ -45,8 +43,7 @@ HEADERS += \
     Nodes/Node.h \
     Nodes/NodeCommonWidget.h \
     Nodes/NodeFactory.h \
-    ProcessorFlow.h \
-    ProcessorFlowDockWidget.h \
+	FlowGraph/ProcessorFlowDockWidget.h \
     TimeControlWidget.h \
     TimelineWidget.h \
     mainwindow.h \
@@ -55,7 +52,7 @@ HEADERS += \
 
 FORMS += \
     Nodes/FilterNodes/ScannerFilterNode.ui \
-    ProcessorFlowDockWidget.ui \
+	FlowGraph/ProcessorFlowDockWidget.ui \
     TimeControlWidget.ui \
     TimelineWidget.ui \
 	mainwindow.ui \
@@ -71,11 +68,12 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
+    FlowGraph/FlowGraphFileIO/flow_0.fgf \
     Shaders/AllRed.frag \
 	Shaders/Contrast.frag \
     Shaders/Desaturate.frag \
-	Shaders/FragmentShader.frag \
 	Shaders/FullScreenTextureCopy.frag \
+    Shaders/Scanner.frag \
 	Shaders/VertexShader.vert \
     Icons/icons8-closed-eye-50.png \
     Icons/icons8-creek-50.png \

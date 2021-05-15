@@ -72,12 +72,6 @@ void PreferencesDialog::on_pushButton_2_clicked()
 {
     //Dialog box
     QString* directory = new QString("Choose default output directory");
-
-    //QString* filter = new QString("..");
-    QString* filter = new QString("..");
-
-    QString* selectedFilter = new QString("Images (*.png *.xpm *.jpg)");
-
     QString chosenFolder = QFileDialog::getExistingDirectory(this, *directory);
 
     if( chosenFolder.isNull()){

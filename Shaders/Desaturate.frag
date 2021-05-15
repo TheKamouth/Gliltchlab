@@ -34,13 +34,15 @@ void main(void)
 
 	switch(desaturationMode)
 	{
+
 	case 0:
 		// Lightness
-		float lightness = desaturationValue * hsvTexColor.b;
+		float lightness = hsvTexColor.b;
 		rgbDesaturatedColor.r = lightness;
 		rgbDesaturatedColor.g = lightness;
 		rgbDesaturatedColor.b = lightness;
 		break;
+
 	case 1:
 		// Average
 		float averageRgb = (texColor.r + texColor.g + texColor.b) / 3.0;
@@ -48,16 +50,18 @@ void main(void)
 		rgbDesaturatedColor.g = averageRgb;
 		rgbDesaturatedColor.b = averageRgb;
 		break;
+
 	case 2:
 		// Min
-		float minRgb = min( hsvTexColor.r, min( hsvTexColor.r, hsvTexColor.b));
+		float minRgb = min( texColor.r, min( texColor.r, texColor.b));
 		rgbDesaturatedColor.r = minRgb;
 		rgbDesaturatedColor.g = minRgb;
 		rgbDesaturatedColor.b = minRgb;
 		break;
+
 	case 3:
 		// Max
-		float maxRgb = max( hsvTexColor.r, max( hsvTexColor.g, hsvTexColor.b));
+		float maxRgb = max( texColor.r, max( texColor.g, texColor.b));
 		rgbDesaturatedColor.r = maxRgb;
 		rgbDesaturatedColor.g = maxRgb;
 		rgbDesaturatedColor.b = maxRgb;
@@ -97,9 +101,8 @@ void main(void)
 		break;
 	}
 
+	vec3 attenuatedColor = desaturationValue * rgbDesaturatedColor;
 
-	gl_FragColor = vec4( rgbDesaturatedColor.x, rgbDesaturatedColor.y, rgbDesaturatedColor.z, 1.0f);
-
-	//gl_FragColor = texColor;
+	gl_FragColor = vec4( attenuatedColor, 1.0f);
 }
 

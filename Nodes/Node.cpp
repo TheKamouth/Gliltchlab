@@ -26,33 +26,61 @@ Node::~Node()
     }
 }
 
+int Node::FlowGraphNodePosition()
+{
+    return _flowGraphPosition;
+}
+
 bool Node::TryProcess()
 {
-    qDebug() << "TryProcess: " << Name() ;
+    BeforeProcessing();
 
-    _output = new QImage(*_input);
+    ProcessInternal();
+
+    AfterProcessing();
+
     return true;
 }
 
-void Node::Initialize()
+bool Node::BeforeProcessing()
+{
+    if(_input == nullptr)
+    {
+        qDebug() << "Cannot save: _input is null";
+        return false;
+    }
+
+    return true;
+}
+
+bool Node::AfterProcessing()
+{
+    if(_output == nullptr)
+    {
+        qDebug() << "_ouput is null";
+        return false;
+    }
+
+    return true;
+}
+
+bool Node::ProcessInternal()
+{
+    _output = new QImage(*_input);
+
+    return true;
+}
+
+void Node::InitializeNodeCommonWidget()
 {
     // Cannot be done in constructor as NodeCommonWidget constructor relies on dynamic type
     _nodeCommonWidget = new NodeCommonWidget(this);
 
     QObject::connect( _nodeCommonWidget, &NodeCommonWidget::DeleteClicked, this, &Node::OnDeleteProcessorClicked);
 
-    //_nodeCommonUi->setParent(NodeUiBaseWidgetInForm());
-
     NodeUiBaseLayoutInForm()->addWidget(_nodeCommonWidget);
 
-    //QWidget* nodeCommonUiWidget = NodeUiBaseWidgetInForm();
-
-    //_nodeCommonUi->setParent(NodeUiBaseWidgetInForm());
-    //QLayout* layout = _nodeCommonUi->layout();
-    //layout->addWidget(NodeUiBaseWidgetInForm());
-
     _nodeCommonWidget->setVisible(true);
-    //SpecificUI()->setVisible(false);
 }
 
 void Node::OnEnableProcessorCheckboxClicked(bool toggled)
