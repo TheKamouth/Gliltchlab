@@ -12,6 +12,7 @@ Node::Node()
     _nodeCommonWidget = nullptr;
     _peakWidget = nullptr;
 
+    // Could be handled by GenericNode
     _input = nullptr;
     _output = nullptr;
 }
@@ -26,13 +27,11 @@ Node::~Node()
     }
 }
 
-int Node::FlowGraphNodePosition()
-{
-    return _flowGraphPosition;
-}
-
 bool Node::TryProcess()
 {
+    // If connection has changed (meaning depends on ConnectionType)
+    // ReadConnections
+
     BeforeProcessing();
 
     ProcessInternal();
@@ -40,6 +39,8 @@ bool Node::TryProcess()
     AfterProcessing();
 
     UpdatePeakWidget();
+
+    // WriteConnections
 
     return true;
 }
@@ -108,3 +109,9 @@ void Node::EmitNodeChanged()
 {
     emit NodeChanged(this);
 }
+
+int Node::FlowGraphNodePosition()
+{
+    return _flowGraphPosition;
+}
+

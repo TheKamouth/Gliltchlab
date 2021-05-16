@@ -19,7 +19,7 @@ public:
     FlowGraph();
 
     // fgf file handling
-    void CreateNewFlowGraphFile(QString filePath);
+    void CreateNewFlowGraphFile();
     void SaveFlowGraphFile(QString fileName);
     void LoadFlowGraphFile(QString filePath);
 

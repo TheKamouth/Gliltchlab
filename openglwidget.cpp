@@ -16,7 +16,6 @@ OpenGLWidget::OpenGLWidget( QWidget *parent) : QOpenGLWidget( parent),
 
 void OpenGLWidget::initializeGL()
 {
-
     // Set up the rendering context, clearColor
     QOpenGLFunctions *f = QOpenGLContext::currentContext()->functions();
     f->glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -225,13 +224,16 @@ ViewInfo * OpenGLWidget::GetViewInfo()
 
 void OpenGLWidget::SetViewInfo(ViewInfo * viewInfo)
 {
-    _viewInfo->Zoom = viewInfo->Zoom;
-    _viewInfo->ZoomMin = viewInfo->ZoomMin;
-    _viewInfo->ZoomMax = viewInfo->ZoomMax;
-    _viewInfo->ViewCenter = viewInfo->ViewCenter;
+    if(_viewInfo)
+    {
+        _viewInfo->Zoom = viewInfo->Zoom;
+        _viewInfo->ZoomMin = viewInfo->ZoomMin;
+        _viewInfo->ZoomMax = viewInfo->ZoomMax;
+        _viewInfo->ViewCenter = viewInfo->ViewCenter;
 
-    paintGL();
-    update();
+        paintGL();
+        update();
+    }
 }
 
 QPointF OpenGLWidget::getSortingCenter()

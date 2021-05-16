@@ -11,7 +11,21 @@ CONFIG += c++11
 SOURCES += \
     CommonPreferences.cpp \
 	FlowGraph/FlowGraph.cpp \
+    FlowGraph/NodeConnection.cpp \
+    Nodes/FilterNodes/PixelSort/PixelSortFilterNode.cpp \
+    Nodes/FilterNodes/PixelSort/core/glilcthlabcore.cpp \
+    Nodes/FilterNodes/PixelSort/core/glitchmask.cpp \
+    Nodes/FilterNodes/PixelSort/core/glitchparameters.cpp \
+    Nodes/FilterNodes/PixelSort/core/glitchsegmentationrule.cpp \
+    Nodes/FilterNodes/PixelSort/core/glitchsortingrule.cpp \
+    Nodes/FilterNodes/PixelSort/ui/editdirectionwidget.cpp \
+    Nodes/FilterNodes/PixelSort/ui/editfunctionwidget.cpp \
+    Nodes/FilterNodes/PixelSort/ui/editmaskwidget.cpp \
+    Nodes/FilterNodes/PixelSort/ui/editsegmentationwidget.cpp \
+    Nodes/FilterNodes/PixelSort/ui/processprogressbar.cpp \
     Nodes/FilterNodes/ScannerFilterNode.cpp \
+    Nodes/GenericNode.cpp \
+    Nodes/GenericNodeTest.cpp \
     Nodes/Node.cpp \
     Nodes/NodeCommonWidget.cpp \
     Nodes/NodeFactory.cpp \
@@ -33,10 +47,24 @@ HEADERS += \
     CommonPreferences.h \
 	FlowGraph/FlowGraph.h \
     FlowGraph/FlowGraphXmlConstants.h \
+    FlowGraph/NodeConnection.h \
     ImageProcessorWrapper.h \
 	Nodes/FilterNodes/ContrastProcessor.h \
 	Nodes/FilterNodes/DesaturateFilterNode.h \
+    Nodes/FilterNodes/PixelSort/PixelSortFilterNode.h \
+    Nodes/FilterNodes/PixelSort/core/glilcthlabcore.h \
+    Nodes/FilterNodes/PixelSort/core/glitchmask.h \
+    Nodes/FilterNodes/PixelSort/core/glitchparameters.h \
+    Nodes/FilterNodes/PixelSort/core/glitchsegmentationrule.h \
+    Nodes/FilterNodes/PixelSort/core/glitchsortingrule.h \
+    Nodes/FilterNodes/PixelSort/ui/editdirectionwidget.h \
+    Nodes/FilterNodes/PixelSort/ui/editfunctionwidget.h \
+    Nodes/FilterNodes/PixelSort/ui/editmaskwidget.h \
+    Nodes/FilterNodes/PixelSort/ui/editsegmentationwidget.h \
+    Nodes/FilterNodes/PixelSort/ui/processprogressbar.h \
     Nodes/FilterNodes/ScannerFilterNode.h \
+    Nodes/GenericNode.h \
+    Nodes/GenericNodeTest.h \
     Nodes/ImageInputNode.h \
     Nodes/ImageOutputNode.h \
     Nodes/ImagePeakNode.h \
@@ -51,6 +79,12 @@ HEADERS += \
     preferencesdialog.h
 
 FORMS += \
+    Nodes/FilterNodes/PixelSort/PixelSortFilterNode.ui \
+    Nodes/FilterNodes/PixelSort/ui/editdirectionwidget.ui \
+    Nodes/FilterNodes/PixelSort/ui/editfunctionwidget.ui \
+    Nodes/FilterNodes/PixelSort/ui/editmaskwidget.ui \
+    Nodes/FilterNodes/PixelSort/ui/editsegmentationwidget.ui \
+    Nodes/FilterNodes/PixelSort/ui/processprogressbar.ui \
     Nodes/FilterNodes/ScannerFilterNode.ui \
 	FlowGraph/ProcessorFlowDockWidget.ui \
     TimeControlWidget.ui \

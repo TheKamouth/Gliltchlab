@@ -73,6 +73,7 @@ void MainWindow::on_actionPreferences_triggered()
 
 void MainWindow::OnNewFlowGraphFileTriggered()
 {
+    /*
     //Dialog box
     QString directory = QString("Open file");
     QString* filter = new QString("..");
@@ -86,8 +87,9 @@ void MainWindow::OnNewFlowGraphFileTriggered()
         qDebug() << "Error loading file: " << inputFilename << Qt::endl;
         return;
     }
+    */
 
-    _flowGraphDockWidget->CurrentFlowGraph()->CreateNewFlowGraphFile(inputFilename);
+    _flowGraphDockWidget->CurrentFlowGraph()->CreateNewFlowGraphFile();
     _flowGraphDockWidget->show();
 }
 
@@ -147,14 +149,36 @@ void MainWindow::OnViewTimeLineTriggered(bool checked)
 }
 
 void MainWindow::OnPeakNode(Node *node)
-{        
-    if (_nodePeaked != nullptr && node != _nodePeaked)
+{
+    if (node == _nodePeaked)
     {
+        // node already peaked at
+        return;
+    }
+
+    ViewInfo * viewInfo = nullptr;
+    OpenGLWidget * glWidget = nullptr;
+
+    if (_nodePeaked != nullptr)
+    {
+        // Currently peaking a node
+
+        // hm, this does not feel right
+        glWidget = dynamic_cast<OpenGLWidget*>(_peakWidget);
+        if (glWidget != nullptr)
+        {
+            // _peakWidget is already an OpenGLWidget
+            // Copy previous viewInfo
+            viewInfo = new ViewInfo(*glWidget->GetViewInfo());
+        }
+
+        // Delete its widget
         _nodePeaked->ReleasePeakWidget();
     }
 
     _nodePeaked = node;
     _peakWidget = _nodePeaked->InstantiatePeakWidget();
+    glWidget = dynamic_cast<OpenGLWidget*>(_peakWidget);
 
     FlowGraph * flowGraph = _flowGraphDockWidget->CurrentFlowGraph();
     for (int i = 0 ; i < flowGraph->NodeCount() ; i++)
@@ -167,19 +191,10 @@ void MainWindow::OnPeakNode(Node *node)
 
     _nodePeaked->CommonWidget()->SetIsPeakedAt(true);
 
-    // hm, this does not feel right    
-    OpenGLWidget * glWidget = dynamic_cast<OpenGLWidget*>(_peakWidget);
-
-    ViewInfo * viewInfo = nullptr;
-    if(glWidget != nullptr)
-    {
-        viewInfo = glWidget->GetViewInfo();
-    }
-
     if(viewInfo != nullptr)
     {
         glWidget->SetViewInfo(viewInfo);
     }
 
-    setCentralWidget(glWidget);
+    setCentralWidget(_peakWidget);
 }

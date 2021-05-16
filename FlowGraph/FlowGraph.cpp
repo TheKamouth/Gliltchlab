@@ -17,15 +17,13 @@ FlowGraph::FlowGraph() :
 {
 }
 
-void FlowGraph::CreateNewFlowGraphFile(QString filePath)
+void FlowGraph::CreateNewFlowGraphFile()
 {
     // Clear previous nodes
     for(int i = _nodes.count() - 1 ; i >= 0 ; i--)
     {
         RemoveNode(i);
     }
-
-    _domDocumentFilePath = filePath;
 
     _domDocument = new QDomDocument(XML_FGF_ROOT);
     QDomElement root = _domDocument->createElement(XML_FGF_ROOT);
@@ -37,7 +35,7 @@ void FlowGraph::CreateNewFlowGraphFile(QString filePath)
 
 void FlowGraph::UpdateFgfFileWithCurrentDom()
 {
-    if(!_flowGraphFileDevice)
+    if(_flowGraphFileDevice == nullptr)
     {
         //QString anotFileName = _flowName + ".fgf";
         _flowGraphFileDevice = new QFile(_domDocumentFilePath);
@@ -119,6 +117,15 @@ void FlowGraph::UpdateFlowGraph()
 
 void FlowGraph::SaveFlowGraphFile(QString fileName)
 {
+    _domDocumentFilePath = fileName;
+
+    // Delete existing file
+    if(QFile::exists(fileName))
+    {
+        QFile * existingFile = new QFile(fileName);
+        existingFile->remove();
+    }
+
     qDebug() << __FUNCTION__ << " saved to : " << fileName;
 
     UpdateFgfFileWithCurrentDom();
