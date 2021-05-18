@@ -6,6 +6,8 @@
 
 //}
 
+// arbitrary diff for branching test purpose
+
 template< class ... Connections>
 int GenericNode<Connections...>::ConnectionCount()
 {
