@@ -16,7 +16,7 @@ NodeCommonWidget::NodeCommonWidget(Node * node):
     QObject::connect( ui->pb_peak, &QPushButton::clicked, this, &NodeCommonWidget::OnPeakClicked);
 
     //QObject::connect( ui->pb_settings, &QPushButton::clicked, node, &Node::OnProcessorSettingsClicked);
-    QObject::connect( ui->cb_enabled, &QPushButton::toggled, node, &Node::OnEnableProcessorCheckboxClicked);
+    QObject::connect( ui->cb_enabled, &QPushButton::toggled, node, &Node::OnEnableNodeCheckboxClicked);
     QObject::connect( ui->pb_arrow, &QPushButton::toggled, node, &Node::OnExpandCollapseArrowClicked);
 
     if(node == nullptr)

@@ -34,7 +34,14 @@ bool Node::TryProcess()
 
     BeforeProcessing();
 
-    ProcessInternal();
+    if(_isEnabled)
+    {
+        ProcessInternal();
+    }
+    else
+    {
+        _output = new QImage(*_input);
+    }
 
     AfterProcessing();
 
@@ -81,16 +88,18 @@ void Node::InitializeNodeCommonWidget()
     // Cannot be done in constructor as NodeCommonWidget constructor relies on dynamic type
     _nodeCommonWidget = new NodeCommonWidget(this);
 
-    QObject::connect( _nodeCommonWidget, &NodeCommonWidget::DeleteClicked, this, &Node::OnDeleteProcessorClicked);
+    QObject::connect( _nodeCommonWidget, &NodeCommonWidget::DeleteClicked, this, &Node::OnDeleteNodeClicked);
 
     NodeUiBaseLayoutInForm()->addWidget(_nodeCommonWidget);
 
     _nodeCommonWidget->setVisible(true);
 }
 
-void Node::OnEnableProcessorCheckboxClicked(bool toggled)
+void Node::OnEnableNodeCheckboxClicked(bool toggled)
 {
     SpecificUI()->setEnabled(toggled);
+
+    //
 }
 
 void Node::OnExpandCollapseArrowClicked(bool isSpecificWidgetExpanded)

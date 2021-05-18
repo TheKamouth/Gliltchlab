@@ -171,8 +171,6 @@ bool ScannerFilterNode::BeforeProcessing()
 
 bool ScannerFilterNode::ProcessInternal()
 {
-    //Scan();
-
     ScanOneDrawCall();
 }
 

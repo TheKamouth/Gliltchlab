@@ -17,7 +17,7 @@ protected:
     virtual void UpdatePeakWidget() override;
     virtual void ReleasePeakWidget() override;
 
-private:
+protected:
     OpenGLWidget * _glWidget;
 };
 

@@ -75,11 +75,11 @@ public:
     bool IsEnabled() { return _isEnabled;}
     void Enable(bool isEnabled){ _isEnabled = isEnabled;}
 
-    void OnEnableProcessorCheckboxClicked(bool toggled);
+    void OnEnableNodeCheckboxClicked(bool toggled);
     void OnExpandCollapseArrowClicked(bool isSpecificWidgetExpanded);
 
 signals:
-    void OnDeleteProcessorClicked(Node * node);
+    void OnDeleteNodeClicked(Node * node);
     void NodeChanged(Node * node);
     void OnProcessorSettingsClicked();
 

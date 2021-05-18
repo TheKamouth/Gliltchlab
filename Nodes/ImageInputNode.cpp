@@ -60,6 +60,11 @@ void ImageInputNode::OnLoadInputClicked()
     // weird vocabulary
     _output = new QImage(inputFilename);
 
+    if(_glWidget != nullptr)
+    {
+        _glWidget->SetDisplayedImage(_output);
+    }
+
     SetInputFilePath(inputFilename);
 }
 
@@ -71,8 +76,6 @@ void ImageInputNode::SetInputFilePath(QString filePath)
 
     ui->label->setText(_outputFileName);
     ui->pb_reload->setEnabled(true);
-
-    UpdatePreview();
 
     EmitNodeChanged();
 
@@ -92,22 +95,8 @@ void ImageInputNode::OnReloadClicked()
     _input = new QImage(_inputFileName);
     ui->label->setText(_inputFileName);
 
-    UpdatePreview();
-
     EmitNodeChanged();
 
     // only one flow for now
     //emit InputLoaded(_input, 0);
-}
-
-void ImageInputNode::UpdatePreview()
-{
-    if(_previewPixMap != nullptr)
-    {
-        delete _previewPixMap;
-    }
-
-    _previewPixMap = new QPixmap;
-    _previewPixMap->convertFromImage(*_output);
-    ui->lb_preview->setPixmap(*_previewPixMap);
 }

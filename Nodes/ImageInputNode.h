@@ -44,8 +44,6 @@ private:
     QString _outputFileName;
 
     QPixmap * _previewPixMap;
-
-    void UpdatePreview();
 };
 
 #endif // IMAGEINPUTNODE_H
