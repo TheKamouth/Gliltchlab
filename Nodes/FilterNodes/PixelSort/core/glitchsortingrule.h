@@ -21,7 +21,6 @@ class GlitchSortingRule
 public:
     GlitchSortingRule();
 
-
     int GetColorValue(QColor color);
     void SetSortingRule( SortingRule sortingRule);
 

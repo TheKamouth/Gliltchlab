@@ -13,6 +13,7 @@ enum NodeType
     // Images processors
     Desaturate,
     ScannerFilter,
+    PixelSort,
 
     // Misc
     OutputImage,
@@ -21,7 +22,6 @@ enum NodeType
     AllRed,
 
     // TODO
-    PixelSort,
     InputColor,
     Contrast,
     Curves,

@@ -13,17 +13,13 @@ public:
     GlitchParameters();
 
     float sortingAngle;
-
     bool isCircularSorting;
-
     QPointF sortingCenter;
-
     GlitchSortingRule* sortingRule;
-
     bool invertSortingRule;
-
     GlitchSegmentationRule* segmentationRule;
 
+    // unused
     GlitchMask mask;
 
 };

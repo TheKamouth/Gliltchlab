@@ -46,6 +46,7 @@ public:
     virtual QWidget * NodeUiBaseWidgetInForm() override;
     virtual QLayout* NodeUiBaseLayoutInForm() override;
     virtual QWidget * SpecificUI() override;
+    virtual QLayout * SpecificUiLayout() override;
 
     // ImageProcessorBase / Filter
     virtual void SetParameters() override;

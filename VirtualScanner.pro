@@ -24,6 +24,7 @@ SOURCES += \
     Nodes/FilterNodes/PixelSort/ui/editmaskwidget.cpp \
     Nodes/FilterNodes/PixelSort/ui/editsegmentationwidget.cpp \
     Nodes/FilterNodes/PixelSort/ui/processprogressbar.cpp \
+	Nodes/FilterNodes/RgbShiftFilterNode.cpp \
     Nodes/FilterNodes/ScannerFilterNode.cpp \
     Nodes/GenericNode.cpp \
     Nodes/GenericNodeTest.cpp \
@@ -59,6 +60,7 @@ HEADERS += \
     Nodes/FilterNodes/PixelSort/ui/editmaskwidget.h \
     Nodes/FilterNodes/PixelSort/ui/editsegmentationwidget.h \
     Nodes/FilterNodes/PixelSort/ui/processprogressbar.h \
+	Nodes/FilterNodes/RgbShiftFilterNode.h \
     Nodes/FilterNodes/ScannerFilterNode.h \
     Nodes/GenericNode.h \
     Nodes/GenericNodeTest.h \
@@ -81,6 +83,7 @@ FORMS += \
     Nodes/FilterNodes/PixelSort/ui/editmaskwidget.ui \
     Nodes/FilterNodes/PixelSort/ui/editsegmentationwidget.ui \
     Nodes/FilterNodes/PixelSort/ui/processprogressbar.ui \
+	Nodes/FilterNodes/RgbShiftFilterNode.ui \
     Nodes/FilterNodes/ScannerFilterNode.ui \
 	FlowGraph/ProcessorFlowDockWidget.ui \
     TimeControlWidget.ui \

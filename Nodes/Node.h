@@ -39,8 +39,9 @@ protected:
 public:
     //
     virtual QWidget * NodeUiBaseWidgetInForm() = 0;
-    virtual QLayout* NodeUiBaseLayoutInForm() = 0;
+    virtual QLayout * NodeUiBaseLayoutInForm() = 0;
     virtual QWidget * SpecificUI() = 0;
+    virtual QLayout * SpecificUiLayout(){return nullptr;}
 
     // Peak widget is instantiated when needed and deleted when not visible
     // Not anymore: mainwindow handles 1 widget for each output type
@@ -76,8 +77,17 @@ public:
     bool IsEnabled() { return _isEnabled;}
     void Enable(bool isEnabled){ _isEnabled = isEnabled;}
 
+    // Common ui events handling
     void OnEnableNodeCheckboxClicked(bool toggled);
     void OnExpandCollapseArrowClicked(bool isSpecificWidgetExpanded);
+
+    void EmitNodeInputChanged();
+
+    template<class T>
+    void EmitNodeInputChanged(T arg)
+    {
+        EmitNodeInputChanged();
+    }
 
 signals:
     void OnDeleteNodeClicked(Node * node);
@@ -106,7 +116,7 @@ protected :
     QImage * _output;
 
     QString GetTempImageOutputFilePath();
-    void EmitNodeInputChanged();
+
 };
 
 #endif // NODE_H

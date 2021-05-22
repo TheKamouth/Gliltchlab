@@ -1,6 +1,7 @@
 #include "glilcthlabcore.h"
 
 #include <QDebug>
+#include <QPixmap>
 
 void GetPixel(int x, int y, std::vector< QRgb>* line, QPixmap *inputImage, QImage *outputImage, int index){
 
@@ -32,19 +33,23 @@ void GlilcthLabCore::Init(){
     myCompClass.rule = glitchParameters->sortingRule;
 }
 
-void GlilcthLabCore::SetInputImage(QString fileName){
+void GlilcthLabCore::SetInputImage(QImage * image){
 
-    if( areResourcesAllocated){
-        ClearResources();
-    }
+//    if( areResourcesAllocated){
+//        ClearResources();
+//    }
 
-    inputImage = new QPixmap(fileName);           
+    // TODO : get rid of this temporary QImage
+    QString tmpShittyPath = "shittyPath.png";
+    image->save(tmpShittyPath);
+
+    inputImage = new QPixmap(tmpShittyPath);
 
     outputQImage = new QImage(inputImage->size(), QImage::Format_RGB32);
     areResourcesAllocated = true;
 }
 
-void GlilcthLabCore::SetInputPixmap(QPixmap &pixmap){    
+void GlilcthLabCore::SetInputPixmap(QPixmap &pixmap){
 
     if( areResourcesAllocated){
         ClearResources();
@@ -65,7 +70,7 @@ void GlilcthLabCore::ProcessGlitch(){
     if(inputImage->isNull()){
         std::cout<< __FUNCTION__<<" input image is null" <<std::endl;
         return;
-    }   
+    }
 
     QImage inputQImage = inputImage->toImage();
 
@@ -120,9 +125,9 @@ void GlilcthLabCore::ProcessGlitch(){
             //updating progressBar
             operationCount++;
             int progressValue = 100 * operationCount / maxOperations;
-            SendProcessProgress( progressValue);            
+            SendProcessProgress( progressValue);
 
-            p1 = QPoint( x, 0);            
+            p1 = QPoint( x, 0);
 
             //get line
             Bresenham(imageCenter, p1, line, getPixel);
@@ -254,7 +259,7 @@ void GlilcthLabCore::ProcessGlitch(){
                 }
 
                 int progressValue = 100 * x / inputImage->size().width();
-                SendProcessProgress( progressValue);                
+                SendProcessProgress( progressValue);
 
                 QPoint p0 = QPoint(0, 0);   //point min dans le repere de la droite d'angle sortingAngle passant par p(x, 0)
                 QPoint p1 = QPoint(0, 0);   //point max ...
@@ -453,10 +458,10 @@ void GlilcthLabCore::ProcessGlitchRefactor(){
         //get line
         Bresenham(p0, p1, line, getPixel);
 
-        //sort line        
+        //sort line
         std::sort ( line->begin(), line->end(), myCompClass);
 
-        //draw sorted line        
+        //draw sorted line
         Bresenham( p0, p1, line, drawPixel);
     }
 
@@ -738,7 +743,7 @@ int GlilcthLabCore::GetOctantFromAngle(float angle){
 }
 
 //new working
-void GlilcthLabCore::Bresenham( QPoint _p0, QPoint _p1, std::vector< QRgb> *line, void (*function)(int, int, std::vector< QRgb> *, QPixmap*, QImage*, int)){    
+void GlilcthLabCore::Bresenham( QPoint _p0, QPoint _p1, std::vector< QRgb> *line, void (*function)(int, int, std::vector< QRgb> *, QPixmap*, QImage*, int)){
 
     if(_p0.x()==_p1.x() && _p0.y() == _p1.y())
         return;
@@ -997,7 +1002,7 @@ void GlilcthLabCore::DrawTestLine(){
     Bresenham(p0, p1, redLine, DrawPixel);
 
     p1 = QPoint(499, 1);
-    Bresenham(p0, p1, redLine, DrawPixel);    
+    Bresenham(p0, p1, redLine, DrawPixel);
 
     p1 = QPoint(1, 1);
     Bresenham(p0, p1, redLine, DrawPixel);

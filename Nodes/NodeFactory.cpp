@@ -4,6 +4,7 @@
 #include "Nodes/ImageOutputNode.h"
 #include "Nodes/FilterNodes/DesaturateFilterNode.h"
 #include "Nodes/FilterNodes/ScannerFilterNode.h"
+#include "Nodes/FilterNodes/PixelSort/PixelSortFilterNode.h"
 
 #include <QDebug>
 #include <QCoreApplication>
@@ -42,6 +43,10 @@ Node * NodeFactory::CreateNode(NodeType type)
 
         case ScannerFilter:
             node = new ScannerFilterNode();
+            break;
+
+        case PixelSort:
+            node = new PixelSortFilterNode();
             break;
 
         default:
@@ -88,6 +93,9 @@ QString NodeFactory::NodeTypeName(NodeType nodeType)
 
         case ScannerFilter:
             return "Scanner";
+
+        case PixelSort:
+            return "PixelSort";
 
         default:
             qDebug() << "unnamed";

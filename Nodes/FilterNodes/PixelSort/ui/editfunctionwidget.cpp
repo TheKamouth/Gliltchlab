@@ -6,6 +6,8 @@ EditFunctionWidget::EditFunctionWidget(QWidget *parent) :
     ui(new Ui::EditFunctionWidget)
 {
     ui->setupUi(this);
+
+    QObject::connect(this, &EditFunctionWidget::FunctionChanged, this, [=]() -> void { emit FunctionChanged(); } );
 }
 
 EditFunctionWidget::~EditFunctionWidget()

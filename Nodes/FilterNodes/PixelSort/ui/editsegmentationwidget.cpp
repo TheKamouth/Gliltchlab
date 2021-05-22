@@ -1,6 +1,9 @@
 #include "editsegmentationwidget.h"
 #include "ui_editsegmentationwidget.h"
 
+#include <QDoubleSpinBox>
+#include <QSlider>
+
 EditSegmentationWidget::EditSegmentationWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::EditSegmentationWidget)
@@ -8,6 +11,10 @@ EditSegmentationWidget::EditSegmentationWidget(QWidget *parent) :
     ui->setupUi(this);
 
     QObject::connect(ui->slider_threshold, &QSlider::valueChanged, ui->sb_threshold, &QSpinBox::setValue);
+
+    QObject::connect( ui->slider_threshold, &QSlider::valueChanged, this, [=]() -> void { emit SegmentationChanged(); } );
+    //QObject::connect( ui->sb_threshold, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+    //                this, [=](int) -> void { emit SegmentationChanged(); } );
 }
 
 EditSegmentationWidget::~EditSegmentationWidget()

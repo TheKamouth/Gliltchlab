@@ -45,6 +45,11 @@ QWidget * DesaturateFilterNode::SpecificUI()
     return ui->widget;
 }
 
+QLayout *DesaturateFilterNode::SpecificUiLayout()
+{
+    return ui->widget->layout();
+}
+
 void DesaturateFilterNode::SetParameters()
 {
 
