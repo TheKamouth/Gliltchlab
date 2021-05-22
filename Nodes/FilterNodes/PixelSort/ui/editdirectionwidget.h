@@ -16,7 +16,6 @@ public:
     ~EditDirectionWidget();
 
     float GetSortingAngle();
-
     bool IsCircularSorting();
 
     QPointF sortingCenter;

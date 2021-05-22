@@ -11,6 +11,7 @@ Node::Node()
     _isEnabled = true;
     _nodeCommonWidget = nullptr;
     _peakWidget = nullptr;
+    _flowGraphPosition = -1;
 
     // Could be handled by GenericNode
     _input = nullptr;
@@ -32,7 +33,13 @@ bool Node::TryProcess()
     // If connection has changed (meaning depends on ConnectionType)
     // ReadConnections
 
-    BeforeProcessing();
+    qDebug() << "### "<< __FUNCTION__<< " " << Name();
+
+    if(BeforeProcessing() == false)
+    {
+         qDebug() << "Failed to process " << Name();
+        return false;
+    }
 
     if(_isEnabled)
     {
@@ -43,11 +50,22 @@ bool Node::TryProcess()
         _output = new QImage(*_input);
     }
 
+
+    if(_output == nullptr)
+    {
+        qDebug() << "_ouput is null";
+        return false;
+    }
+
+    update();
+    CommonWidget()->OnPeakClicked();
+
     AfterProcessing();
 
-    UpdatePeakWidget();
-
     // WriteConnections
+
+    qDebug() << "### " << Name() << " processed " << Name();
+    emit NodeOutputChanged(this);
 
     return true;
 }
@@ -65,14 +83,6 @@ bool Node::BeforeProcessing()
 
 bool Node::AfterProcessing()
 {
-    if(_output == nullptr)
-    {
-        qDebug() << "_ouput is null";
-        return false;
-    }
-
-    update();
-
     return true;
 }
 
@@ -99,7 +109,9 @@ void Node::OnEnableNodeCheckboxClicked(bool toggled)
 {
     SpecificUI()->setEnabled(toggled);
 
-    //
+    _isEnabled = toggled;
+
+    emit NodeInputChanged(this);
 }
 
 void Node::OnExpandCollapseArrowClicked(bool isSpecificWidgetExpanded)
@@ -114,9 +126,9 @@ QString Node::GetTempImageOutputFilePath()
     return "nodeName_image_output" + timeStamp + ".png";
 }
 
-void Node::EmitNodeChanged()
+void Node::EmitNodeInputChanged()
 {
-    emit NodeChanged(this);
+    emit NodeInputChanged(this);
 }
 
 int Node::FlowGraphNodePosition()

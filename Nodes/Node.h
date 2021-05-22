@@ -31,10 +31,10 @@ public:
 
 protected:
     virtual bool BeforeProcessing();
-    virtual bool AfterProcessing();
-
     // Default implementation copies _input to _ouptut
     virtual bool ProcessInternal();
+    // AfterProcessing should not modify _output
+    virtual bool AfterProcessing();
 
 public:
     //
@@ -43,9 +43,10 @@ public:
     virtual QWidget * SpecificUI() = 0;
 
     // Peak widget is instantiated when needed and deleted when not visible
-    virtual QWidget * InstantiatePeakWidget() = 0;
-    virtual void UpdatePeakWidget() = 0;
-    virtual void ReleasePeakWidget() = 0;
+    // Not anymore: mainwindow handles 1 widget for each output type
+    //virtual QWidget * InstantiatePeakWidget() = 0;
+    //virtual void UpdatePeakWidget() = 0;
+    //virtual void ReleasePeakWidget() = 0;
 
     // This could be generic
     // And in cpp file
@@ -80,7 +81,8 @@ public:
 
 signals:
     void OnDeleteNodeClicked(Node * node);
-    void NodeChanged(Node * node);
+    void NodeInputChanged(Node * node);
+    void NodeOutputChanged(Node * node);
     void OnProcessorSettingsClicked();
 
 protected :
@@ -104,7 +106,7 @@ protected :
     QImage * _output;
 
     QString GetTempImageOutputFilePath();
-    void EmitNodeChanged();
+    void EmitNodeInputChanged();
 };
 
 #endif // NODE_H

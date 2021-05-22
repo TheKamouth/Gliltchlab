@@ -25,7 +25,8 @@ void ScannerFilterNode::_CheckGLError(const char* file, int line)
             case GL_OUT_OF_MEMORY:      error="OUT_OF_MEMORY";          break;
             case GL_INVALID_FRAMEBUFFER_OPERATION:  error="INVALID_FRAMEBUFFER_OPERATION";  break;
         }
-        std::cout << "GL_" << error.c_str() <<" - " << file << ":" << line << std::endl;
+
+        qDebug() << "GL_" << error.c_str() <<" - " << file << ":" << line;
         err = _glContext.functions()->glGetError();
     }
 
@@ -167,16 +168,15 @@ bool ScannerFilterNode::BeforeProcessing()
     {
         qDebug() << "Can't bind index buffer.";
     }
+
+    return true;
 }
 
 bool ScannerFilterNode::ProcessInternal()
 {
     ScanOneDrawCall();
-}
 
-bool ScannerFilterNode::AfterProcessing()
-{
-    qDebug() << "Scanner node processed, " ;
+    return true;
 }
 
 void ScannerFilterNode::ScanOneDrawCall()
@@ -220,6 +220,10 @@ void ScannerFilterNode::ScanOneDrawCall()
         case RotateAroundSensorEdge:
             deltaTheta = 2.0 * PI / lineCount;
             break;
+
+        default:
+            deltaTheta = 2.0 * PI / lineCount;
+            break;
     }
 
     _glVertexBuffer.allocate(lineCount * 2 * sizeof(VertexData));
@@ -228,7 +232,7 @@ void ScannerFilterNode::ScanOneDrawCall()
     CheckGLError();
 
     // Sample line and draw it
-    VertexData lineData[2 * lineCount];
+    VertexData vertexData[2 * lineCount];
     GLuint indexData[2 * lineCount];
     for(int i = 0; i < lineCount - 1; i++)
     {
@@ -250,12 +254,12 @@ void ScannerFilterNode::ScanOneDrawCall()
 
         theta += deltaTheta;
 
-        lineData[i*2].position = ToVertexCoord( QVector2D(i, 0.0f));
-        lineData[i*2].texCoord = ToTexCoord( lineOrigin);
+        vertexData[i*2].position = ToVertexCoord( QVector2D(i, 0.0f));
+        vertexData[i*2].texCoord = ToTexCoord( lineOrigin);
         indexData[i*2] = i * 2;
 
-        lineData[i*2+1].position = ToVertexCoord(QVector2D(i, _fboSize.height()));
-        lineData[i*2+1].texCoord = ToTexCoord(lineEnd);
+        vertexData[i*2+1].position = ToVertexCoord(QVector2D(i, _fboSize.height()));
+        vertexData[i*2+1].texCoord = ToTexCoord(lineEnd);
         indexData[i*2+1] = i * 2 + 1;
 
         // Debug output
@@ -274,7 +278,7 @@ void ScannerFilterNode::ScanOneDrawCall()
         */
     }
 
-    _glVertexBuffer.write( 0, lineData, 2 * lineCount * sizeof(VertexData));
+    _glVertexBuffer.write( 0, vertexData, 2 * lineCount * sizeof(VertexData));
     CheckGLError();
     _glFragmentBuffer.write( 0, indexData, 2 * lineCount * sizeof(GLuint));
     CheckGLError();
@@ -298,13 +302,13 @@ void ScannerFilterNode::ScanOneDrawCall()
     _glContext.functions()->glDrawElements(GL_LINES, 2 * lineCount, GL_UNSIGNED_INT, Q_NULLPTR);
     CheckGLError();
 
-    QImage currentOutput(_glFrameBufferObject->toImage(false));
-    qDebug() << currentOutput.format();
+    //QImage currentOutput(_glFrameBufferObject->toImage(false));
+    //qDebug() << currentOutput.format();
 
-    QString tempImageOutputFilePath = GetTempImageOutputFilePath();
-    _glFrameBufferObject->toImage(false).save(tempImageOutputFilePath);
+    //QString tempImageOutputFilePath = GetTempImageOutputFilePath();
+    //_glFrameBufferObject->toImage(false).save(tempImageOutputFilePath);
 
-    qDebug() << "saved in "<< tempImageOutputFilePath << Qt::endl;
+    //qDebug() << "saved in "<< tempImageOutputFilePath << Qt::endl;
 
     _output = new QImage(_glFrameBufferObject->toImage());
 }
@@ -313,7 +317,7 @@ void ScannerFilterNode::OnSensorAnimationPresetCurrentIndexChanged(int index)
 {
     _sensorAnimationMethod = (SensorAnimationMethod)index;
 
-    EmitNodeChanged();
+    EmitNodeInputChanged();
 }
 
 QVector2D ScannerFilterNode::ToTexCoord(QVector2D position)

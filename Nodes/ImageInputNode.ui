@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>145</width>
-    <height>65</height>
+    <height>67</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -143,8 +143,8 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../icons.qrc">
-              <normaloff>:/icons/Icons/icons8-update-50.png</normaloff>:/icons/Icons/icons8-update-50.png</iconset>
+             <iconset resource="../resources.qrc">
+              <normaloff>:/icons/Resources/Icons/icons8-update-50.png</normaloff>:/icons/Resources/Icons/icons8-update-50.png</iconset>
             </property>
             <property name="flat">
              <bool>true</bool>
@@ -178,8 +178,8 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../icons.qrc">
-              <normaloff>:/icons/Icons/icons8-folder-50.png</normaloff>:/icons/Icons/icons8-folder-50.png</iconset>
+             <iconset resource="../resources.qrc">
+              <normaloff>:/icons/Resources/Icons/icons8-folder-50.png</normaloff>:/icons/Resources/Icons/icons8-folder-50.png</iconset>
             </property>
             <property name="flat">
              <bool>true</bool>
@@ -235,7 +235,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../icons.qrc"/>
+  <include location="../resources.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -11,6 +11,7 @@
 #include <QElapsedTimer>
 #include <QDateTime>
 #include <QMessageBox>
+#include <QCoreApplication>
 
 #include <math.h>       /* cos */
 #define PI 3.14159265
@@ -19,10 +20,21 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     _preferencesDialog(parent, &_preferences),
-    _nodePeaked(nullptr),
-    _peakWidget(nullptr)
+    _nodePeaked(nullptr)
 {
     ui->setupUi(this);
+
+    //    QString applicationName = QCoreApplication::applicationName();
+    //    qint64 applicationPid = QCoreApplication::applicationPid();
+    //    qDebug() << "Application name: " << applicationName << " (" << applicationPid << ")";
+
+    //    _gliltchlabMainProcess.setProgram(QCoreApplication::applicationName());
+    //    qDebug() << "member process pid: " << _gliltchlabMainProcess.processId();
+
+    //    QObject::connect(&_readOutputTimer, &QTimer::timeout, this, &MainWindow::OnReadTimerTimout);
+
+    //    _readOutputTimer.setInterval(1000);
+    //    _readOutputTimer.start();
 
     _flowGraphDockWidget = new ProcessorFlowDockWidget(this);
     _flowGraphDockWidget->hide();
@@ -34,6 +46,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     _timeControlWidget.hide();
 
+    setCentralWidget(&_glWidget);
+
+    QObject::connect(_flowGraphDockWidget->CurrentFlowGraph(), &FlowGraph::NodeOutputChanged, this, &MainWindow::OnNodeOutputChanged);
+    QObject::connect(_flowGraphDockWidget->CurrentFlowGraph(), &FlowGraph::Processed, this, &MainWindow::OnFlowGraphProcessed);
+
     QObject::connect(_flowGraphDockWidget, &ProcessorFlowDockWidget::PeakNode, this, &MainWindow::OnPeakNode);
     QObject::connect(_flowGraphDockWidget, &ProcessorFlowDockWidget::OutputProcessed, this, &MainWindow::OnOutputProcessed);
 
@@ -44,6 +61,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->actionFlow_widget, &QAction::triggered ,this, &MainWindow::OnViewFlowWidgetTriggered);
     QObject::connect(ui->actionTime_controls, &QAction::triggered ,this, &MainWindow::OnViewTimeControlsTriggered);
     QObject::connect(ui->actionTimeline, &QAction::triggered ,this, &MainWindow::OnViewTimeControlsTriggered);
+    QObject::connect(ui->actionDebug_console, &QAction::triggered ,this, &MainWindow::OnShowDebugConsoleTriggered);
 }
 
 MainWindow::~MainWindow()
@@ -54,14 +72,6 @@ MainWindow::~MainWindow()
 void MainWindow::OnOutputProcessed()
 {
     qDebug() << "Flow processed.";
-}
-
-void MainWindow::on_actionPlay_triggered()
-{
-    //_processorFlow.PlayFlow();
-    _flowGraphDockWidget->CurrentFlowGraph()->Process();
-
-    //_glWidget->SetDisplayedImage(*FlowGraph().Output());
 }
 
 void MainWindow::on_actionPreferences_triggered()
@@ -132,6 +142,16 @@ void MainWindow::OnSaveFlowGraphFileTriggered()
     _flowGraphDockWidget->CurrentFlowGraph()->SaveFlowGraphFile(inputFilename);
 }
 
+void MainWindow::OnReadTimerTimout()
+{
+    QString outputStdOut = _gliltchlabMainProcess.readAllStandardOutput();
+    QString outputStdErr = _gliltchlabMainProcess.readAllStandardError();
+
+    ui->actionDebug_console->text().append(outputStdOut);
+    ui->actionDebug_console->text().append(outputStdErr);
+
+}
+
 void MainWindow::OnViewFlowWidgetTriggered(bool checked)
 {
     _flowGraphDockWidget->setVisible(checked);
@@ -148,6 +168,11 @@ void MainWindow::OnViewTimeLineTriggered(bool checked)
     _timeLineWidget->setVisible(checked);
 }
 
+void MainWindow::OnShowDebugConsoleTriggered(bool checked)
+{
+    ui->actionDebug_console->setVisible(checked);
+}
+
 void MainWindow::OnPeakNode(Node *node)
 {
     if (node == _nodePeaked)
@@ -156,29 +181,8 @@ void MainWindow::OnPeakNode(Node *node)
         return;
     }
 
-    ViewInfo * viewInfo = nullptr;
-    OpenGLWidget * glWidget = nullptr;
-
-    if (_nodePeaked != nullptr)
-    {
-        // Currently peaking a node
-
-        // hm, this does not feel right
-        glWidget = dynamic_cast<OpenGLWidget*>(_peakWidget);
-        if (glWidget != nullptr)
-        {
-            // _peakWidget is already an OpenGLWidget
-            // Copy previous viewInfo
-            viewInfo = new ViewInfo(*glWidget->GetViewInfo());
-        }
-
-        // Delete its widget
-        _nodePeaked->ReleasePeakWidget();
-    }
-
+    _glWidget.SetDisplayedImage(node->Output());
     _nodePeaked = node;
-    _peakWidget = _nodePeaked->InstantiatePeakWidget();
-    glWidget = dynamic_cast<OpenGLWidget*>(_peakWidget);
 
     FlowGraph * flowGraph = _flowGraphDockWidget->CurrentFlowGraph();
     for (int i = 0 ; i < flowGraph->NodeCount() ; i++)
@@ -190,11 +194,22 @@ void MainWindow::OnPeakNode(Node *node)
     }
 
     _nodePeaked->CommonWidget()->SetIsPeakedAt(true);
+}
 
-    if(viewInfo != nullptr)
+void MainWindow::OnNodeOutputChanged(Node *node)
+{
+    if(node == _nodePeaked)
     {
-        glWidget->SetViewInfo(viewInfo);
+        _glWidget.SetDisplayedImage(node->Output());
+    }
+}
+
+void MainWindow::OnFlowGraphProcessed()
+{
+    if ( _nodePeaked == nullptr)
+    {
+        return;
     }
 
-    setCentralWidget(_peakWidget);
+    _glWidget.SetDisplayedImage(_nodePeaked->Output());
 }

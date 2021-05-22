@@ -3,6 +3,7 @@ QT       += core gui opengl multimedia multimediawidgets
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets xml gui multimedia
 
 CONFIG += c++11
+#QMAKE_CXXFLAGS += -Werror
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -31,8 +32,6 @@ SOURCES += \
     Nodes/NodeFactory.cpp \
 	Nodes/ImageInputNode.cpp \
 	Nodes/ImageOutputNode.cpp \
-	Nodes/ImagePeakNode.cpp \
-	Nodes/FilterNodes/ContrastProcessor.cpp \
 	Nodes/FilterNodes/DesaturateFilterNode.cpp \
 	FlowGraph/ProcessorFlowDockWidget.cpp \
     TimeControlWidget.cpp \
@@ -48,8 +47,6 @@ HEADERS += \
 	FlowGraph/FlowGraph.h \
     FlowGraph/FlowGraphXmlConstants.h \
     FlowGraph/NodeConnection.h \
-    ImageProcessorWrapper.h \
-	Nodes/FilterNodes/ContrastProcessor.h \
 	Nodes/FilterNodes/DesaturateFilterNode.h \
     Nodes/FilterNodes/PixelSort/PixelSortFilterNode.h \
     Nodes/FilterNodes/PixelSort/core/glilcthlabcore.h \
@@ -67,7 +64,6 @@ HEADERS += \
     Nodes/GenericNodeTest.h \
     Nodes/ImageInputNode.h \
     Nodes/ImageOutputNode.h \
-    Nodes/ImagePeakNode.h \
     Nodes/Node.h \
     Nodes/NodeCommonWidget.h \
     Nodes/NodeFactory.h \
@@ -103,6 +99,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 DISTFILES += \
     FlowGraph/FlowGraphFileIO/flow_0.fgf \
+    Resources/Images/default.png \
     Shaders/AllRed.frag \
 	Shaders/Contrast.frag \
     Shaders/Desaturate.frag \
@@ -122,4 +119,5 @@ DISTFILES += \
     Icons/icons8-update-50.png \
 
 RESOURCES += \
-    icons.qrc
+    resources.qrc \
+    resources.qrc

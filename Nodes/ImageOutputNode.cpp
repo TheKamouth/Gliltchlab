@@ -4,8 +4,9 @@
 #include <QFileDialog>
 #include <QDebug>
 #include <QDateTime>
+#include <QDir>
 
-ImageOutputNode::ImageOutputNode(QWidget *parent) :
+ImageOutputNode::ImageOutputNode() :
     ui(new Ui::ImageOutputNode)
 {
     ui->setupUi(this);
@@ -13,7 +14,7 @@ ImageOutputNode::ImageOutputNode(QWidget *parent) :
     QObject::connect(ui->pb_loadInput, &QPushButton::clicked, this, &ImageOutputNode::OnChoseSaveDirClicked);
     QObject::connect(ui->pb_save, &QPushButton::clicked, this, &ImageOutputNode::OnSaveClicked);
 
-    _outputDirName = "";
+    _outputDirName = QDir::currentPath();
 }
 
 ImageOutputNode::~ImageOutputNode()
@@ -80,6 +81,8 @@ QWidget * ImageOutputNode::SpecificUI()
 bool ImageOutputNode::AfterProcessing()
 {
     OnSaveClicked();
+
+    return true;
 }
 
 void ImageOutputNode::SetInput(QImage *input)

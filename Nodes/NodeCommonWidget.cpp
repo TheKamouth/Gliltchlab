@@ -2,6 +2,7 @@
 #include "ui_NodeCommonWidget.h"
 
 #include "Node.h"
+#include "NodeCommonWidget.h"
 
 #include <QDebug>
 
@@ -68,6 +69,7 @@ void NodeCommonWidget::OnArrowClicked()
 
 void NodeCommonWidget::SetWidgetVisible(bool visible)
 {
+    setVisible(visible);
 }
 
 void NodeCommonWidget::SetIsPeakedAt(bool isPeakedAt)

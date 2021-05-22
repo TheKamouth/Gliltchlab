@@ -4,8 +4,8 @@
 #include <QFileDialog>
 #include <QDebug>
 
-ImageInputNode::ImageInputNode(QWidget * parent) :
-    ImagePeakNode(),
+ImageInputNode::ImageInputNode() :
+    Node(),
     ui(new Ui::ImageInputNode),
     _previewPixMap(nullptr)
 {
@@ -56,15 +56,6 @@ void ImageInputNode::OnLoadInputClicked()
         return;
     }
 
-    // should input node be output only ?
-    // weird vocabulary
-    _output = new QImage(inputFilename);
-
-    if(_glWidget != nullptr)
-    {
-        _glWidget->SetDisplayedImage(_output);
-    }
-
     SetInputFilePath(inputFilename);
 }
 
@@ -72,12 +63,13 @@ void ImageInputNode::SetInputFilePath(QString filePath)
 {
     _inputFileName = filePath;
     _outputFileName = filePath;
-    _output = new QImage(_outputFileName);
+
+    _output = new QImage(_inputFileName);
 
     ui->label->setText(_outputFileName);
     ui->pb_reload->setEnabled(true);
 
-    EmitNodeChanged();
+    EmitNodeInputChanged();
 
     // only one flow for now
     //emit InputLoaded(_input, 0);
@@ -92,10 +84,10 @@ void ImageInputNode::OnReloadClicked()
         return;
     }
 
-    _input = new QImage(_inputFileName);
     ui->label->setText(_inputFileName);
+    _output = new QImage(_outputFileName);
 
-    EmitNodeChanged();
+    EmitNodeInputChanged();
 
     // only one flow for now
     //emit InputLoaded(_input, 0);

@@ -35,7 +35,7 @@ void OpenGLWidget::paintGL()
 {
 
     //if(displayedPixmap.isNull()){
-    if( _displayedImage->isNull())
+    if( _displayedImage == nullptr || _displayedImage->isNull())
     {
         return;
     }
@@ -43,14 +43,10 @@ void OpenGLWidget::paintGL()
     painter = new QPainter( this);
 
     //zoom limit:
-    if( !_displayedImage->isNull()){
+    int onScreenImgWidth = _displayedImage->width() * _viewInfo->Zoom;
+    if( onScreenImgWidth < this->width() * 0.25){
 
-        int onScreenImgWidth = _displayedImage->width() * _viewInfo->Zoom;
-
-        if( onScreenImgWidth < this->width() * 0.25){
-
-            _viewInfo->Zoom = this->width() * 0.25 / _displayedImage->width();
-        }
+        _viewInfo->Zoom = this->width() * 0.25 / _displayedImage->width();
     }
 
     float width = _displayedImage->width() * _viewInfo->Zoom;

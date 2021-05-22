@@ -1,9 +1,8 @@
 #ifndef IMAGEOUTPUTNODE_H
 #define IMAGEOUTPUTNODE_H
 
-#include "ImagePeakNode.h"
 #include "NodeCommonWidget.h"
-#include "Nodes/ImagePeakNode.h"
+#include "Node.h"
 
 #include <QWidget>
 #include <QDir>
@@ -12,12 +11,12 @@ namespace Ui {
 class ImageOutputNode;
 }
 
-class ImageOutputNode : public ImagePeakNode
+class ImageOutputNode : public Node
 {
     Q_OBJECT
 
 public:
-    explicit ImageOutputNode(QWidget *parent = nullptr);
+    explicit ImageOutputNode();
     ~ImageOutputNode();
 
     // Node

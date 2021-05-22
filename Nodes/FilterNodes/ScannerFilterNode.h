@@ -46,7 +46,7 @@ class ScannerFilterNode;
 }
 
 
-class ScannerFilterNode : public ImagePeakNode
+class ScannerFilterNode : public Node
 {
 public:
     ScannerFilterNode();
@@ -61,7 +61,6 @@ public:
     // ImageProcessorBase / Filter
     virtual void SetParameters() override;
     virtual bool BeforeProcessing() override;
-    virtual bool AfterProcessing() override;
     virtual bool ProcessInternal() override;
 
     // Node override
@@ -78,8 +77,8 @@ private :
     SensorAnimationMethod _sensorAnimationMethod;
 
     // constants
-    const QString VERTEX_SHADER_PATH = "D:\\5_PROJETS\\5_DEV\\VirtualScanner\\sources\\VirtualScanner\\Shaders\\VertexShader.vert";
-    const QString FRAGMENT_SHADER_PATH = "D:\\5_PROJETS\\5_DEV\\VirtualScanner\\sources\\VirtualScanner\\Shaders\\Scanner.frag";
+    const QString VERTEX_SHADER_PATH = ":/shaders/Resources/Shaders/VertexShader.vert";
+    const QString FRAGMENT_SHADER_PATH = ":/shaders/Resources/Shaders/Scanner.frag";
 
     QVector<VertexData*> * _vertexData;
     QList<GLuint> * _vertexindexes;

@@ -3,7 +3,8 @@
 
 #include <QColor>
 
-enum SortingRule{
+enum SortingRule
+{
     RedOnly,
     GreenOnly,
     BlueOnly,
@@ -20,11 +21,12 @@ class GlitchSortingRule
 public:
     GlitchSortingRule();
 
-    SortingRule currentRule;
 
     int GetColorValue(QColor color);
-
     void SetSortingRule( SortingRule sortingRule);
+
+//private:
+    SortingRule _sortingRuleId;
 };
 
 #endif // GLITCHSORTINGRULE_H

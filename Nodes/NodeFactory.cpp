@@ -6,6 +6,7 @@
 #include "Nodes/FilterNodes/ScannerFilterNode.h"
 
 #include <QDebug>
+#include <QCoreApplication>
 
 NodeFactory::NodeFactory()
 {
@@ -22,7 +23,8 @@ Node * NodeFactory::CreateNode(NodeType type)
         {
             node = new ImageInputNode();
             ImageInputNode * inputImageNode = dynamic_cast<ImageInputNode *>(node);
-            inputImageNode->SetInputFilePath(DEFAULT_IMAGE_INPUT_PATH);
+            QString defaultInputImagePath = DEFAULT_IMAGE_PATH;
+            inputImageNode->SetInputFilePath(defaultInputImagePath);
             break;
         }
 
@@ -30,7 +32,7 @@ Node * NodeFactory::CreateNode(NodeType type)
         {
             node = new ImageOutputNode();
             ImageOutputNode * outputImageNode = dynamic_cast<ImageOutputNode *>(node);
-            outputImageNode->SetOutputFilePath(DEFAULT_IMAGE_OUTPUT_PATH);
+            outputImageNode->SetOutputFilePath(QCoreApplication::applicationDirPath());
             break;
         }
 
@@ -56,7 +58,8 @@ QStringList NodeFactory::AvailableNodeTypesNames()
 {
     QStringList availableNodeTypesNames;
 
-    for(int i = 0 ; i < COUNT ; i++)
+    //for(int i = 0 ; i < COUNT ; i++)
+    for(int i = 0 ; i < AllRed ; i++)
     {
         availableNodeTypesNames.append(NodeTypeName(i));
     }

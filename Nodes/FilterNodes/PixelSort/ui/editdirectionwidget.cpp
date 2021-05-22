@@ -3,8 +3,8 @@
 
 EditDirectionWidget::EditDirectionWidget(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::EditDirectionWidget),
-    sortingCenter(0.5, 0.5)
+    sortingCenter(0.5, 0.5),
+    ui(new Ui::EditDirectionWidget)
 {
     ui->setupUi(this);
 }

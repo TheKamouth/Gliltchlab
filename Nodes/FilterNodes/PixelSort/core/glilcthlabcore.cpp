@@ -76,7 +76,7 @@ void GlilcthLabCore::ProcessGlitch(){
     bool isSegmentationEnabled = glitchParameters->segmentationRule->IsSegmentationEnabled();
 
     int threshold = glitchParameters->segmentationRule->GetThreshold();
-    if (glitchParameters->sortingRule->currentRule == SortingRule::HueOnly)
+    if (glitchParameters->sortingRule->_sortingRuleId == SortingRule::HueOnly)
         threshold *= 3.59;
     else
         threshold *= 2.55;

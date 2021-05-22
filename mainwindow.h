@@ -21,11 +21,10 @@
 #include <QOpenGLFunctions>
 #include <QOpenGLTexture>
 #include <QOpenGLBuffer>
-
-#include <QImageReader> //shitty class
 #include <QMovie>
-
 #include <QDebug>
+#include <QProcess>
+#include <QTimer>
 
 /// Icons from _scanned2021_05_03_23_19_50_788
 
@@ -35,7 +34,7 @@ QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
 {
-    Q_OBJECT       
+    Q_OBJECT
 
     struct VertexData
     {
@@ -51,13 +50,14 @@ public:
     void OnViewFlowWidgetTriggered(bool checked);
     void OnViewTimeControlsTriggered(bool checked);
     void OnViewTimeLineTriggered(bool checked);
+    void OnShowDebugConsoleTriggered(bool checked);
 
 private slots:
-    void on_actionPlay_triggered();
     void on_actionPreferences_triggered();
     void OnNewFlowGraphFileTriggered();
     void OnLoadFlowGraphFileTriggered();
     void OnSaveFlowGraphFileTriggered();
+    void OnReadTimerTimout();
 
 private:
     Ui::MainWindow *ui;
@@ -71,10 +71,22 @@ private:
     PreferencesDialog _preferencesDialog;
 
     void OnPeakNode(Node * node);
-
+    void OnNodeOutputChanged(Node * node);
+    void OnFlowGraphProcessed();
 
     Node * _nodePeaked;
-    QWidget * _peakWidget;
+
+    // A widget per observable output type ?
+    OpenGLWidget _glWidget;
+    //QVideoWidget _videoWidget;
+    //QAudioWidget _audioWidget;
+
+    // TODO:
+
+    // Main gliltchlab process.
+    // Handling everything right now (UI and processing)
+    QProcess _gliltchlabMainProcess;
+    QTimer _readOutputTimer;
 
 };
 #endif // MAINWINDOW_H

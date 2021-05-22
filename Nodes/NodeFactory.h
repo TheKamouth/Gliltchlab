@@ -9,11 +9,13 @@ enum NodeType
 {
     // Misc
     InputImage,
-    OutputImage,
 
     // Images processors
     Desaturate,
     ScannerFilter,
+
+    // Misc
+    OutputImage,
 
     // Debug/Test
     AllRed,
@@ -30,8 +32,8 @@ enum NodeType
 class NodeFactory
 {
 public:
-    const QString DEFAULT_IMAGE_INPUT_PATH = QString("D:/5_PROJETS/5_DEV/VirtualScanner/test video/frame1.png");
-    const QString DEFAULT_IMAGE_OUTPUT_PATH = QString("D:/5_PROJETS/5_DEV/VirtualScanner/output");
+    const QString DEFAULT_IMAGE_PATH = ":/images/Resources/Images/default.png";
+    const QString DEFAULT_IMAGE_OUTPUT_PATH = QString("..");
 
     NodeFactory();
 

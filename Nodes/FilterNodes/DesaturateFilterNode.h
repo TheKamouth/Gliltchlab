@@ -3,8 +3,6 @@
 
 #include "Nodes/Node.h"
 
-#include "Nodes/FilterNodes/ImageProcessorBase.h"
-
 #include <QWidget>
 
 #include <QOpenGLContext>
@@ -34,12 +32,12 @@ enum DesaturationMethod
     DesaturationMethodCount
 };
 
-class DesaturateFilterNode : public ImageProcessorBase
+class DesaturateFilterNode : public Node
 {
     Q_OBJECT
 
 public:
-    explicit DesaturateFilterNode(QWidget *parent = nullptr);
+    explicit DesaturateFilterNode();
     virtual ~DesaturateFilterNode();
 
     // Node
@@ -52,11 +50,10 @@ public:
     // ImageProcessorBase / Filter
     virtual void SetParameters() override;
     virtual bool BeforeProcessing() override;
-    virtual bool AfterProcessing() override;
     virtual bool ProcessInternal() override;
 
     //
-    void OnCurrentIndexChanged(int index);
+    void OnDesaturationMethodChanged(int index);
     void OnSaturationValueChanged(int value);
     void OnSaturationSpinBoxValueChanged(double value);
 
@@ -74,8 +71,10 @@ private:
     QString AvailableDesaturationMethodName(DesaturationMethod desaturationMethod);
 
     // constants
-    const QString VERTEX_SHADER_PATH = "D:\\5_PROJETS\\5_DEV\\VirtualScanner\\sources\\VirtualScanner\\Shaders\\VertexShader.vert";
-    const QString CONTRAST_FRAGMENT_SHADER_PATH = "D:\\5_PROJETS\\5_DEV\\VirtualScanner\\sources\\VirtualScanner\\Shaders\\Desaturate.frag";
+    const QString VERTEX_SHADER_PATH =
+            ":/shaders/Resources/Shaders/VertexShader.vert";
+    const QString CONTRAST_FRAGMENT_SHADER_PATH =
+            ":/shaders/Resources/Shaders/Desaturate.frag";
 
     struct VertexData
     {
