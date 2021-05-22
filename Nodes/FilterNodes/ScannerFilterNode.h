@@ -59,7 +59,7 @@ public:
     virtual QWidget * SpecificUI() override;
 
     // ImageProcessorBase / Filter
-    virtual void SetParameters() override;
+    virtual bool TryReadInputs() override;
     virtual bool BeforeProcessing() override;
     virtual bool ProcessInternal() override;
 

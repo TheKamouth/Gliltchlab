@@ -70,9 +70,9 @@ void ScannerFilterNode::SetInput(QImage* input)
     _fboSize = _input->size();
 }
 
-void ScannerFilterNode::SetParameters()
+bool ScannerFilterNode::TryReadInputs()
 {
-
+    return true;
 }
 
 bool ScannerFilterNode::BeforeProcessing()

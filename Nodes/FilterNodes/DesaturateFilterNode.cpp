@@ -50,9 +50,9 @@ QLayout *DesaturateFilterNode::SpecificUiLayout()
     return ui->widget->layout();
 }
 
-void DesaturateFilterNode::SetParameters()
+bool DesaturateFilterNode::TryReadInputs()
 {
-
+    return true;
 }
 
 void DesaturateFilterNode::InitNodeTypeComboBox()

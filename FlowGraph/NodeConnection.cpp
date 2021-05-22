@@ -25,7 +25,7 @@ NodeConnection<InOut, ConnectionDataType>::NodeConnection()
 
     if( _connectionDirection == OutputDirection)
     {
-        _connectionData = new ConnectionData();
+        _connectionData = new FlowData();
     }
     else
     {

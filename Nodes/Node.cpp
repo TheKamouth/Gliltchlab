@@ -1,6 +1,7 @@
 #include "Node.h"
 
 #include "NodeCommonWidget.h"
+#include "FlowGraph/NodeConnection.h"
 
 #include <QLayout>
 #include <QDateTime>
@@ -85,8 +86,28 @@ bool Node::TryProcess()
     return true;
 }
 
+bool Node::TryReadInputs()
+{
+    /*
+    for(int i = 0; i < _flowData.count(); i++)
+    {
+        if(_flowData[i]->IsInput())
+        {
+            ;
+        }
+    }*/
+
+    return true;
+}
+
 bool Node::BeforeProcessing()
 {
+    //
+    if(TryReadInputs() == false)
+    {
+        return false;
+    }
+
     if(_input == nullptr)
     {
         qDebug() << "Cannot save: _input is null";

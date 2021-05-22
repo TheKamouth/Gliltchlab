@@ -6,7 +6,6 @@
 #include <QList>
 #include <QImage>
 #include <QObject>
-
 #include <QDomDocument>
 
 class Node;

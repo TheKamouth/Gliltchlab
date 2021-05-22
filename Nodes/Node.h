@@ -7,6 +7,7 @@
 #include <QWidget>
 
 class NodeCommonWidget;
+class INodeConnection;
 
 class Node : public QWidget
 {
@@ -27,7 +28,7 @@ public:
 
     // This is the interface to process node with current inputs and parameters
     virtual bool TryProcess() final;
-    virtual void SetParameters(){};
+    virtual bool TryReadInputs();
 
 protected:
     virtual bool BeforeProcessing();
@@ -114,6 +115,9 @@ protected :
     // This could be generic
     QImage * _input;
     QImage * _output;
+
+    // a cheap attempt for something a little bit more generic
+    QVector< INodeConnection *> _flowData;
 
     QString GetTempImageOutputFilePath();
 
