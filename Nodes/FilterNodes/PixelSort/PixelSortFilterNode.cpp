@@ -18,6 +18,7 @@ PixelSortFilterNode::PixelSortFilterNode() :
     SpecificUiLayout()->layout()->addWidget(segmentationEditor);
 
     QObject::connect(directionEditor, &EditDirectionWidget::CircularSortingEnabled, this, &Node::EmitNodeInputChanged<bool>);
+    QObject::connect(segmentationEditor, &EditSegmentationWidget::SegmentationChanged, this, [=]() -> void{ EmitNodeInputChanged(); });
 
     // TODO
     //_gliltchLabCore->moveToThread( &workerThread);
@@ -72,7 +73,8 @@ bool PixelSortFilterNode::ProcessInternal()
     //if(currentOpenGLWIdget)
         //gliltchLabCore->SetCircularSortingCenter( currentOpenGLWIdget->getSortingCenter());
 
-    _gliltchLabCore.ProcessGlitchRefactor();
+    //_gliltchLabCore.ProcessGlitchRefactor();
+    _gliltchLabCore.ProcessGlitch();
 
     _output = _gliltchLabCore.GetOuputImage();
 

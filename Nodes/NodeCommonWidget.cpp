@@ -77,6 +77,11 @@ void NodeCommonWidget::SetIsPeakedAt(bool isPeakedAt)
     ui->pb_peak->setChecked(isPeakedAt);
 }
 
+void NodeCommonWidget::ShowLastProcessingTime(int processingTimeMs)
+{
+    ui->lb_time->setText(QString::number(processingTimeMs) + "ms");
+}
+
 void NodeCommonWidget::UpdateNodeName(QString name)
 {
     ui->le_name->setText(name);

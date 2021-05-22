@@ -5,6 +5,7 @@
 #include <QLayout>
 #include <QDateTime>
 #include <QDebug>
+#include <QElapsedTimer>
 
 Node::Node()
 {
@@ -41,13 +42,24 @@ bool Node::TryProcess()
         return false;
     }
 
+    QString processingLogOutput = "";
+    QElapsedTimer processingTimer;
+    processingTimer.start();
+    int processingTime;
+
     if(_isEnabled)
     {
         ProcessInternal();
+
+        processingTime = processingTimer.elapsed();
+        processingLogOutput += "took " + QString::number(processingTime) + "ms to process.";
     }
     else
     {
         _output = new QImage(*_input);
+
+        processingTime = processingTimer.elapsed();
+        processingLogOutput += "took " + QString::number(processingTime) + "ms (disabled) to process.";
     }
 
 
@@ -64,7 +76,10 @@ bool Node::TryProcess()
 
     // WriteConnections
 
-    qDebug() << "### " << Name() << " processed " << Name();
+    CommonWidget()->ShowLastProcessingTime(processingTime);
+    qDebug() << processingLogOutput;
+    qDebug() << "----------------------";
+
     emit NodeOutputChanged(this);
 
     return true;
