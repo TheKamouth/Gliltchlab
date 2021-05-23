@@ -32,8 +32,7 @@ Node::~Node()
 
 bool Node::TryProcess()
 {
-    // If connection has changed (meaning depends on ConnectionType)
-    // ReadConnections
+    // Read inputs (if changed)
 
     qDebug() << "### "<< __FUNCTION__<< " " << Name();
 
@@ -75,7 +74,7 @@ bool Node::TryProcess()
 
     AfterProcessing();
 
-    // WriteConnections
+    // Write outputs
 
     CommonWidget()->ShowLastProcessingTime(processingTime);
     qDebug() << processingLogOutput;
@@ -120,6 +119,26 @@ bool Node::BeforeProcessing()
 bool Node::AfterProcessing()
 {
     return true;
+}
+
+QImage *Node::Input()
+{
+    return _input;
+}
+
+QImage *Node::Output()
+{
+    return _output;
+}
+
+void Node::SetInput(QImage *input)
+{
+    _input = input;
+}
+
+NodeCommonWidget *Node::CommonWidget()
+{
+    return _nodeCommonWidget;
 }
 
 bool Node::ProcessInternal()

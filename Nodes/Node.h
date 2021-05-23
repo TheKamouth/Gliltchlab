@@ -52,25 +52,12 @@ public:
 
     // This could be generic
     // And in cpp file
-    QImage * Input()
-    {
-        return _input;
-    }
+    QImage * Input();
+    QImage * Output();
 
-    QImage * Output()
-    {
-        return _output;
-    }
+    virtual void SetInput(QImage * input);
+    NodeCommonWidget * CommonWidget();
 
-    virtual void SetInput(QImage * input)
-    {
-        _input = input;
-    }
-
-    NodeCommonWidget * CommonWidget()
-    {
-        return _nodeCommonWidget;
-    }
 
     // Is SUpposed to be called in Node implementation constructor
     virtual void InitializeNodeCommonWidget();

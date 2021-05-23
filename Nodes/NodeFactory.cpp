@@ -2,7 +2,7 @@
 
 #include "Nodes/ImageInputNode.h"
 #include "Nodes/ImageOutputNode.h"
-#include "Nodes/FilterNodes/DesaturateFilterNode.h"
+#include "Nodes/FilterNodes/Desaturate/DesaturateFilterNode.h"
 #include "Nodes/FilterNodes/ScannerFilterNode.h"
 #include "Nodes/FilterNodes/PixelSort/PixelSortFilterNode.h"
 
