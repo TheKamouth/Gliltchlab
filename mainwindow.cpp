@@ -20,7 +20,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     _preferencesDialog(parent, &_preferences),
-    _nodePeaked(nullptr)
+    _nodePeaked(nullptr),
+    _previewWidget(this)
 {
     ui->setupUi(this);
 
@@ -36,17 +37,32 @@ MainWindow::MainWindow(QWidget *parent) :
     //    _readOutputTimer.setInterval(1000);
     //    _readOutputTimer.start();
 
+
+
+    _timeLineWidget = new TimelineWidget();
+    addDockWidget(Qt::BottomDockWidgetArea, _timeLineWidget);
+    _timeLineWidget->show();
+
+    //_timeControlWidget.hide();
+
+    _glWidget.setParent(&_previewWidget);
+    _previewWidget.setWidget(&_glWidget);
+    addDockWidget(Qt::RightDockWidgetArea, &_previewWidget);
+    _glWidget.setMinimumWidth(300);
+
+    //_previewWidget.setFloating(false);
+    //_previewWidget.setWindowFlags(Qt::Tool | Qt::WindowTitleHint);
+    //_previewWidget.show();
+
+
+    // Should be removed when FlowGraphSceneView is done
     _flowGraphDockWidget = new ProcessorFlowDockWidget(this);
-    _flowGraphDockWidget->hide();
+    _flowGraphDockWidget->setAllowedAreas(Qt::AllDockWidgetAreas);
+    _flowGraphDockWidget->show();
     addDockWidget(Qt::RightDockWidgetArea, _flowGraphDockWidget);
 
-    _timeLineWidget = new TimelineWidget(this);
-    _timeLineWidget->hide();
-    addDockWidget(Qt::BottomDockWidgetArea, _timeLineWidget);
-
-    _timeControlWidget.hide();
-
-    setCentralWidget(&_glWidget);
+    _flowGraphSceneWidget.SetFlowGraph( _flowGraphDockWidget->CurrentFlowGraph());
+    setCentralWidget(&_flowGraphSceneWidget);
 
     QObject::connect(_flowGraphDockWidget->CurrentFlowGraph(), &FlowGraph::NodeOutputChanged, this, &MainWindow::OnNodeOutputChanged);
     QObject::connect(_flowGraphDockWidget->CurrentFlowGraph(), &FlowGraph::Processed, this, &MainWindow::OnFlowGraphProcessed);

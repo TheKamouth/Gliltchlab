@@ -9,6 +9,9 @@
 #include <QDebug>
 #include <QCoreApplication>
 
+const QString NodeFactory::DEFAULT_IMAGE_PATH = ":/images/Resources/Images/default.png";
+const QString NodeFactory::DEFAULT_IMAGE_OUTPUT_PATH = "..";
+
 NodeFactory::NodeFactory()
 {
 
@@ -63,13 +66,18 @@ QStringList NodeFactory::AvailableNodeTypesNames()
 {
     QStringList availableNodeTypesNames;
 
-    //for(int i = 0 ; i < COUNT ; i++)
-    for(int i = 0 ; i < AllRed ; i++)
+    for(int i = 0 ; i < AvailableNodeTypesCount() ; i++)
     {
         availableNodeTypesNames.append(NodeTypeName(i));
     }
 
     return availableNodeTypesNames;
+}
+
+int NodeFactory::AvailableNodeTypesCount()
+{
+    return AllRed;
+    // return COUNT
 }
 
 QString NodeFactory::NodeTypeName(NodeType nodeType)

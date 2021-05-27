@@ -6,7 +6,7 @@ static const QColor PINK(255,0,255);
 OpenGLWidget::OpenGLWidget( QWidget *parent) : QOpenGLWidget( parent),
     _displayedImage(nullptr),
     _lastViewCenter(),
-    rightClickPressed(false),
+    _middleMouseButtonPressed(false),
     displayFramingLines(true),
     showSortingCenter(false),
     sortingCenter(0.5,0.5)
@@ -151,7 +151,7 @@ void OpenGLWidget::wheelEvent( QWheelEvent * event){
 
 void OpenGLWidget::mouseMoveEvent(QMouseEvent *event)
 {
-    if( rightClickPressed){
+    if( _middleMouseButtonPressed){
 
         _viewInfo->ViewCenter = _lastViewCenter + event->pos() - lastClickPosition;
 
@@ -169,10 +169,14 @@ void OpenGLWidget::mouseMoveEvent(QMouseEvent *event)
 
 void OpenGLWidget::mousePressEvent(QMouseEvent * event)
 {
+    if( _displayedImage == nullptr )
+    {
+        return;
+    }
 
-    if(event->buttons() == Qt::RightButton){
+    if(event->buttons() == Qt::MiddleButton){
 
-        rightClickPressed = true;
+        _middleMouseButtonPressed = true;
         lastClickPosition = event->pos();
         _lastViewCenter = _viewInfo->ViewCenter;
     }
@@ -202,7 +206,7 @@ void OpenGLWidget::mousePressEvent(QMouseEvent * event)
 
 void OpenGLWidget::mouseReleaseEvent(QMouseEvent * event)
 {
-    rightClickPressed = false;
+    _middleMouseButtonPressed = false;
     _lastViewCenter = _viewInfo->ViewCenter;
 }
 

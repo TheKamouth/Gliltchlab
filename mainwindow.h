@@ -10,6 +10,7 @@
 
 #include "Nodes/FilterNodes/ScannerFilterNode.h"
 
+#include "FlowGraph/FlowGraphSceneView.h"
 #include "FlowGraph/ProcessorFlowDockWidget.h"
 
 #include <QMainWindow>
@@ -76,13 +77,15 @@ private:
 
     Node * _nodePeaked;
 
+    QDockWidget _previewWidget;
     // A widget per observable output type ?
     OpenGLWidget _glWidget;
     //QVideoWidget _videoWidget;
     //QAudioWidget _audioWidget;
 
-    // TODO:
+    FlowGraphSceneView _flowGraphSceneWidget;
 
+    // TODO:
     // Main gliltchlab process.
     // Handling everything right now (UI and processing)
     QProcess _gliltchlabMainProcess;

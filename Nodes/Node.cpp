@@ -8,7 +8,8 @@
 #include <QDebug>
 #include <QElapsedTimer>
 
-Node::Node()
+Node::Node() :
+    _flowGraphScenePosition(0.f,0.f)
 {
     _isEnabled = true;
     _nodeCommonWidget = nullptr;
@@ -141,6 +142,11 @@ NodeCommonWidget *Node::CommonWidget()
     return _nodeCommonWidget;
 }
 
+QPointF Node::FlowGraphScenePosition()
+{
+    return _flowGraphScenePosition;
+}
+
 bool Node::ProcessInternal()
 {
     _output = new QImage(*_input);
@@ -189,5 +195,10 @@ void Node::EmitNodeInputChanged()
 int Node::FlowGraphNodePosition()
 {
     return _flowGraphPosition;
+}
+
+void Node::SetFlowGraphScenePosition(QPointF graphScenePosition)
+{
+    _flowGraphScenePosition = graphScenePosition;
 }
 

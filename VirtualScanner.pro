@@ -11,8 +11,12 @@ CONFIG += c++11
 
 SOURCES += \
 	CommonPreferences.cpp \
+	FlowGraph/ConnectionGraphicsItem.cpp \
 	FlowGraph/FlowGraph.cpp \
+	FlowGraph/FlowGraphScene.cpp \
+	FlowGraph/FlowGraphSceneView.cpp \
 	FlowGraph/NodeConnection.cpp \
+	FlowGraph/NodeGraphicsItem.cpp \
 	Nodes/FilterNodes/Desaturate/DesaturateFilterNode.cpp \
 	Nodes/FilterNodes/PixelSort/PixelSortFilterNode.cpp \
 	Nodes/FilterNodes/PixelSort/core/glilcthlabcore.cpp \
@@ -45,9 +49,13 @@ SOURCES += \
 
 HEADERS += \
 	CommonPreferences.h \
+	FlowGraph/ConnectionGraphicsItem.h \
 	FlowGraph/FlowGraph.h \
+	FlowGraph/FlowGraphScene.h \
+	FlowGraph/FlowGraphSceneView.h \
 	FlowGraph/FlowGraphXmlConstants.h \
 	FlowGraph/NodeConnection.h \
+	FlowGraph/NodeGraphicsItem.h \
 	Nodes/FilterNodes/Desaturate/DesaturateFilterNode.h \
 	Nodes/FilterNodes/DesaturateFilterNode.h \
 	Nodes/FilterNodes/PixelSort/PixelSortFilterNode.h \

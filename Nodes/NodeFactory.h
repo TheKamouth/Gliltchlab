@@ -32,13 +32,14 @@ enum NodeType
 class NodeFactory
 {
 public:
-    const QString DEFAULT_IMAGE_PATH = ":/images/Resources/Images/default.png";
-    const QString DEFAULT_IMAGE_OUTPUT_PATH = QString("..");
+    static const QString DEFAULT_IMAGE_PATH;
+    static const QString DEFAULT_IMAGE_OUTPUT_PATH;
 
     NodeFactory();
 
-    Node * CreateNode(NodeType type);
+    static Node * CreateNode(NodeType type);
     static QStringList AvailableNodeTypesNames();
+    static int AvailableNodeTypesCount();
     static QString NodeTypeName(NodeType nodeType);
     static QString NodeTypeName(int index);
 };

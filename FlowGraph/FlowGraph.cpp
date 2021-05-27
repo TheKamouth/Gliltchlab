@@ -15,6 +15,7 @@ FlowGraph::FlowGraph() :
     _flowGraphFileDevice(nullptr),
     _domDocument(nullptr)
 {
+    CreateNewFlowGraphFile();
 }
 
 void FlowGraph::CreateNewFlowGraphFile()

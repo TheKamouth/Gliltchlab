@@ -25,6 +25,7 @@ public:
     void SetPosition(int position) { _flowGraphPosition = position;}
     int Position() { return _flowGraphPosition;}
     int FlowGraphNodePosition();
+    void SetFlowGraphScenePosition(QPointF graphScenePosition);
 
     // This is the interface to process node with current inputs and parameters
     virtual bool TryProcess() final;
@@ -57,6 +58,7 @@ public:
 
     virtual void SetInput(QImage * input);
     NodeCommonWidget * CommonWidget();
+    QPointF FlowGraphScenePosition();
 
 
     // Is SUpposed to be called in Node implementation constructor
@@ -90,6 +92,7 @@ protected :
     NodeType _nodeType;
     QString _name;
     bool _isEnabled;
+    QPointF _flowGraphScenePosition;
 
     NodeCommonWidget * _nodeCommonWidget;
 

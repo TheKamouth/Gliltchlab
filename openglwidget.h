@@ -64,7 +64,7 @@ private:
     std::vector< std::pair< QRectF, QColor> > rects;
 
     QPoint _lastViewCenter;
-    bool rightClickPressed;
+    bool _middleMouseButtonPressed;
     QPoint lastClickPosition;
 
     bool displayFramingLines;
