@@ -2,7 +2,7 @@ QT       += core gui opengl multimedia multimediawidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets xml gui multimedia
 
-CONFIG += c++11
+CONFIG += c++17
 #QMAKE_CXXFLAGS += -Werror
 
 # You can make your code fail to compile if it uses deprecated APIs.
@@ -18,6 +18,7 @@ SOURCES += \
 	FlowGraph/NodeConnection.cpp \
 	FlowGraph/NodeGraphicsItem.cpp \
 	Nodes/FilterNodes/Desaturate/DesaturateFilterNode.cpp \
+	Nodes/FilterNodes/ImageFilterExample.cpp \
 	Nodes/FilterNodes/PixelSort/PixelSortFilterNode.cpp \
 	Nodes/FilterNodes/PixelSort/core/glilcthlabcore.cpp \
 	Nodes/FilterNodes/PixelSort/core/glitchmask.cpp \
@@ -32,6 +33,7 @@ SOURCES += \
 	Nodes/FilterNodes/RgbShiftFilterNode.cpp \
 	Nodes/FilterNodes/ScannerFilterNode.cpp \
 	Nodes/GenericNode.cpp \
+	Nodes/GenericNodePin.cpp \
 	Nodes/GenericNodeTest.cpp \
 	Nodes/Node.cpp \
 	Nodes/NodeCommonWidget.cpp \
@@ -39,6 +41,7 @@ SOURCES += \
 	Nodes/ImageInputNode.cpp \
 	Nodes/ImageOutputNode.cpp \
 	FlowGraph/ProcessorFlowDockWidget.cpp \
+	Nodes/TypeList.cpp \
 	TimeControlWidget.cpp \
 	TimelineWidget.cpp \
 	main.cpp \
@@ -58,6 +61,7 @@ HEADERS += \
 	FlowGraph/NodeGraphicsItem.h \
 	Nodes/FilterNodes/Desaturate/DesaturateFilterNode.h \
 	Nodes/FilterNodes/DesaturateFilterNode.h \
+	Nodes/FilterNodes/ImageFilterExample.h \
 	Nodes/FilterNodes/PixelSort/PixelSortFilterNode.h \
 	Nodes/FilterNodes/PixelSort/core/glilcthlabcore.h \
 	Nodes/FilterNodes/PixelSort/core/glitchmask.h \
@@ -71,7 +75,9 @@ HEADERS += \
 	Nodes/FilterNodes/PixelSort/ui/processprogressbar.h \
 	Nodes/FilterNodes/RgbShiftFilterNode.h \
 	Nodes/FilterNodes/ScannerFilterNode.h \
+	Nodes/GenScatterHierarchy.h \
 	Nodes/GenericNode.h \
+	Nodes/GenericNodePin.h \
 	Nodes/GenericNodeTest.h \
 	Nodes/ImageInputNode.h \
 	Nodes/ImageOutputNode.h \
@@ -79,6 +85,7 @@ HEADERS += \
 	Nodes/NodeCommonWidget.h \
 	Nodes/NodeFactory.h \
 	FlowGraph/ProcessorFlowDockWidget.h \
+	Nodes/TypeList.h \
 	TimeControlWidget.h \
 	TimelineWidget.h \
 	mainwindow.h \

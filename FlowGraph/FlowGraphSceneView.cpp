@@ -2,6 +2,7 @@
 
 #include "FlowGraph/NodeGraphicsItem.h"
 #include "Nodes/NodeFactory.h"
+#include "Nodes/Node.h"
 
 // TMP
 #include "Nodes/FilterNodes/Desaturate/DesaturateFilterNode.h"
@@ -32,7 +33,7 @@ FlowGraphSceneView::~FlowGraphSceneView(){}
 void FlowGraphSceneView::AddNodeAction(NodeType type, QPointF nodePosition)
 {
     // Create Node and add to flow
-    Node * node = _flowGraph->AddNode(type);
+    class Node * node = _flowGraph->AddNode(type);
     node->SetFlowGraphScenePosition(nodePosition);
     qDebug() << __FUNCTION__ << " at position: " << nodePosition;
 
@@ -49,18 +50,18 @@ void FlowGraphSceneView::OnSelectionChanged()
     qDebug() << __FUNCTION__;
 }
 
-void FlowGraphSceneView::SetFlowGraph(FlowGraph * flowGraph)
+void FlowGraphSceneView::SetFlowGraph( FlowGraph * flowGraph)
 {
     _flowGraph = flowGraph;
     QObject::connect( _flowGraph, &FlowGraph::NodeAdded, this, &FlowGraphSceneView::OnNodeAdded);
 }
 
-void FlowGraphSceneView::OnNodeAdded( Node *node)
+void FlowGraphSceneView::OnNodeAdded( class Node * node)
 {
     AddNodeWidget(node);
 }
 
-void FlowGraphSceneView::AddNodeWidget( Node *node)
+void FlowGraphSceneView::AddNodeWidget( class Node * node)
 {
     if(node == nullptr)
     {
@@ -79,7 +80,7 @@ void FlowGraphSceneView::AddNodeWidget( Node *node)
     //ui->vboxLayoutProcessors->insertWidget(_flowGraph->NodeCount() - 1, node->Widget());
 }
 
-void FlowGraphSceneView::mousePressEvent(QMouseEvent *event)
+void FlowGraphSceneView::mousePressEvent( QMouseEvent *event)
 {
     QGraphicsItem * clickedItem = _flowGraphScene.itemAt( _dragStartPosition, transform());
     if (event->buttons() == Qt::MiddleButton )

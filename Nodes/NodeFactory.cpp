@@ -1,5 +1,6 @@
 #include "NodeFactory.h"
 
+#include "Nodes/Node.h"
 #include "Nodes/ImageInputNode.h"
 #include "Nodes/ImageOutputNode.h"
 #include "Nodes/FilterNodes/Desaturate/DesaturateFilterNode.h"
@@ -17,13 +18,13 @@ NodeFactory::NodeFactory()
 
 }
 
-Node * NodeFactory::CreateNode(NodeType type)
+class Node * NodeFactory::CreateNode(NodeType type)
 {
-    Node * node = nullptr;
+    class Node * node = nullptr;
 
     switch(type)
     {
-        case InputImage:
+        case ImageInput:
         {
             node = new ImageInputNode();
             ImageInputNode * inputImageNode = dynamic_cast<ImageInputNode *>(node);
@@ -32,7 +33,7 @@ Node * NodeFactory::CreateNode(NodeType type)
             break;
         }
 
-        case OutputImage:
+        case ImageOutput:
         {
             node = new ImageOutputNode();
             ImageOutputNode * outputImageNode = dynamic_cast<ImageOutputNode *>(node);
@@ -84,10 +85,10 @@ QString NodeFactory::NodeTypeName(NodeType nodeType)
 {
     switch(nodeType)
     {
-        case InputImage:
+        case ImageInput:
             return "Image Input";
 
-        case OutputImage:
+        case ImageOutput:
             return "Output Image";
 
         case Desaturate:

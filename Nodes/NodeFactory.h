@@ -8,7 +8,7 @@ class Node;
 enum NodeType
 {
     // Misc
-    InputImage,
+    ImageInput,
 
     // Images processors
     Desaturate,
@@ -16,7 +16,7 @@ enum NodeType
     PixelSort,
 
     // Misc
-    OutputImage,
+    ImageOutput,
 
     // Debug/Test
     AllRed,

@@ -3,6 +3,9 @@
 
 #include "Nodes/Node.h"
 
+#include "Nodes/GenericNode.h"
+#include "Nodes/GenScatterHierarchy.h"
+
 #include <QWidget>
 
 #include <QOpenGLContext>
@@ -31,6 +34,8 @@ enum DesaturationMethod
     HslMaxToRgb,
     DesaturationMethodCount
 };
+
+//typedef GenScatterHierarchy< TYPE_LIST_2(ImageInputPin, ImageOutputPin), GenericNodePinHolder> DesaturateNodePins;
 
 class DesaturateFilterNode : public Node
 {

@@ -1,19 +1,35 @@
 #ifndef GENERICNODETEST_H
 #define GENERICNODETEST_H
 
+#include "GenScatterHierarchy.h"
 #include "GenericNode.h"
+#include "GenericNodePin.h"
 #include "FlowGraph/NodeConnection.h"
 
 #include <QImage>
 #include <QDebug>
 
+/*
 class GenericNodeImplTest : public GenericNode<
-        NodeConnection< Input, QImage*>,
-        NodeConnection< Output, QImage*>
+        GenericNodePin< QImage *, InputNodePin>//,
+        //NodeConnection< QImage * , OutputNodePin>
         >
-{
+{};
 
+
+template< class T >
+struct Holder
+{
+    T * data;
 };
+*/
+
+// defining a node holding a QImage* and an int as member
+//typedef GenScatterHierarchy< TYPE_LIST_2(QImage *, int), GenericNodePinHolder> NodeType;
+//typedef GenScatterHierarchy< TYPE_LIST_2(ImageInputPin, ImageOutputPin), GenericNodePinHolder> NodeDataType2;
+//typedef GenScatterHierarchy< TYPE_LIST_3(IntInputPin, ImageInputPin, ImageOutputPin), GenericNodePinHolder> NodeDataType3;
+
+//typedef GenScatterHierarchy< TYPE_LIST_2(GenericNodePin< QImage *, InputNodePin>,GenericNodePin< QImage *, OutputNodePin>), >;
 
 
 // A list of interface value type is defined
@@ -43,24 +59,24 @@ class ImageInputNode : GenericNode<QImage*>
 ou plutot
 
 class ImageInputNode :  GenericNode<
-                        Connection< Input, QImage * >
+                        GenericNodePin< Input, QImage * >
                         >
 
 class ImageFilterNode : GenericNode<
-                        Connection< Input, QImage * >
-                        Connection< Output, QImage * >
+                        GenericNodePin< Input, QImage * >
+                        GenericNodePin< Output, QImage * >
                         >
 
 class ImageFilterNode : GenericNode<
-                        Connection< Input, QImage * >
-                        Connection< Output, QImage * >
+                        GenericNodePin< Input, QImage * >
+                        GenericNodePin< Output, QImage * >
                         >
 
 class ImageFilterNode : GenericNode<
-                        Connection< Input, QImage * >
-                        Connection< Output, QImage * >
+                        GenericNodePin< Input, QImage * >
+                        GenericNodePin< Output, QImage * >
                         // Parameter
-                        Connection< Input, float>
+                        GenericNodePin< Input, float>
                         >
 */
 

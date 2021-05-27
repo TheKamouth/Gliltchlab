@@ -2,6 +2,7 @@
 #define NODE_H
 
 #include "NodeFactory.h"
+#include "NodeCommonWidget.h"
 
 #include <QString>
 #include <QWidget>
