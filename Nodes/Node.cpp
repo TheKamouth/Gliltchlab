@@ -1,16 +1,20 @@
 #include "Node.h"
 
 #include "NodeCommonWidget.h"
+#include "FlowGraph/NodeConnection.h"
 
 #include <QLayout>
 #include <QDateTime>
 #include <QDebug>
+#include <QElapsedTimer>
 
-Node::Node()
+Node::Node() :
+    _flowGraphScenePosition(0.f,0.f)
 {
     _isEnabled = true;
     _nodeCommonWidget = nullptr;
     _peakWidget = nullptr;
+    _flowGraphPosition = -1;
 
     // Could be handled by GenericNode
     _input = nullptr;
@@ -29,31 +33,81 @@ Node::~Node()
 
 bool Node::TryProcess()
 {
-    // If connection has changed (meaning depends on ConnectionType)
-    // ReadConnections
+    // Read inputs (if changed)
 
-    BeforeProcessing();
+    qDebug() << "### "<< __FUNCTION__<< " " << Name();
+
+    if(BeforeProcessing() == false)
+    {
+         qDebug() << "Failed to process " << Name();
+        return false;
+    }
+
+    QString processingLogOutput = "";
+    QElapsedTimer processingTimer;
+    processingTimer.start();
+    int processingTime;
 
     if(_isEnabled)
     {
         ProcessInternal();
+
+        processingTime = processingTimer.elapsed();
+        processingLogOutput += "took " + QString::number(processingTime) + "ms to process.";
     }
     else
     {
         _output = new QImage(*_input);
+
+        processingTime = processingTimer.elapsed();
+        processingLogOutput += "took " + QString::number(processingTime) + "ms (disabled) to process.";
     }
+
+
+    if(_output == nullptr)
+    {
+        qDebug() << "_ouput is null";
+        return false;
+    }
+
+    update();
+    CommonWidget()->OnPeakClicked();
 
     AfterProcessing();
 
-    UpdatePeakWidget();
+    // Write outputs
 
-    // WriteConnections
+    CommonWidget()->ShowLastProcessingTime(processingTime);
+    qDebug() << processingLogOutput;
+    qDebug() << "----------------------";
+
+    emit NodeOutputChanged(this);
+
+    return true;
+}
+
+bool Node::TryReadInputs()
+{
+    /*
+    for(int i = 0; i < _flowData.count(); i++)
+    {
+        if(_flowData[i]->IsInput())
+        {
+            ;
+        }
+    }*/
 
     return true;
 }
 
 bool Node::BeforeProcessing()
 {
+    //
+    if(TryReadInputs() == false)
+    {
+        return false;
+    }
+
     if(_input == nullptr)
     {
         qDebug() << "Cannot save: _input is null";
@@ -65,15 +119,32 @@ bool Node::BeforeProcessing()
 
 bool Node::AfterProcessing()
 {
-    if(_output == nullptr)
-    {
-        qDebug() << "_ouput is null";
-        return false;
-    }
-
-    update();
-
     return true;
+}
+
+QImage *Node::Input()
+{
+    return _input;
+}
+
+QImage *Node::Output()
+{
+    return _output;
+}
+
+void Node::SetInput(QImage *input)
+{
+    _input = input;
+}
+
+NodeCommonWidget *Node::CommonWidget()
+{
+    return _nodeCommonWidget;
+}
+
+QPointF Node::FlowGraphScenePosition()
+{
+    return _flowGraphScenePosition;
 }
 
 bool Node::ProcessInternal()
@@ -99,7 +170,9 @@ void Node::OnEnableNodeCheckboxClicked(bool toggled)
 {
     SpecificUI()->setEnabled(toggled);
 
-    //
+    _isEnabled = toggled;
+
+    emit NodeInputChanged(this);
 }
 
 void Node::OnExpandCollapseArrowClicked(bool isSpecificWidgetExpanded)
@@ -114,13 +187,18 @@ QString Node::GetTempImageOutputFilePath()
     return "nodeName_image_output" + timeStamp + ".png";
 }
 
-void Node::EmitNodeChanged()
+void Node::EmitNodeInputChanged()
 {
-    emit NodeChanged(this);
+    emit NodeInputChanged(this);
 }
 
 int Node::FlowGraphNodePosition()
 {
     return _flowGraphPosition;
+}
+
+void Node::SetFlowGraphScenePosition(QPointF graphScenePosition)
+{
+    _flowGraphScenePosition = graphScenePosition;
 }
 

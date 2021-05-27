@@ -29,13 +29,9 @@ public:
     ~OpenGLWidget();
 
     void SetDisplayedImage( QImage * image);
-
     void Update();
-
     void AddRect(std::pair< QRectF, QColor> newRect);
-
     void ClearRects();
-
     void ShowFramingLines( bool show);
 
     ViewInfo * GetViewInfo();
@@ -55,7 +51,7 @@ protected:
     virtual void mouseReleaseEvent(QMouseEvent * event);
 
 signals:
-    void viewChange();    
+    void viewChange();
 
 private:
     QMatrix4x4 projectionMatrix;
@@ -68,7 +64,7 @@ private:
     std::vector< std::pair< QRectF, QColor> > rects;
 
     QPoint _lastViewCenter;
-    bool rightClickPressed;
+    bool _middleMouseButtonPressed;
     QPoint lastClickPosition;
 
     bool displayFramingLines;

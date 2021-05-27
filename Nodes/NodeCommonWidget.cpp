@@ -2,6 +2,7 @@
 #include "ui_NodeCommonWidget.h"
 
 #include "Node.h"
+#include "NodeCommonWidget.h"
 
 #include <QDebug>
 
@@ -68,11 +69,17 @@ void NodeCommonWidget::OnArrowClicked()
 
 void NodeCommonWidget::SetWidgetVisible(bool visible)
 {
+    setVisible(visible);
 }
 
 void NodeCommonWidget::SetIsPeakedAt(bool isPeakedAt)
 {
     ui->pb_peak->setChecked(isPeakedAt);
+}
+
+void NodeCommonWidget::ShowLastProcessingTime(int processingTimeMs)
+{
+    ui->lb_time->setText(QString::number(processingTimeMs) + "ms");
 }
 
 void NodeCommonWidget::UpdateNodeName(QString name)

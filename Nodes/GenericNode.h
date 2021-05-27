@@ -49,7 +49,7 @@ public:
     }
 
     template<class C>
-    void Initialize(C &&T...);
+    void Initialize(C && T ...);
 
     //template< class ... C>
     //template< class T>

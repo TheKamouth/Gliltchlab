@@ -2,10 +2,15 @@
 
 #include "Nodes/ImageInputNode.h"
 #include "Nodes/ImageOutputNode.h"
-#include "Nodes/FilterNodes/DesaturateFilterNode.h"
+#include "Nodes/FilterNodes/Desaturate/DesaturateFilterNode.h"
 #include "Nodes/FilterNodes/ScannerFilterNode.h"
+#include "Nodes/FilterNodes/PixelSort/PixelSortFilterNode.h"
 
 #include <QDebug>
+#include <QCoreApplication>
+
+const QString NodeFactory::DEFAULT_IMAGE_PATH = ":/images/Resources/Images/default.png";
+const QString NodeFactory::DEFAULT_IMAGE_OUTPUT_PATH = "..";
 
 NodeFactory::NodeFactory()
 {
@@ -22,7 +27,8 @@ Node * NodeFactory::CreateNode(NodeType type)
         {
             node = new ImageInputNode();
             ImageInputNode * inputImageNode = dynamic_cast<ImageInputNode *>(node);
-            inputImageNode->SetInputFilePath(DEFAULT_IMAGE_INPUT_PATH);
+            QString defaultInputImagePath = DEFAULT_IMAGE_PATH;
+            inputImageNode->SetInputFilePath(defaultInputImagePath);
             break;
         }
 
@@ -30,7 +36,7 @@ Node * NodeFactory::CreateNode(NodeType type)
         {
             node = new ImageOutputNode();
             ImageOutputNode * outputImageNode = dynamic_cast<ImageOutputNode *>(node);
-            outputImageNode->SetOutputFilePath(DEFAULT_IMAGE_OUTPUT_PATH);
+            outputImageNode->SetOutputFilePath(QCoreApplication::applicationDirPath());
             break;
         }
 
@@ -40,6 +46,10 @@ Node * NodeFactory::CreateNode(NodeType type)
 
         case ScannerFilter:
             node = new ScannerFilterNode();
+            break;
+
+        case PixelSort:
+            node = new PixelSortFilterNode();
             break;
 
         default:
@@ -56,12 +66,18 @@ QStringList NodeFactory::AvailableNodeTypesNames()
 {
     QStringList availableNodeTypesNames;
 
-    for(int i = 0 ; i < COUNT ; i++)
+    for(int i = 0 ; i < AvailableNodeTypesCount() ; i++)
     {
         availableNodeTypesNames.append(NodeTypeName(i));
     }
 
     return availableNodeTypesNames;
+}
+
+int NodeFactory::AvailableNodeTypesCount()
+{
+    return AllRed;
+    // return COUNT
 }
 
 QString NodeFactory::NodeTypeName(NodeType nodeType)
@@ -85,6 +101,9 @@ QString NodeFactory::NodeTypeName(NodeType nodeType)
 
         case ScannerFilter:
             return "Scanner";
+
+        case PixelSort:
+            return "PixelSort";
 
         default:
             qDebug() << "unnamed";

@@ -6,6 +6,7 @@
 #include "FlowGraph.h"
 
 #include <QDockWidget>
+#include <QThread>
 
 namespace Ui {
 class ProcessorFlowDockWidget;

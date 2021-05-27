@@ -3,11 +3,8 @@
 
 #include "Nodes/NodeCommonWidget.h"
 
-#include "Nodes/FilterNodes/ContrastProcessor.h"
-#include "Nodes/FilterNodes/ScannerFilterNode.h"
-
 #include <QFileDialog>
-
+#include <QDebug>
 
 ProcessorFlowDockWidget::ProcessorFlowDockWidget(QWidget *parent) :
     QDockWidget(parent),
@@ -15,7 +12,7 @@ ProcessorFlowDockWidget::ProcessorFlowDockWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    this->setWindowFlags(Qt::Tool);
+    this->setWindowFlags(Qt::Tool | Qt::WindowTitleHint);
 
     QObject::connect( ui->pb_addProcessor, &QPushButton::clicked, this, &ProcessorFlowDockWidget::OnAddNodeClicked);
     QObject::connect( ui->pb_processFlow, &QPushButton::clicked, this, &ProcessorFlowDockWidget::OnProcessFlowClicked);
@@ -40,8 +37,6 @@ void ProcessorFlowDockWidget::OnAddNodeClicked()
 
     // Create Node and add to flow
     Node* node = _flowGraph->AddNode(nodeType);
-
-    AddNodeWidget(node);
 
     OnProcessFlowClicked();
 

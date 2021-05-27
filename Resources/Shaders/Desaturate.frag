@@ -2,9 +2,9 @@
 
 in vec2 vTexCoord;
 uniform sampler2D texture;
-// [0;desaturationModeCount]
+// [0 ; desaturationModeCount]
 uniform int desaturationMode;
-// [0;1]
+// [0 ; 1]
 uniform float desaturationValue;
 
 vec3 rgb2hsv(vec3 c)
@@ -97,12 +97,13 @@ void main(void)
 
 	case 7:
 		// Debug
-		rgbDesaturatedColor = vec3(1.0,0.,255.0);
+		rgbDesaturatedColor = vec3(255.0,0.,255.0);
 		break;
 	}
 
 	vec3 attenuatedColor = desaturationValue * rgbDesaturatedColor;
+	vec3 allRed = vec3(255.0, 0.0, 255.0);
 
+	//gl_FragColor = vec4( allRed, 1.0f);
 	gl_FragColor = vec4( attenuatedColor, 1.0f);
 }
-

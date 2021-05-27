@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>877</width>
+    <height>504</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,11 +19,14 @@
   <property name="documentMode">
    <bool>true</bool>
   </property>
+  <property name="dockNestingEnabled">
+   <bool>true</bool>
+  </property>
+  <property name="dockOptions">
+   <set>QMainWindow::AllowNestedDocks|QMainWindow::AllowTabbedDocks|QMainWindow::VerticalTabs</set>
+  </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <property name="spacing">
-     <number>2</number>
-    </property>
+   <layout class="QGridLayout" name="gridLayout" rowstretch="0" columnstretch="0">
     <property name="leftMargin">
      <number>2</number>
     </property>
@@ -31,14 +34,11 @@
      <number>2</number>
     </property>
     <property name="rightMargin">
-     <number>2</number>
+     <number>50</number>
     </property>
     <property name="bottomMargin">
-     <number>2</number>
+     <number>50</number>
     </property>
-    <item>
-     <widget class="QWidget" name="glWidget" native="true"/>
-    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -46,8 +46,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
-     <height>20</height>
+     <width>877</width>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -77,6 +77,8 @@
     <addaction name="actionFlow_widget"/>
     <addaction name="actionTime_controls"/>
     <addaction name="actionTimeline"/>
+    <addaction name="separator"/>
+    <addaction name="actionDebug_console"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -88,18 +90,22 @@
    <property name="text">
     <string>Load flow</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
   </action>
   <action name="actionSaveFlow">
    <property name="text">
     <string>Save flow</string>
    </property>
-  </action>
-  <action name="actionPlay">
-   <property name="text">
-    <string>Play</string>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
    </property>
   </action>
   <action name="actionPreferences">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Preferences</string>
    </property>
@@ -108,10 +114,16 @@
    <property name="text">
     <string>New flow</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
   </action>
   <action name="actionGliltchlabl_0_1">
    <property name="text">
     <string>Gliltchlabl 0.1</string>
+   </property>
+   <property name="shortcut">
+    <string>?</string>
    </property>
   </action>
   <action name="actionTime_controls">
@@ -121,21 +133,47 @@
    <property name="text">
     <string>Time controls</string>
    </property>
+   <property name="shortcut">
+    <string>F3</string>
+   </property>
   </action>
   <action name="actionTimeline">
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Timeline</string>
+   </property>
+   <property name="shortcut">
+    <string>F2</string>
    </property>
   </action>
   <action name="actionFlow_widget">
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Flow widget</string>
+   </property>
+   <property name="shortcut">
+    <string>F1</string>
+   </property>
+  </action>
+  <action name="actionDebug_console">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Debug console</string>
+   </property>
+   <property name="shortcut">
+    <string>F4</string>
    </property>
   </action>
  </widget>

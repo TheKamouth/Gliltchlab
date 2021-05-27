@@ -6,7 +6,7 @@
 #include <QString>
 #include <QImage>
 
-struct ConnectionData
+struct FlowData
 {
     enum Type
     {
@@ -17,11 +17,11 @@ struct ConnectionData
         //Audio,
         //Video,
     };
-    ConnectionData();
-    ConnectionData(int   e) { _data.INT    = e; _type = Int;}
-    ConnectionData(float e) { _data.FLOAT  = e; _type = Float;}
-    ConnectionData(QString * e) { _data.STRING = e; _type = String;}
-    ConnectionData(QImage * e) { _data.IMAGE = e; _type = Image;}
+    FlowData();
+    FlowData(int   e) { _data.INT    = e; _type = Int;}
+    FlowData(float e) { _data.FLOAT  = e; _type = Float;}
+    FlowData(QString * e) { _data.STRING = e; _type = String;}
+    FlowData(QImage * e) { _data.IMAGE = e; _type = Image;}
 
     Type GetType() const { return _type; }
     int GetInt() const { return _data.INT; }
@@ -64,7 +64,9 @@ class Output{};
 // ?
 class INodeConnection
 {
+public:
     //void * Data() { return _connectionData; }
+    bool IsInput() { return true; }
 };
 
 // Might be a connection to another node, to timeline or to a specificUI widget (default)

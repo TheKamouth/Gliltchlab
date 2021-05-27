@@ -15,6 +15,7 @@ FlowGraph::FlowGraph() :
     _flowGraphFileDevice(nullptr),
     _domDocument(nullptr)
 {
+    CreateNewFlowGraphFile();
 }
 
 void FlowGraph::CreateNewFlowGraphFile()
@@ -142,7 +143,7 @@ void FlowGraph::LoadFlowGraphFile(QString filePath)
     Process();
 }
 
-void FlowGraph::OnNodeChanged(Node * node)
+void FlowGraph::OnNodeInputChanged(Node * node)
 {
     // Reprocess all dependent nodes
     int position = node->Position();
@@ -169,16 +170,24 @@ void FlowGraph::OnNodeChanged(Node * node)
     qDebug() << __FUNCTION__<< "Reprocessed, node changed: " << node->Name();
 }
 
+void FlowGraph::OnNodeOutputChanged(Node * node)
+{
+    emit NodeOutputChanged(node);
+}
+
 Node * FlowGraph::AddNode(NodeType nodeType)
 {
     Node * node =_nodeFactory.CreateNode(nodeType);
     node->SetPosition(_nodes.count());
 
-    QObject::connect(node , &Node::NodeChanged, this, &FlowGraph::OnNodeChanged);
+    QObject::connect(node , &Node::NodeInputChanged, this, &FlowGraph::OnNodeInputChanged);
+    QObject::connect(node , &Node::NodeOutputChanged, this, &FlowGraph::OnNodeOutputChanged);
 
     AddNodeToDom(node);
 
     _nodes.append(node);
+
+    emit NodeAdded(node);
 
     return node;
 }
@@ -188,11 +197,14 @@ Node * FlowGraph::InsertNode(NodeType nodeType, int index)
     Node * node =_nodeFactory.CreateNode(nodeType);
     node->SetPosition(_nodes.count());
 
-    QObject::connect(node , &Node::NodeChanged, this, &FlowGraph::OnNodeChanged);
+    QObject::connect(node , &Node::NodeInputChanged, this, &FlowGraph::OnNodeInputChanged);
+    QObject::connect(node , &Node::NodeOutputChanged, this, &FlowGraph::OnNodeOutputChanged);
 
     AddNodeToDom(node);
 
     _nodes.insert(index, node);
+
+    emit NodeAdded(node);
 
     return node;
 }
@@ -206,6 +218,8 @@ void FlowGraph::RemoveNode(Node * node)
 void FlowGraph::RemoveNode(int index)
 {
     _nodes.removeAt(index);
+
+    Process();
 }
 
 void FlowGraph::Process()
@@ -234,6 +248,8 @@ void FlowGraph::Process()
             qDebug() << "Failed to process node: " << node->Name();
         }
     }
+
+    emit Processed();
 }
 
 QImage *FlowGraph::Output()

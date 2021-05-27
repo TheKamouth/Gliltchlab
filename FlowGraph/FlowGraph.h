@@ -6,7 +6,6 @@
 #include <QList>
 #include <QImage>
 #include <QObject>
-
 #include <QDomDocument>
 
 class Node;
@@ -27,7 +26,8 @@ public:
     int NodeCount(){ return _nodes.count();}
     Node * GetNode(int index){return _nodes[index];}
 
-    void OnNodeChanged(Node * node);
+    void OnNodeInputChanged(Node * node);
+    void OnNodeOutputChanged(Node * node);
 
     Node * AddNode(NodeType nodeType);
     Node * InsertNode(NodeType nodeType, int index);
@@ -49,6 +49,8 @@ public:
 
 signals:
     void NodeAdded(Node * node);
+    void NodeOutputChanged(Node * node);
+    void Processed();
 
 private:
     NodeFactory _nodeFactory;

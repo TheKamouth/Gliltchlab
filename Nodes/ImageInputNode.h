@@ -2,7 +2,6 @@
 #define IMAGEINPUTNODE_H
 
 #include "Node.h"
-#include "ImagePeakNode.h"
 
 #include "NodeCommonWidget.h"
 
@@ -13,13 +12,13 @@ namespace Ui {
 class ImageInputNode;
 }
 
-class ImageInputNode : public ImagePeakNode
+class ImageInputNode : public Node
 {
     Q_OBJECT
 
 
 public:
-    explicit ImageInputNode(QWidget *parent = nullptr);
+    explicit ImageInputNode();
     virtual ~ImageInputNode();
 
     virtual QString Name() override { return "Image input"; }

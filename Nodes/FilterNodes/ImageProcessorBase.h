@@ -2,13 +2,12 @@
 #define IIMAGEPROCESSOR_H
 
 #include "Nodes/Node.h"
-#include "Nodes/ImagePeakNode.h"
 
 #include <QVector2D>
 
 class QImage;
 
-class ImageProcessorBase : public ImagePeakNode
+class ImageProcessorBase : public Node
 {
 public:
     // Node

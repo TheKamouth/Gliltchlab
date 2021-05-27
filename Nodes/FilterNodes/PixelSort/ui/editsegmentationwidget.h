@@ -25,6 +25,9 @@ public:
 
     void CircularSortingEnabled(bool enable);
 
+signals:
+    void SegmentationChanged();
+
 private:
     Ui::EditSegmentationWidget *ui;
 };

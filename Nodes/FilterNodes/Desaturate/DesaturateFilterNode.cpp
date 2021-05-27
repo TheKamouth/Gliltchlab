@@ -1,6 +1,8 @@
 #include "DesaturateFilterNode.h"
 #include "ui_DesaturateFilterNode.h"
 
+#include "Nodes/NodeCommonWidget.h"
+
 #include <QDateTime>
 #include <QString>
 #include <QStringList>
@@ -10,15 +12,15 @@
 #include <QSlider>
 #include <QDoubleSpinBox>
 
-DesaturateFilterNode::DesaturateFilterNode(QWidget *parent) :
-    ImageProcessorBase(),
+DesaturateFilterNode::DesaturateFilterNode() :
+    Node(),
     ui(new Ui::DesaturateFilterNode),
     _desaturationValue(0.5f)
 {
     ui->setupUi(this);
 
     InitNodeTypeComboBox();
-    QObject::connect( ui->cb_desaturationMethod, QOverload<int>::of(&QComboBox::activated), this, &DesaturateFilterNode::OnCurrentIndexChanged);
+    QObject::connect( ui->cb_desaturationMethod, QOverload<int>::of(&QComboBox::activated), this, &DesaturateFilterNode::OnDesaturationMethodChanged);
     QObject::connect( ui->sl_desaturationValue, &QSlider::valueChanged, this, &DesaturateFilterNode::OnSaturationValueChanged);
     QObject::connect( ui->dsb_desaturationValue, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &DesaturateFilterNode::OnSaturationSpinBoxValueChanged);
 }
@@ -43,9 +45,14 @@ QWidget * DesaturateFilterNode::SpecificUI()
     return ui->widget;
 }
 
-void DesaturateFilterNode::SetParameters()
+QLayout *DesaturateFilterNode::SpecificUiLayout()
 {
+    return ui->widget->layout();
+}
 
+bool DesaturateFilterNode::TryReadInputs()
+{
+    return true;
 }
 
 void DesaturateFilterNode::InitNodeTypeComboBox()
@@ -54,30 +61,31 @@ void DesaturateFilterNode::InitNodeTypeComboBox()
     ui->cb_desaturationMethod->addItems(availableDesaturationMethodNames);
 }
 
-void DesaturateFilterNode::OnCurrentIndexChanged(int index)
+void DesaturateFilterNode::OnDesaturationMethodChanged(int index)
 {
     _desaturationMode = (DesaturationMethod)index;
 
-     EmitNodeChanged();
+     EmitNodeInputChanged();
 }
 
 void DesaturateFilterNode::OnSaturationValueChanged(int value)
 {
-    float sliderValue = ui->sl_desaturationValue->value();
-    _desaturationValue = sliderValue != 0.0f ? sliderValue / 100.0f : 0.0f;
+    //float sliderValue = ui->sl_desaturationValue->value();
+    _desaturationValue = value != 0.0f ? value / 100.0f : 0.0f;
     ui->dsb_desaturationValue->setValue( _desaturationValue);
     qDebug() << _desaturationValue;
 
-    EmitNodeChanged();
+    EmitNodeInputChanged();
 }
 
 void DesaturateFilterNode::OnSaturationSpinBoxValueChanged(double value)
 {
     _desaturationValue = ui->dsb_desaturationValue->value();
-    ui->sl_desaturationValue->setValue(_desaturationValue * 100.0f);
+
+    ui->sl_desaturationValue->setValue(value * 100.0f);
     qDebug() << _desaturationValue;
 
-    EmitNodeChanged();
+    EmitNodeInputChanged();
 }
 
 QStringList DesaturateFilterNode::AvailableDesaturationMethodNames()
@@ -129,9 +137,12 @@ QString DesaturateFilterNode::AvailableDesaturationMethodName(DesaturationMethod
 
 bool DesaturateFilterNode::BeforeProcessing()
 {
-    _fboSize = _input->size();
+    if( Node::BeforeProcessing() == false)
+    {
+        return false;
+    }
 
-    qDebug() << "with "<< Name();
+    _fboSize = _input->size();
 
     if(!_glContext.create())
     {
@@ -204,7 +215,6 @@ bool DesaturateFilterNode::BeforeProcessing()
         qDebug() << "texturePF error.";
     }
 
-
     _glVertexBuffer = QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
     if(!_glVertexBuffer.create())
     {
@@ -230,29 +240,6 @@ bool DesaturateFilterNode::BeforeProcessing()
 
     //    _glVertexBuffer.allocate(4 * sizeof(VertexData));
     //    _glFragmentBuffer.allocate(4 * sizeof(GLuint));
-
-}
-
-bool DesaturateFilterNode::AfterProcessing()
-{
-    // Get a temporary dir somwhere ?
-    QString dirPath= QDir::currentPath();
-    QString timeStamp = QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm_ss_z");
-    QString outputFilenameNoExtension = "desaturationNodeOutput";
-
-    QString outputFilename = dirPath + '/' + outputFilenameNoExtension + timeStamp + ".png";
-
-    //_glFrameBufferObject->toImage(false).save(outputFilename);
-    //_output = new QImage(outputFilename);
-
-    _output = new QImage(_glFrameBufferObject->toImage(false));
-
-    qDebug() << "Desaturate node processed, " ;
-
-    if(_peakWidget != nullptr)
-    {
-        UpdatePeakWidget();
-    }
 
     return true;
 }
@@ -293,13 +280,6 @@ bool DesaturateFilterNode::ProcessInternal()
     _glContext.functions()->glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, Q_NULLPTR);
 
     _output = new QImage(_glFrameBufferObject->toImage(false));
-
-    if( _peakWidget != nullptr)
-    {
-        // currently peaking this
-        OpenGLWidget * glWidget = dynamic_cast<OpenGLWidget*>(_peakWidget);
-        glWidget->SetDisplayedImage(Output());
-    }
 
     return true;
 }

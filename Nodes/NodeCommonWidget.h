@@ -25,6 +25,7 @@ public:
 
     void SetWidgetVisible(bool visible);
     void SetIsPeakedAt(bool isPeakedAt);
+    void ShowLastProcessingTime(int processingTimeMs);
 
     Node * GetNode(){ return _node; }
 

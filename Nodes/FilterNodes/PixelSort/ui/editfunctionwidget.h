@@ -16,8 +16,10 @@ public:
     ~EditFunctionWidget();
 
     int GetSortingRuleId();
-
     bool isInvertedRule();
+
+signals:
+    void FunctionChanged();
 
 private:
     Ui::EditFunctionWidget *ui;

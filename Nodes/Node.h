@@ -7,6 +7,7 @@
 #include <QWidget>
 
 class NodeCommonWidget;
+class INodeConnection;
 
 class Node : public QWidget
 {
@@ -24,50 +25,41 @@ public:
     void SetPosition(int position) { _flowGraphPosition = position;}
     int Position() { return _flowGraphPosition;}
     int FlowGraphNodePosition();
+    void SetFlowGraphScenePosition(QPointF graphScenePosition);
 
     // This is the interface to process node with current inputs and parameters
     virtual bool TryProcess() final;
-    virtual void SetParameters(){};
+    virtual bool TryReadInputs();
 
 protected:
     virtual bool BeforeProcessing();
-    virtual bool AfterProcessing();
-
     // Default implementation copies _input to _ouptut
     virtual bool ProcessInternal();
+    // AfterProcessing should not modify _output
+    virtual bool AfterProcessing();
 
 public:
     //
     virtual QWidget * NodeUiBaseWidgetInForm() = 0;
-    virtual QLayout* NodeUiBaseLayoutInForm() = 0;
+    virtual QLayout * NodeUiBaseLayoutInForm() = 0;
     virtual QWidget * SpecificUI() = 0;
+    virtual QLayout * SpecificUiLayout(){return nullptr;}
 
     // Peak widget is instantiated when needed and deleted when not visible
-    virtual QWidget * InstantiatePeakWidget() = 0;
-    virtual void UpdatePeakWidget() = 0;
-    virtual void ReleasePeakWidget() = 0;
+    // Not anymore: mainwindow handles 1 widget for each output type
+    //virtual QWidget * InstantiatePeakWidget() = 0;
+    //virtual void UpdatePeakWidget() = 0;
+    //virtual void ReleasePeakWidget() = 0;
 
     // This could be generic
     // And in cpp file
-    QImage * Input()
-    {
-        return _input;
-    }
+    QImage * Input();
+    QImage * Output();
 
-    QImage * Output()
-    {
-        return _output;
-    }
+    virtual void SetInput(QImage * input);
+    NodeCommonWidget * CommonWidget();
+    QPointF FlowGraphScenePosition();
 
-    virtual void SetInput(QImage * input)
-    {
-        _input = input;
-    }
-
-    NodeCommonWidget * CommonWidget()
-    {
-        return _nodeCommonWidget;
-    }
 
     // Is SUpposed to be called in Node implementation constructor
     virtual void InitializeNodeCommonWidget();
@@ -75,12 +67,22 @@ public:
     bool IsEnabled() { return _isEnabled;}
     void Enable(bool isEnabled){ _isEnabled = isEnabled;}
 
+    // Common ui events handling
     void OnEnableNodeCheckboxClicked(bool toggled);
     void OnExpandCollapseArrowClicked(bool isSpecificWidgetExpanded);
 
+    void EmitNodeInputChanged();
+
+    template<class T>
+    void EmitNodeInputChanged(T arg)
+    {
+        EmitNodeInputChanged();
+    }
+
 signals:
     void OnDeleteNodeClicked(Node * node);
-    void NodeChanged(Node * node);
+    void NodeInputChanged(Node * node);
+    void NodeOutputChanged(Node * node);
     void OnProcessorSettingsClicked();
 
 protected :
@@ -90,6 +92,7 @@ protected :
     NodeType _nodeType;
     QString _name;
     bool _isEnabled;
+    QPointF _flowGraphScenePosition;
 
     NodeCommonWidget * _nodeCommonWidget;
 
@@ -103,8 +106,11 @@ protected :
     QImage * _input;
     QImage * _output;
 
+    // a cheap attempt for something a little bit more generic
+    QVector< INodeConnection *> _flowData;
+
     QString GetTempImageOutputFilePath();
-    void EmitNodeChanged();
+
 };
 
 #endif // NODE_H

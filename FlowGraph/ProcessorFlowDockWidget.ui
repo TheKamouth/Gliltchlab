@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>ProcessorFlowDockWidget</class>
  <widget class="QDockWidget" name="ProcessorFlowDockWidget">
+  <property name="windowModality">
+   <enum>Qt::NonModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -18,13 +21,13 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>100</width>
-    <height>111</height>
+    <width>106</width>
+    <height>114</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>300</width>
+    <width>800</width>
     <height>524287</height>
    </size>
   </property>
@@ -152,8 +155,8 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../icons.qrc">
-          <normaloff>:/icons/Icons/002-plus-1.png</normaloff>:/icons/Icons/002-plus-1.png</iconset>
+         <iconset resource="../resources.qrc">
+          <normaloff>:/icons/Resources/Icons/004-add.png</normaloff>:/icons/Resources/Icons/004-add.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -191,7 +194,7 @@
   </widget>
  </widget>
  <resources>
-  <include location="../icons.qrc"/>
+  <include location="../resources.qrc"/>
  </resources>
  <connections/>
 </ui>
