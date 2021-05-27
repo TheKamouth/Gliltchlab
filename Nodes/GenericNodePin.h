@@ -22,8 +22,8 @@ class GenericNodePin
 public:
     GenericNodePin();
 
-    void SetInput(A * data);
-    A * GetOutput();
+    void SetData(A * data);
+    A * GetData();
     bool IsInput();
     QString Name();
 

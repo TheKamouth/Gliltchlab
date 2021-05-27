@@ -6,15 +6,22 @@
 #include "Nodes/GenScatterHierarchy.h"
 
 //typedef GenScatterHierarchy< TYPE_LIST_2(ImageInputPin, ImageOutputPin), GenericNodePinHolder> ImageExampleNodePins;
-typedef GenericNode<ImageInputPin, ImageOutputPin> ImageFilterExamplePins;
+typedef NodeInOutPins<ImageInputPin, ImageOutputPin> ImageFilterExampleInOutPins;
 
 class ImageFilterExample //: ?
 {
 public:
     ImageFilterExample();
 
+protected:
+    virtual bool BeforeProcessing();
+    // Default implementation copies _input to _ouptut
+    virtual bool ProcessInternal();
+    virtual bool AfterProcessing() const;
+
 private:
-    ImageFilterExamplePins _imageFilterExamplePins;
+    ImageFilterExampleInOutPins _imageFilterExamplePins;
+
 };
 
 #endif // IMAGEFILTEREXAMPLE_H

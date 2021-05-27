@@ -9,13 +9,13 @@ GenericNodePin<A,B>::GenericNodePin()
 }
 
 template<class A, class B>
-void GenericNodePin<A,B>::SetInput(A * data)
+void GenericNodePin<A,B>::SetData(A * data)
 {
     _data = data;
 }
 
 template<class A, class B>
-A *GenericNodePin<A,B>::GetOutput()
+A *GenericNodePin<A,B>::GetData()
 {
     return _data;
 }

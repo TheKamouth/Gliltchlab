@@ -117,6 +117,13 @@ bool Node::BeforeProcessing()
     return true;
 }
 
+bool Node::ProcessInternal()
+{
+    _output = new QImage(*_input);
+
+    return true;
+}
+
 bool Node::AfterProcessing()
 {
     return true;
@@ -145,13 +152,6 @@ NodeCommonWidget *Node::CommonWidget()
 QPointF Node::FlowGraphScenePosition()
 {
     return _flowGraphScenePosition;
-}
-
-bool Node::ProcessInternal()
-{
-    _output = new QImage(*_input);
-
-    return true;
 }
 
 void Node::InitializeNodeCommonWidget()
