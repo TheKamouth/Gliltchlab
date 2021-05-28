@@ -1,22 +1,27 @@
 #include "ImageFilterExample.h"
 
-ImageFilterExample::ImageFilterExample()
+ImageFilterNodeExample::ImageFilterNodeExample()
 {
 
 }
 
-bool ImageFilterExample::BeforeProcessing()
+bool ImageFilterNodeExample::BeforeProcessing()
 {
     // Read all inputs in _imageFilterExamplePins and map it to parameters
 
-    for (int i = 0; i < _imageFilterExamplePins.Count(); i++)
+    //for( int i = 0; i < _imageFilterExamplePins.Count(); i++)
     {
         /*
-        GenericNodePin * nodePin = _imageFilterExamplePins[i];
+        GenericNodePin * nodePin; = _imageFilterExamplePins[i];
         if( nodePin->IsInput())
         {
             QString pinName = nodePin->Name();
-            if(pinName == "imageInput")
+            if(pinName == "sortingAngle")
+            {
+                // do something with nodePin->GetData();
+                //gliltchParam.SetSortingAngle(nodePin->GetData());
+            }
+            else if(pinName == "imageInput")
             {
                 // do something with nodePin->GetData();
             }
@@ -28,11 +33,10 @@ bool ImageFilterExample::BeforeProcessing()
         */
     }
 
-
     return true;
 }
 
-bool ImageFilterExample::ProcessInternal()
+bool ImageFilterNodeExample::ProcessInternal()
 {
     // Default interface implementation :
     // initialize outputs
@@ -41,7 +45,7 @@ bool ImageFilterExample::ProcessInternal()
     return true;
 }
 
-bool ImageFilterExample::AfterProcessing() const
+bool ImageFilterNodeExample::AfterProcessing() const
 {
     // Notify
     return true;

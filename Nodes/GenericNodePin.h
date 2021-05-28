@@ -14,9 +14,13 @@ class IsInputNodePin{};
 typedef IsInputNodePin<true> InputNodePin;
 typedef IsInputNodePin<false> OutputNodePin;
 
+// TODO : GenericNodePin template argument must include a unique identifier
+// because GenericNodePin are defined by the node implementation, and a node can have several in/output of the same type
+
 // A is the type of data handled by the pin
 // B is InputNodePin or OutputNodePin (how to enforce it ?)
-template <class A, class B>
+// T3 is the pin name, used by NodeInOutPins::operator[]
+template <class A, class B/*, class T3*/>
 class GenericNodePin
 {
 public:

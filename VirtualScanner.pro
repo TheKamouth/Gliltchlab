@@ -41,6 +41,7 @@ SOURCES += \
 	Nodes/ImageInputNode.cpp \
 	Nodes/ImageOutputNode.cpp \
 	FlowGraph/ProcessorFlowDockWidget.cpp \
+	Nodes/ProcessorNode.cpp \
 	Nodes/TypeList.cpp \
 	TimeControlWidget.cpp \
 	TimelineWidget.cpp \
@@ -79,12 +80,14 @@ HEADERS += \
 	Nodes/GenericNode.h \
 	Nodes/GenericNodePin.h \
 	Nodes/GenericNodeTest.h \
+	Nodes/GenericTemplateHelpers.h \
 	Nodes/ImageInputNode.h \
 	Nodes/ImageOutputNode.h \
 	Nodes/Node.h \
 	Nodes/NodeCommonWidget.h \
 	Nodes/NodeFactory.h \
 	FlowGraph/ProcessorFlowDockWidget.h \
+	Nodes/ProcessorNode.h \
 	Nodes/TypeList.h \
 	TimeControlWidget.h \
 	TimelineWidget.h \

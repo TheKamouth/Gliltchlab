@@ -29,7 +29,7 @@ bool GenericNodePin<A,B>::IsInput()
     }
     else if( std::is_same<B, OutputNodePin>::value == true)
     {
-        return true;
+        return false;
     }
     else
     {

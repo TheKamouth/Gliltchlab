@@ -1,0 +1,8 @@
+#ifndef GENERICTEMPLATEHELPERS_H
+#define GENERICTEMPLATEHELPERS_H
+
+#include "TypeList.h"
+
+
+
+#endif // GENERICTEMPLATEHELPERS_H

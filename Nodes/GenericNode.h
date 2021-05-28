@@ -29,10 +29,10 @@ struct NodeInOutPins : public GenScatterHierarchy< TYPE_LIST_2(T1, T2), GenericN
     //GenericNodePinHolder & operator[] (unsigned int);
 };
 
-// Error : This is a redefinition of GenericNode. Could change the name, impractical.
+// Error : This is a redefinition of GenericNode. Can change the name, impractical.
 // 3 pin GenericNode
-//template< class T1, class T2, class T3>
-//class GenericNode : public GenScatterHierarchy< TYPE_LIST_3(T1, T2, T3), GenericNodePinHolder>
-//{};
+template< class T1, class T2, class T3>
+class NodeInOutPins_3 : public GenScatterHierarchy< TYPE_LIST_3(T1, T2, T3), GenericNodePinHolder>
+{};
 
 #endif // GENERICNODE_H

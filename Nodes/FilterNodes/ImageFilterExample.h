@@ -5,23 +5,33 @@
 #include "Nodes/GenericNode.h"
 #include "Nodes/GenScatterHierarchy.h"
 
-//typedef GenScatterHierarchy< TYPE_LIST_2(ImageInputPin, ImageOutputPin), GenericNodePinHolder> ImageExampleNodePins;
-typedef NodeInOutPins<ImageInputPin, ImageOutputPin> ImageFilterExampleInOutPins;
 
-class ImageFilterExample //: ?
+#include "Nodes/ProcessorNode.h"
+
+typedef TYPE_LIST_3(ImageInputPin, ImageOutputPin, IntInputPin) ImageFilterExamplePinsTlist ;
+
+typedef GenScatterHierarchy< ImageFilterExamplePinsTlist, GenericNodePinHolder> ImageFilterExampleInOutPins;
+
+//typedef NodeInOutPins<ImageInputPin, ImageOutputPin> ImageFilterExampleInOutPins;
+
+class ImageFilterNodeExample : public ProcessorNode
 {
 public:
-    ImageFilterExample();
+    ImageFilterNodeExample();
+
+    // map pin index to pin name
+    //static const hmm ?
+
+    static constexpr int _pinCount = Length<ImageFilterExamplePinsTlist>();
 
 protected:
-    virtual bool BeforeProcessing();
+    virtual bool BeforeProcessing() override;
     // Default implementation copies _input to _ouptut
-    virtual bool ProcessInternal();
-    virtual bool AfterProcessing() const;
+    virtual bool ProcessInternal() override;
+    virtual bool AfterProcessing() const override;
 
 private:
     ImageFilterExampleInOutPins _imageFilterExamplePins;
-
 };
 
 #endif // IMAGEFILTEREXAMPLE_H
