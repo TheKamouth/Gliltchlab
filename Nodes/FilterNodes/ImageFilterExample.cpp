@@ -50,7 +50,21 @@ bool ImageFilterNodeExample::AfterProcessing() const
     return true;
 }
 
+bool SimplerImageFilterNodeExample::BeforeProcessing()
+{
+    for(int i = 0 ; i < PinCount::value; i++)
+    {
+        //qDebug() << "pin #" << i << ": " << GetPinName<i>();
+    }
+}
+
 bool SimplerImageFilterNodeExample::ProcessInternal()
 {
+    /*GenericNodePin * pin = */
+    //GetNodeGenericPinAt< SimplerImageFilterNodeExample,0 >(this);
+
+    //IDataPin * pin0 = GetDataPinAt<0>();
+    //FlowData * pin0Data = pin0->GetData();
+
     return true;
 }

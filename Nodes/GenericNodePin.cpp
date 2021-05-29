@@ -9,18 +9,6 @@ GenericNodePin<A,B>::GenericNodePin()
 }
 
 template<class A, class B>
-void GenericNodePin<A,B>::SetData(A * data)
-{
-    _data = data;
-}
-
-template<class A, class B>
-A *GenericNodePin<A,B>::GetData()
-{
-    return _data;
-}
-
-template<class A, class B>
 bool GenericNodePin<A,B>::IsInput()
 {
     if( std::is_same<B, InputNodePin>::value == true)

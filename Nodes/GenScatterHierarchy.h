@@ -13,6 +13,7 @@ class GenScatterHierarchy< TypeList< Head, Tail >, Unit > :
         public GenScatterHierarchy< Head, Unit >,
         public GenScatterHierarchy< Tail, Unit >
 {
+
     typedef class TypeList< Head, Tail > TList;
     typedef class GenScatterHierarchy< Head, Unit > LeftBase;
     typedef class GenScatterHierarchy< Tail, Unit > RightBase;

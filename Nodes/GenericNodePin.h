@@ -1,6 +1,9 @@
 #ifndef GENERICNODEPIN_H
 #define GENERICNODEPIN_H
 
+#include "FlowGraph/FlowData.h"
+#include "FlowGraph/DataPin.h"
+
 #include <QString>
 #include <QImage>
 
@@ -26,19 +29,30 @@ class GenericNodePin
 public:
     GenericNodePin();
 
-    void SetData(A * data);
-    A * GetData();
     bool IsInput();
     QString Name();
-
-private:
-    A * _data;
 
     static const QString _pinName;
 };
 
+template <class A>
+class GenericNodePin<A, InputNodePin> : public IInputDataPin
+{
+public:
+    GenericNodePin();
+};
+
+template <class A>
+class GenericNodePin<A, OutputNodePin> : public IOutputDataPin
+{
+public:
+    GenericNodePin();
+};
+
 typedef class GenericNodePin< int, InputNodePin > IntInputPin ;
 typedef class GenericNodePin< int, OutputNodePin > IntOutputPin ;
+typedef class GenericNodePin< float, InputNodePin > FloatInputPin ;
+typedef class GenericNodePin< float, OutputNodePin > FloatOutputPin ;
 typedef class GenericNodePin< QImage *, InputNodePin > ImageInputPin;
 typedef class GenericNodePin< QImage *, OutputNodePin > ImageOutputPin ;
 

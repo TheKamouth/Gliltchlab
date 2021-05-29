@@ -27,13 +27,22 @@ template< class T1/*, class T2*/>
 class GenericNode
 {
 public:
-    typedef std::integral_constant<int, Length< T1 >::value > PinCount;
-    typedef GenScatterHierarchy< T1, GenericNodePinHolder> PinHierarchy;
+    typedef T1 GenericPinTypeList;
+    typedef std::integral_constant<int, Length< GenericPinTypeList >::value > PinCount;
+    typedef GenScatterHierarchy< GenericPinTypeList, GenericNodePinHolder> PinHierarchy;
 
     QString GetPinName(int index)
     {
-        return Field<index>(_pins)._genericPin.Name();
+        IDataPin * pin = Field<0>(_pins)._genericPin;
+        return pin->Name();
     }
+
+    /*
+    IDataPin * GetDataPinAt(int index)
+    {
+        IDataPin * pin = Field<index>(_pins)._genericPin;
+        return pin;
+    }*/
 
 private:
     PinHierarchy _pins;
@@ -42,13 +51,14 @@ private:
 
 // T1 is a GenericNode
 // T2 is an index
+/*
 template< class T1, int i >
-GenericNodePin<class A, class B> * GetNodeGenericPinAt()
+GenericNodePin<class A, class B> * GetNodeGenericPinAt(T1 * genericNode)
 {
-
+    // TODO
+    typedef TypeAt< T1::GenericPinTypeList >
+    GenericNodePin<A,B> * pin = Field<i>(genericNode, i)._genericPin;
+    return pin;
 }
-
-// A template function to get pin at index i
-//tempalte
-
+*/
 #endif // GENERICNODE_H

@@ -39,7 +39,10 @@ class SimplerImageFilterNodeExample : public GenericNode<ImageFilterExamplePinsT
 {
 public:
 
+    typedef GenericNode<ImageFilterExamplePinsTlist> SimplerImageFilterGenericNodeType;
+
 protected:
+    virtual bool BeforeProcessing() override;
     virtual bool ProcessInternal() override;
 };
 
