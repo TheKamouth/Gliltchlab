@@ -8,7 +8,7 @@
 #include "Nodes/TypeList.h"
 
 #include "Nodes/ProcessorNode.h"
-
+/*
 typedef class TYPE_LIST_3(ImageInputPin, ImageOutputPin, IntInputPin) ImageFilterExamplePinsTlist ;
 class ImageFilterNodeExample : public IProcessorNode
 {
@@ -31,15 +31,21 @@ protected:
 private:
     ImageFilterExampleInOutPins _imageFilterExamplePins;
 };
+*/
 
 /////////////////////////////////
 // An other try at simplifying nodes implementation
-//typedef class TYPE_LIST_3(ImageInputPin, ImageOutputPin, IntInputPin) ImageFilterExamplePinsTlist ;
-class SimplerImageFilterNodeExample : public GenericNode<ImageFilterExamplePinsTlist>, public IProcessorNode
+typedef TYPE_LIST_3(ImageInputPin, ImageOutputPin, IntInputPin) ImageFilterExamplePinsTlist ;
+class ImageFilterNodeExample : public GenericNode<ImageFilterExamplePinsTlist>
 {
 public:
-
+    ~ImageFilterNodeExample(){};
     typedef GenericNode<ImageFilterExamplePinsTlist> SimplerImageFilterGenericNodeType;
+
+    // INode
+    virtual NodeType Type() override { return ImageFilterExample;}
+    virtual QString Name() override { return "ImageFilterExample";}
+    virtual FlowData * MainOutput() override { return GetPinData<0>();}
 
 protected:
     virtual bool BeforeProcessing() override;

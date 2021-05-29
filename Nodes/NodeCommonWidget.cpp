@@ -6,7 +6,7 @@
 
 #include <QDebug>
 
-NodeCommonWidget::NodeCommonWidget(Node * node):
+NodeCommonWidget::NodeCommonWidget(class Node * node):
     ui(new Ui::NodeCommonWidget),
     _node(node)
 {

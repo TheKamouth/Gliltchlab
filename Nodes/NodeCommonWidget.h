@@ -14,7 +14,7 @@ class NodeCommonWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit NodeCommonWidget(Node * node = nullptr);
+    explicit NodeCommonWidget(class Node * node = nullptr);
     ~NodeCommonWidget();
 
     void OnProcessorSettingsClicked();
@@ -27,18 +27,18 @@ public:
     void SetIsPeakedAt(bool isPeakedAt);
     void ShowLastProcessingTime(int processingTimeMs);
 
-    Node * GetNode(){ return _node; }
+    class Node * GetNode(){ return _node; }
 
 signals:
-    void DeleteClicked(Node * node);
-    void PeakClicked(Node * node);
+    void DeleteClicked(class Node * node);
+    void PeakClicked(class Node * node);
     void EnableClicked(NodeCommonWidget * processorCommonUI, bool processorEnabled);
     void ArrowClicked(bool isExpanded);
 
 private:
     Ui::NodeCommonWidget *ui;
 
-    Node * _node;
+    class Node * _node;
 
     bool _isExpanded;
     bool _isPickedAt;;

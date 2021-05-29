@@ -7,6 +7,8 @@
 #include "Nodes/FilterNodes/ScannerFilterNode.h"
 #include "Nodes/FilterNodes/PixelSort/PixelSortFilterNode.h"
 
+#include "Nodes/FilterNodes/ImageFilterExample.h"
+
 #include <QDebug>
 #include <QCoreApplication>
 
@@ -18,12 +20,13 @@ NodeFactory::NodeFactory()
 
 }
 
-class Node * NodeFactory::CreateNode(NodeType type)
+INode * NodeFactory::CreateNode(NodeType type)
 {
-    class Node * node = nullptr;
+    INode * node = nullptr;
 
     switch(type)
     {
+        /*
         case ImageInput:
         {
             node = new ImageInputNode();
@@ -52,6 +55,11 @@ class Node * NodeFactory::CreateNode(NodeType type)
         case PixelSort:
             node = new PixelSortFilterNode();
             break;
+            */
+
+        case ImageFilterExample:
+            node = new ImageFilterNodeExample();
+            break;
 
         default:
             qDebug() << "NodeFactory does not handle this NodeType";
@@ -59,7 +67,6 @@ class Node * NodeFactory::CreateNode(NodeType type)
             break;
     }
 
-    node->SetType(type);
     return node;
 }
 
@@ -77,7 +84,7 @@ QStringList NodeFactory::AvailableNodeTypesNames()
 
 int NodeFactory::AvailableNodeTypesCount()
 {
-    return AllRed;
+    return ImageInput;
     // return COUNT
 }
 
@@ -105,6 +112,9 @@ QString NodeFactory::NodeTypeName(NodeType nodeType)
 
         case PixelSort:
             return "PixelSort";
+
+        case ImageFilterExample:
+            return "ImageFilterExample";
 
         default:
             qDebug() << "unnamed";

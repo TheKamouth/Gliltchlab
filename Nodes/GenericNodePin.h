@@ -27,7 +27,7 @@ template <class A, class B/*, class T3*/>
 class GenericNodePin
 {
 public:
-    GenericNodePin();
+    GenericNodePin(){_pinName = __FUNCTION__;}
 
     bool IsInput();
     QString Name();
@@ -55,5 +55,7 @@ typedef class GenericNodePin< float, InputNodePin > FloatInputPin ;
 typedef class GenericNodePin< float, OutputNodePin > FloatOutputPin ;
 typedef class GenericNodePin< QImage *, InputNodePin > ImageInputPin;
 typedef class GenericNodePin< QImage *, OutputNodePin > ImageOutputPin ;
+typedef class GenericNodePin< QString, InputNodePin > StringInputPin ;
+typedef class GenericNodePin< QString, OutputNodePin > StringOutputPin ;
 
 #endif // GENERICNODEPIN_H

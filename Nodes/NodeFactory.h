@@ -3,10 +3,12 @@
 
 #include <QString>
 
-class Node;
+class INode;
 
 enum NodeType
 {
+    ImageFilterExample,
+
     // Misc
     ImageInput,
 
@@ -37,7 +39,7 @@ public:
 
     NodeFactory();
 
-    static Node * CreateNode(NodeType type);
+    static INode * CreateNode(NodeType type);
     static QStringList AvailableNodeTypesNames();
     static int AvailableNodeTypesCount();
     static QString NodeTypeName(NodeType nodeType);

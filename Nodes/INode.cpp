@@ -1,14 +1,29 @@
-#include "ProcessorNode.h"
+#include "INode.h"
 
-#include <QString>
 #include <QDebug>
 #include <QElapsedTimer>
 
-IProcessorNode::IProcessorNode()
+QPointF INode::FlowGraphNodePosition()
 {
+    return _flowGraphNodePostion;
 }
 
-bool IProcessorNode::TryProcess()
+void INode::SetFlowGraphScenePosition(QPointF graphScenePosition)
+{
+    _flowGraphNodePostion = graphScenePosition;
+}
+
+bool INode::IsEnabled()
+{
+    return _isEnabled;
+}
+
+void INode::SetEnabled(bool enable)
+{
+    _isEnabled = enable;
+}
+
+bool INode::TryProcess()
 {
     qDebug() << "##################";
 
@@ -55,7 +70,7 @@ bool IProcessorNode::TryProcess()
     return true;
 }
 
-bool IProcessorNode::BeforeProcessing()
+bool INode::BeforeProcessing()
 {
     // Read inputs, initialize outputs
 
@@ -86,7 +101,9 @@ bool IProcessorNode::BeforeProcessing()
     return true;
 }
 
-bool IProcessorNode::AfterProcessing() const
+bool INode::AfterProcessing() const
 {
+    emit NodeOutputChanged(this);
+
     return true;
 }

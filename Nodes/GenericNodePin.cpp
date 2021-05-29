@@ -3,12 +3,6 @@
 #include <QDebug>
 
 template<class A, class B>
-GenericNodePin<A,B>::GenericNodePin()
-{
-    _pinName = __FUNCTION__;
-}
-
-template<class A, class B>
 bool GenericNodePin<A,B>::IsInput()
 {
     if( std::is_same<B, InputNodePin>::value == true)

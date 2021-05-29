@@ -68,6 +68,36 @@ struct TypeAt<TypeList<Head, Tail>, i>
     typedef typename TypeAt<Tail, i - 1>::Result Result;
 };
 
+// class template TypeAtNonStrict
+// Finds the type at a given index in a typelist
+// Invocations (TList is a typelist and index is a compile-time integral
+//     constant):
+// a) TypeAt<TList, index>::Result
+// returns the type in position 'index' in TList, or NullType if index is
+//     out-of-bounds
+// b) TypeAt<TList, index, D>::Result
+// returns the type in position 'index' in TList, or D if index is out-of-bounds
+
+template <class TList, unsigned int index,
+          typename DefaultType = NullType>
+struct TypeAtNonStrict
+{
+    typedef DefaultType Result;
+};
+
+template <class Head, class Tail, typename DefaultType>
+struct TypeAtNonStrict<TypeList<Head, Tail>, 0, DefaultType>
+{
+    typedef Head Result;
+};
+
+template <class Head, class Tail, unsigned int i, typename DefaultType>
+struct TypeAtNonStrict<TypeList<Head, Tail>, i, DefaultType>
+{
+    typedef typename
+    TypeAtNonStrict<Tail, i - 1, DefaultType>::Result Result;
+};
+
 // class template IndexOf
 // Finds the index of a type in a typelist
 // Invocation (TList is a typelist and T is a type):
