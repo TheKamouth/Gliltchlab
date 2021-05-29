@@ -13,22 +13,34 @@ class GenScatterHierarchy< TypeList< Head, Tail >, Unit > :
         public GenScatterHierarchy< Head, Unit >,
         public GenScatterHierarchy< Tail, Unit >
 {
-
+public:
     typedef class TypeList< Head, Tail > TList;
     typedef class GenScatterHierarchy< Head, Unit > LeftBase;
     typedef class GenScatterHierarchy< Tail, Unit > RightBase;
+    template <typename T> struct Rebind
+    {
+        typedef Unit<T> Result;
+    };
 };
 
 template < class AtomicType, template < class > class Unit >
 class GenScatterHierarchy : public Unit< AtomicType >
 {
     typedef class Unit< AtomicType > LeftBase;
+
+    template <typename T> struct Rebind
+    {
+        typedef Unit<T> Result;
+    };
 };
 
 template< template < class > class Unit >
 class GenScatterHierarchy< NullType, Unit >
 {
-
+    template <typename T> struct Rebind
+    {
+        typedef Unit<T> Result;
+    };
 };
 
 // function template Field
@@ -142,11 +154,15 @@ Field(H& obj)
     return FieldHelper<H, i>::Do(obj);
 }
 
+/*
 template <int i, class H>
 const typename FieldHelper<H, i>::ResultType&
 Field(const H& obj)
 {
     return FieldHelper<H, i>::Do(obj);
 }
+*/
+
+
 
 #endif // GENSCATTERHIERARCHY_H

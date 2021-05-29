@@ -7,13 +7,13 @@
 #define TYPE_LIST_3(T1, T2, T3)     TypeList< T1, TYPE_LIST_2(T2, T3)>
 
 template <class T, class U>
-class TypeList
+struct TypeList
 {
     typedef T Head;
     typedef U Tail;
 };
 
-class NullType{};
+struct NullType{};
 
 // Length
 template <class TList>
@@ -53,7 +53,8 @@ struct TypeToType
 // TypeAt<TList, index>::Result
 // returns the type in position 'index' in TList
 // If you pass an out-of-bounds index, the result is a compile-time error
-template <class TList, unsigned int index> struct TypeAt;
+template <class TList, unsigned int index>
+struct TypeAt;
 
 template <class Head, class Tail>
 struct TypeAt<TypeList<Head, Tail>, 0>
@@ -73,7 +74,8 @@ struct TypeAt<TypeList<Head, Tail>, i>
 // IndexOf<TList, T>::value
 // returns the position of T in TList, or NullType if T is not found in TList
 
-template <class TList, class T> struct IndexOf;
+template <class TList, class T>
+struct IndexOf;
 
 template <class T>
 struct IndexOf<NullType, T>

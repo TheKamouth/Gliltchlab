@@ -34,7 +34,7 @@ private:
 
 /////////////////////////////////
 // An other try at simplifying nodes implementation
-typedef class TYPE_LIST_3(ImageInputPin, ImageOutputPin, IntInputPin) ImageFilterExamplePinsTlist ;
+//typedef class TYPE_LIST_3(ImageInputPin, ImageOutputPin, IntInputPin) ImageFilterExamplePinsTlist ;
 class SimplerImageFilterNodeExample : public GenericNode<ImageFilterExamplePinsTlist>, public IProcessorNode
 {
 public:
