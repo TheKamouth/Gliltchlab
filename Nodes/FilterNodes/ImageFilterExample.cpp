@@ -9,11 +9,11 @@ bool ImageFilterNodeExample::BeforeProcessing()
 {
     // Read all inputs in _imageFilterExamplePins and map it to parameters
 
-    //for( int i = 0; i < _imageFilterExamplePins.Count(); i++)
+    for( int i = 0; i < PinCount::value; i++)
     {
-        /*
-        GenericNodePin * nodePin; = _imageFilterExamplePins[i];
-        if( nodePin->IsInput())
+
+        //GenericNodePin * nodePin = nullptr; //_imageFilterExamplePins[i];
+        /*if( nodePin->IsInput())
         {
             QString pinName = nodePin->Name();
             if(pinName == "sortingAngle")
@@ -29,8 +29,7 @@ bool ImageFilterNodeExample::BeforeProcessing()
             {
                 qDebug() << __FUNCTION__ << " this pin is not handled: " << pinName;
             }
-        }
-        */
+        }*/
     }
 
     return true;
@@ -48,5 +47,10 @@ bool ImageFilterNodeExample::ProcessInternal()
 bool ImageFilterNodeExample::AfterProcessing() const
 {
     // Notify
+    return true;
+}
+
+bool SimplerImageFilterNodeExample::ProcessInternal()
+{
     return true;
 }

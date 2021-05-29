@@ -12,6 +12,7 @@ CONFIG += c++17
 SOURCES += \
 	CommonPreferences.cpp \
 	FlowGraph/ConnectionGraphicsItem.cpp \
+	FlowGraph/FlowData.cpp \
 	FlowGraph/FlowGraph.cpp \
 	FlowGraph/FlowGraphScene.cpp \
 	FlowGraph/FlowGraphSceneView.cpp \
@@ -54,12 +55,14 @@ SOURCES += \
 HEADERS += \
 	CommonPreferences.h \
 	FlowGraph/ConnectionGraphicsItem.h \
+	FlowGraph/FlowData.h \
 	FlowGraph/FlowGraph.h \
 	FlowGraph/FlowGraphScene.h \
 	FlowGraph/FlowGraphSceneView.h \
 	FlowGraph/FlowGraphXmlConstants.h \
 	FlowGraph/NodeConnection.h \
 	FlowGraph/NodeGraphicsItem.h \
+	Loki/Sequence.h \
 	Nodes/FilterNodes/Desaturate/DesaturateFilterNode.h \
 	Nodes/FilterNodes/DesaturateFilterNode.h \
 	Nodes/FilterNodes/ImageFilterExample.h \
@@ -89,6 +92,8 @@ HEADERS += \
 	FlowGraph/ProcessorFlowDockWidget.h \
 	Nodes/ProcessorNode.h \
 	Nodes/TypeList.h \
+	Nodes/TypeManip.h \
+	Nodes/TypeTraits.h \
 	TimeControlWidget.h \
 	TimelineWidget.h \
 	mainwindow.h \

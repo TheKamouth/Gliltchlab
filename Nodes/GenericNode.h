@@ -6,6 +6,7 @@
 
 #include "TypeList.h"
 #include "FlowGraph/NodeConnection.h"
+#include "FlowGraph/FlowData.h"
 
 #include <QImage>
 #include <QDebug>
@@ -17,22 +18,37 @@
 template<class T1>
 struct GenericNodePinHolder
 {
-    T1 * pin;
+    T1 * _genericPin;
 };
 
-// 2 pin GenericNode
-template<class T1, class T2>
-struct NodeInOutPins : public GenScatterHierarchy< TYPE_LIST_2(T1, T2), GenericNodePinHolder>
+// T1 is a GenericNodePin type list, data describing node pins in/out and type
+// T2 is a NodeProcessor implementation
+template< class T1/*, class T2*/>
+class GenericNode
 {
-    // TODO : pin data accesors
-    int Count() { return 2; }
-    //GenericNodePinHolder & operator[] (unsigned int);
+public:
+    typedef std::integral_constant<int, Length< T1 >::value > PinCount;
+    typedef GenScatterHierarchy< T1, GenericNodePinHolder> PinHierarchy;
+
+    QString GetPinName(int index)
+    {
+        return Field<index>(_pins)._genericPin.Name();
+    }
+
+private:
+    PinHierarchy _pins;
+    //T2 _nodeProcessor;
 };
 
-// Error : This is a redefinition of GenericNode. Can change the name, impractical.
-// 3 pin GenericNode
-template< class T1, class T2, class T3>
-class NodeInOutPins_3 : public GenScatterHierarchy< TYPE_LIST_3(T1, T2, T3), GenericNodePinHolder>
-{};
+// T1 is a GenericNode
+// T2 is an index
+template< class T1, int i >
+GenericNodePin<class A, class B> * GetNodeGenericPinAt()
+{
+
+}
+
+// A template function to get pin at index i
+//tempalte
 
 #endif // GENERICNODE_H

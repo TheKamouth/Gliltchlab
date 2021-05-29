@@ -4,12 +4,12 @@
 #include <QDebug>
 #include <QElapsedTimer>
 
-ProcessorNode::ProcessorNode():
+IProcessorNode::IProcessorNode():
     _isEnabled(true)
 {
 }
 
-bool ProcessorNode::TryProcess()
+bool IProcessorNode::TryProcess()
 {
     qDebug() << "##################";
 
@@ -56,7 +56,7 @@ bool ProcessorNode::TryProcess()
     return true;
 }
 
-bool ProcessorNode::BeforeProcessing()
+bool IProcessorNode::BeforeProcessing()
 {
     // Read inputs, initialize outputs
 
@@ -87,7 +87,7 @@ bool ProcessorNode::BeforeProcessing()
     return true;
 }
 
-bool ProcessorNode::AfterProcessing() const
+bool IProcessorNode::AfterProcessing() const
 {
 
     return true;

@@ -1,10 +1,10 @@
 #ifndef PROCESSORNODE_H
 #define PROCESSORNODE_H
 
-class ProcessorNode
+class IProcessorNode
 {
 public:
-    ProcessorNode();
+    IProcessorNode();
     virtual bool TryProcess() final;
 
 protected:
@@ -13,7 +13,7 @@ protected:
     virtual bool ProcessInternal() = 0;
     virtual bool AfterProcessing() const;
 
-    // ProcessInternal implementation needs a way to acces _isEnabled (add accessor method?)
+    // ProcessInternal implementation needs a way to acces _isEnabled (add accessor method to keep private ?)
     bool _isEnabled;
 };
 

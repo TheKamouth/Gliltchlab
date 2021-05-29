@@ -3,18 +3,14 @@
 
 #include "Nodes/Node.h"
 #include "Nodes/GenericNode.h"
+#include "Nodes/GenericNodePin.h"
 #include "Nodes/GenScatterHierarchy.h"
-
+#include "Nodes/TypeList.h"
 
 #include "Nodes/ProcessorNode.h"
 
-typedef TYPE_LIST_3(ImageInputPin, ImageOutputPin, IntInputPin) ImageFilterExamplePinsTlist ;
-
-typedef GenScatterHierarchy< ImageFilterExamplePinsTlist, GenericNodePinHolder> ImageFilterExampleInOutPins;
-
-//typedef NodeInOutPins<ImageInputPin, ImageOutputPin> ImageFilterExampleInOutPins;
-
-class ImageFilterNodeExample : public ProcessorNode
+typedef class TYPE_LIST_3(ImageInputPin, ImageOutputPin, IntInputPin) ImageFilterExamplePinsTlist ;
+class ImageFilterNodeExample : public IProcessorNode
 {
 public:
     ImageFilterNodeExample();
@@ -22,7 +18,9 @@ public:
     // map pin index to pin name
     //static const hmm ?
 
-    static constexpr int _pinCount = Length<ImageFilterExamplePinsTlist>();
+    //typedef std::integral_constant<int, Length<TypeList<int, NullType> >::value > pinCount;
+    typedef std::integral_constant<int, Length< ImageFilterExamplePinsTlist >::value > PinCount;
+    typedef GenScatterHierarchy< ImageFilterExamplePinsTlist, GenericNodePinHolder> ImageFilterExampleInOutPins;
 
 protected:
     virtual bool BeforeProcessing() override;
@@ -32,6 +30,17 @@ protected:
 
 private:
     ImageFilterExampleInOutPins _imageFilterExamplePins;
+};
+
+/////////////////////////////////
+// An other try at simplifying nodes implementation
+typedef class TYPE_LIST_3(ImageInputPin, ImageOutputPin, IntInputPin) ImageFilterExamplePinsTlist ;
+class SimplerImageFilterNodeExample : public GenericNode<ImageFilterExamplePinsTlist>, public IProcessorNode
+{
+public:
+
+protected:
+    virtual bool ProcessInternal() override;
 };
 
 #endif // IMAGEFILTEREXAMPLE_H

@@ -6,44 +6,6 @@
 #include <QString>
 #include <QImage>
 
-struct FlowData
-{
-    enum Type
-    {
-        Int,
-        Float,
-        String,
-        Image
-        //Audio,
-        //Video,
-    };
-    FlowData();
-    FlowData(int   e) { _data.INT    = e; _type = Int;}
-    FlowData(float e) { _data.FLOAT  = e; _type = Float;}
-    FlowData(QString * e) { _data.STRING = e; _type = String;}
-    FlowData(QImage * e) { _data.IMAGE = e; _type = Image;}
-
-    Type GetType() const { return _type; }
-    int GetInt() const { return _data.INT; }
-    float GetFloat() const { return _data.FLOAT; }
-    QString * GetString() const { return _data.STRING; }
-    QImage * GetImage() const { return _data.IMAGE; }
-
-private:
-    Type _type;
-
-    // use QVariant instead ?
-    union {
-        int   INT;
-        float FLOAT;
-        QString * STRING;
-        QImage * IMAGE;
-        //QAudio * AUDIO;
-        //QVideo * VIDEO;
-    }_data;
-};
-
-
 enum ConnectionDirection
 {
     InputDirection,
