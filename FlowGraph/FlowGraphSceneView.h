@@ -4,6 +4,8 @@
 #include "FlowGraph.h"
 #include "FlowGraphScene.h"
 
+#include "PinGraphicsItem.h"
+
 #include <QMenu>
 #include <QWidget>
 #include <QGraphicsScene>
@@ -52,6 +54,12 @@ private:
 
     QMenu _contextMenu;
     QGraphicsItem * _selectedItem;
+
+    NodeGraphicsItem * _clickedNodeItem;
+
+    //
+    PinGraphicsItem * _fromPinItem;
+    PinGraphicsItem * _toPinItem;
 
     void Repaint();
 };

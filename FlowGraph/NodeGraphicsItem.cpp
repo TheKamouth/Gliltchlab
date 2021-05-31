@@ -15,15 +15,6 @@ NodeGraphicsItem::NodeGraphicsItem(INode * node) :
     setZValue(10.0f);
 
     //setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
-
-    // Create a PinGraphicsItem per pin
-    int pinCount = _node->GetPinCount();
-    for( int i = 0; i < pinCount; i++)
-    {
-        IDataPin * dataPin = _node->GetDataPinAt(i);
-        PinGraphicsItem * pinItem = new PinGraphicsItem(_node, dataPin);
-        pinItem->setParentItem(this);
-    }
 }
 
 QRectF NodeGraphicsItem::boundingRect() const
@@ -41,6 +32,8 @@ QRectF NodeGraphicsItem::boundingRect() const
 
 void NodeGraphicsItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
 {
+    painter->setRenderHint(QPainter::Antialiasing, true);
+
     QBrush painterBrush = painter->brush();
 
     QPointF flowGraphScenePosition = _node->FlowGraphNodePosition();
@@ -144,16 +137,13 @@ void NodeGraphicsItem::paint(QPainter * painter, const QStyleOptionGraphicsItem 
 void NodeGraphicsItem::SetGraphicsScenePosition(QPointF graphicsScenePosititon)
 {
     _node->SetFlowGraphScenePosition(graphicsScenePosititon);
-
     update();
 }
 
 void NodeGraphicsItem::SetSelected(bool selected)
 {
     _isSelected = selected;
-
     setSelected(selected);
-
     update();
 }
 

@@ -1,6 +1,8 @@
 #ifndef FLOWDATA_H
 #define FLOWDATA_H
 
+#include "FlowGraphConstants.h"
+
 #include <QString>
 #include <QImage>
 
@@ -13,6 +15,7 @@ enum FlowDataType
     //Audio,
     //Video,
 };
+
 // A struct that wraps data types handled by Nodes
 struct FlowData
 {
@@ -29,6 +32,40 @@ struct FlowData
     float GetFloat() const { return _data.FLOAT; }
     QString * GetString() const { return _data.STRING; }
     QImage * GetImage() const { return _data.IMAGE; }
+
+    QString TypeString()
+    {
+        switch(_type)
+        {
+            case Int:
+                return "int";
+            case Float:
+                return "float";
+            case String:
+                return "string";
+            case Image:
+                return "image";
+            default :
+                return "unknown flow data type";
+        }
+    }
+
+    static QColor TypeToColor(FlowDataType type)
+    {
+        switch(type)
+        {
+            case Int:
+                return PIN_INT_COLOR;
+            case Float:
+                return PIN_FLOAT_COLOR;
+            case String:
+                return PIN_STRING_COLOR;
+            case Image:
+                return PIN_IMAGE_COLOR;
+            default :
+                return PIN_INT_COLOR;
+        }
+    }
 
 private:
     FlowDataType _type;

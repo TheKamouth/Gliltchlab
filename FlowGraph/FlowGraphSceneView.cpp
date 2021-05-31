@@ -1,6 +1,7 @@
 #include "FlowGraphSceneView.h"
 
 #include "FlowGraph/NodeGraphicsItem.h"
+#include "FlowGraph/PinGraphicsItem.h"
 #include "Nodes/NodeFactory.h"
 #include "Nodes/Node.h"
 
@@ -19,7 +20,10 @@ FlowGraphSceneView::FlowGraphSceneView( QWidget *parent) :
     _dragStartPosition( QPointF( 0.0f,0.0f)),
     _dragItemStartPosition( QPointF( 0.0f,0.0f)),
     _dragItemOffsetPosition( QPointF( 0.0f,0.0f)),
-    _currentScale( 1.0f)
+    _currentScale( 1.0f),
+    _clickedNodeItem(nullptr),
+    _fromPinItem(nullptr),
+    _toPinItem(nullptr)
 {
     setScene(&_flowGraphScene);
     show();
@@ -86,7 +90,17 @@ void FlowGraphSceneView::AddNodeWidget( INode * node)
     NodeGraphicsItem * nodeGraphicsItem = new NodeGraphicsItem(node);
     _flowGraphScene.addItem(nodeGraphicsItem);
 
-    _flowGraphScene.installEventFilter(this);
+    // Create a PinGraphicsItem per pin
+    int pinCount = node->GetPinCount();
+    for( int i = 0; i < pinCount; i++)
+    {
+        IDataPin * dataPin = node->GetDataPinAt(i);
+        PinGraphicsItem * pinItem = new PinGraphicsItem(node, dataPin);
+        pinItem->setParentItem(nodeGraphicsItem);
+        _flowGraphScene.addItem(pinItem);
+    }
+
+    //_flowGraphScene.installEventFilter(this);
 
     //QObject::connect( nodeGraphicsItem, &NodeGraphicsItem::NodeChanged, this, &FlowGraphSceneView::OnNodeChanged);
 
@@ -104,7 +118,6 @@ void FlowGraphSceneView::mousePressEvent( QMouseEvent *event)
 {
     QPointF sceneClickPos = mapToScene(event->pos());
     QGraphicsItem * clickedItem = _flowGraphScene.itemAt(sceneClickPos, transform());
-
     QGraphicsItem * clickedItem2 = itemAt( event->pos());
 
     if (event->buttons() == Qt::MiddleButton )
@@ -119,8 +132,24 @@ void FlowGraphSceneView::mousePressEvent( QMouseEvent *event)
         _contextMenu.clear();
 
         NodeGraphicsItem * nodeItem = dynamic_cast<NodeGraphicsItem *>(clickedItem);
+        PinGraphicsItem * pinItem = dynamic_cast<PinGraphicsItem *>(clickedItem);
 
-        if( nodeItem == nullptr)
+        // We could get top most item but we dont. Have to start with more specific items
+        if (pinItem != nullptr)
+        {
+            qDebug() << "pin item clicked";
+            _fromPinItem = pinItem;
+        }
+        else if(nodeItem != nullptr)
+        {
+            _contextMenu.addAction("Delete node",
+                                   [=]() -> void {
+                _flowGraphScene.removeItem(nodeItem);
+                DeleteNodeAction(nodeItem->Node());
+                delete nodeItem;
+            });
+        }
+        else
         {
             _contextMenu.addSection("Add");
 
@@ -133,15 +162,6 @@ void FlowGraphSceneView::mousePressEvent( QMouseEvent *event)
                                         [=]() -> void { AddNodeAction((NodeType)i, newNodePosition);}
                 );
             }
-        }
-        else if(nodeItem != nullptr)
-        {
-            _contextMenu.addAction("Delete node",
-                                   [=]() -> void {
-                _flowGraphScene.removeItem(nodeItem);
-                DeleteNodeAction(nodeItem->Node());
-                delete nodeItem;
-            });
         }
 
         _contextMenu.move(event->globalPos());
@@ -161,12 +181,19 @@ void FlowGraphSceneView::mousePressEvent( QMouseEvent *event)
 
             // clicked on an GraphicsItem
             NodeGraphicsItem * nodeItem = dynamic_cast<NodeGraphicsItem *>(clickedItem);
-            if(nodeItem != nullptr)
+            PinGraphicsItem * pinItem = dynamic_cast<PinGraphicsItem *>(clickedItem);
+
+            // We could get top most item but we dont. Have to start with more specific items
+            if (pinItem != nullptr)
             {
+                qDebug() << "pin item clicked";
+                _fromPinItem = pinItem;
+            }
+            else if(nodeItem != nullptr)
+            {
+                _clickedNodeItem = nodeItem;
                 _leftClickedOnNodeItem = true;
                 //_dragItemOffsetPosition = nodeItem->mapToItem(_dragItemStartPosition);
-
-                //qDebug() << "LeftClickedOnNodeItem: " << _dragItemOffsetPosition;
 
                 if (nodeItem->isSelected() == false)
                 {
@@ -237,16 +264,9 @@ void FlowGraphSceneView::mouseMoveEvent(QMouseEvent * event)
         _dragStartPosition = QPointF(event->x(), event->y());
 
     }
-    else if(_isLeftMouseButtonPressed && _leftClickedOnNodeItem /*&& _flowGraphScene.selectedItems().isEmpty() == false*/)
+    else if(_isLeftMouseButtonPressed && _clickedNodeItem /*&& _flowGraphScene.selectedItems().isEmpty() == false*/)
     {
-        if( _flowGraphScene.selectedItems().count() == 0)
-        {
-            qDebug() << "No item selected";
-            return;
-        }
-
-        QGraphicsItem * draggedNodeItem = _flowGraphScene.selectedItems().at(0);
-        NodeGraphicsItem * nodeGraphicsItem = dynamic_cast<NodeGraphicsItem *>(draggedNodeItem);
+        NodeGraphicsItem * nodeGraphicsItem = dynamic_cast<NodeGraphicsItem *>(_clickedNodeItem);
         QPointF sceneDragPosition = mapToScene(event->pos());
         //QPointF itemDraggedPosition = nodeGraphicsItem->mapFromScene(sceneDragPosition);
         //QPointF itemDragLocalPosition = nodeGraphicsItem->mapFro(sceneDragPosition);
@@ -265,6 +285,11 @@ void FlowGraphSceneView::mouseMoveEvent(QMouseEvent * event)
 
 void FlowGraphSceneView::mouseReleaseEvent(QMouseEvent *event)
 {
+    QPointF sceneClickPos = mapToScene(event->pos());
+    QGraphicsItem * clickedItem = _flowGraphScene.itemAt(sceneClickPos, transform());
+    NodeGraphicsItem * nodeItem = dynamic_cast<NodeGraphicsItem *>(clickedItem);
+    PinGraphicsItem * pinItem = dynamic_cast<PinGraphicsItem *>(clickedItem);
+
     if(event->button() == Qt::MiddleButton)
     {
         _isMiddleMouseButtonPressed = false;
@@ -286,6 +311,20 @@ void FlowGraphSceneView::mouseReleaseEvent(QMouseEvent *event)
 
         _dragStartPosition = QPointF( 0.0f, 0.0f);
         _dragItemOffsetPosition = QPointF(0.0f, 0.0f);
+
+        if(pinItem != nullptr && _fromPinItem != nullptr)
+        {
+            _toPinItem = pinItem;
+            // Should check if pins are from a different node
+            // todo :connect pins
+            qDebug() << "Connect pins";
+        }
+        else
+        {
+            _clickedNodeItem = nullptr;
+            _fromPinItem = nullptr;
+            _toPinItem = nullptr;
+        }
     }
 
     //qDebug() << __FUNCTION__;
