@@ -18,6 +18,7 @@ SOURCES += \
 	FlowGraph/FlowGraphSceneView.cpp \
 	FlowGraph/NodeConnection.cpp \
 	FlowGraph/NodeGraphicsItem.cpp \
+	FlowGraph/PinConnectionGraphicsItem.cpp \
 	FlowGraph/PinGraphicsItem.cpp \
 	Nodes/FilterNodes/Desaturate/DesaturateFilterNode.cpp \
 	Nodes/FilterNodes/ImageFilterExample.cpp \
@@ -66,6 +67,7 @@ HEADERS += \
 	FlowGraph/FlowGraphXmlConstants.h \
 	FlowGraph/NodeConnection.h \
 	FlowGraph/NodeGraphicsItem.h \
+	FlowGraph/PinConnectionGraphicsItem.h \
 	FlowGraph/PinGraphicsItem.h \
 	Loki/Sequence.h \
 	Nodes/FilterNodes/Desaturate/DesaturateFilterNode.h \

@@ -126,3 +126,24 @@ void PinGraphicsItem::paint(QPainter * painter, const QStyleOptionGraphicsItem *
     painter->setBrush(painterBrush);
     painter->drawText( pinNameRect, _pin->Name(), textOption);
 }
+
+QPointF PinGraphicsItem::GetConnectionPosition()
+{
+    QPointF nodePosition = _node->FlowGraphNodePosition();
+    int pinVerticalIndex = _node->GetPinVerticalIndex(_pin);
+
+    float pinConnectionPositionX;
+    float pinConnectionPositionY = NODE_HEADER_HEIGHT + NODE_HEIGHT_PER_INPUT * pinVerticalIndex + NODE_PIN_MARGIN + NODE_HEIGHT_PER_INPUT / 2.0;
+
+    if(_pin->IsInput())
+    {
+        pinConnectionPositionX = 0;
+    }
+    else
+    {
+        pinConnectionPositionX = NODE_WIDTH;
+    }
+
+    return QPointF( nodePosition.x() + pinConnectionPositionX,
+                    nodePosition.y() + pinConnectionPositionY);
+}

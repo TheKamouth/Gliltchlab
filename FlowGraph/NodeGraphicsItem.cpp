@@ -134,6 +134,19 @@ void NodeGraphicsItem::paint(QPainter * painter, const QStyleOptionGraphicsItem 
     */
 }
 
+QPointF NodeGraphicsItem::GetPinConnectionPosition(IDataPin * pin)
+{
+    int pinCount = _node->GetPinCount();
+    for(int i = 0 ; i < pinCount ; i++)
+    {
+        IDataPin * currentPin = _node->GetDataPinAt(i);
+        if (currentPin == pin)
+        {
+
+        }
+    }
+}
+
 void NodeGraphicsItem::SetGraphicsScenePosition(QPointF graphicsScenePosititon)
 {
     _node->SetFlowGraphScenePosition(graphicsScenePosititon);

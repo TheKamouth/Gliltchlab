@@ -18,6 +18,8 @@ public:
     virtual void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) override;
     //virtual void mousePressEvent(QGraphicsSceneMouseEvent * event) override;
 
+    QPointF GetPinConnectionPosition(IDataPin * pin);
+
     void SetGraphicsScenePosition(QPointF graphicsScenePosititon);
     void SetSelected(bool selected);
     INode * Node();

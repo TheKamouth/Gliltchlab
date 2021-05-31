@@ -17,6 +17,7 @@ class IDataPin
 {
 public:
     IDataPin() { _flowData = new FlowData(); _flowData->SetType(Int); }
+    FlowDataType Type(){return _flowData->GetType();}
     virtual void SetData(FlowData * data) = 0;
     virtual FlowData * GetData() = 0;
     virtual bool IsInput() = 0;

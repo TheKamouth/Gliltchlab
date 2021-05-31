@@ -2,6 +2,8 @@
 
 #include "FlowGraph/NodeGraphicsItem.h"
 #include "FlowGraph/PinGraphicsItem.h"
+#include "FlowGraph/PinConnectionGraphicsItem.h"
+
 #include "Nodes/NodeFactory.h"
 #include "Nodes/Node.h"
 
@@ -315,9 +317,28 @@ void FlowGraphSceneView::mouseReleaseEvent(QMouseEvent *event)
         if(pinItem != nullptr && _fromPinItem != nullptr)
         {
             _toPinItem = pinItem;
+
             // Should check if pins are from a different node
-            // todo :connect pins
-            qDebug() << "Connect pins";
+            // todo : connect pins
+            // create a connection graphics item
+            // actually connect nodes : meaning ?
+            if (_fromPinItem != _toPinItem ||
+                    _fromPinItem->Pin()->Type() == _toPinItem->Pin()->Type() ||
+                    _fromPinItem->Pin()->IsInput() != _toPinItem->Pin()->IsInput())
+            {
+                if(_fromPinItem->Pin()->IsInput())
+                {
+                    PinGraphicsItem * tmp = _fromPinItem;
+                    _fromPinItem = _toPinItem;
+                    _toPinItem = tmp;
+                }
+
+                ConnectionGraphicsItem * connectionItem = new ConnectionGraphicsItem(_fromPinItem, _toPinItem);
+                _flowGraphScene.addItem(connectionItem);
+
+                qDebug() << "Connect pins";
+            }
+
         }
         else
         {
@@ -327,7 +348,6 @@ void FlowGraphSceneView::mouseReleaseEvent(QMouseEvent *event)
         }
     }
 
-    //qDebug() << __FUNCTION__;
 }
 
 void FlowGraphSceneView::wheelEvent(QWheelEvent * event)

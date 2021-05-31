@@ -16,6 +16,9 @@ public:
     virtual QRectF boundingRect() const override;
     virtual void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) override;
 
+    QPointF GetConnectionPosition();
+    IDataPin * Pin() { return _pin;}
+
 private:
     IDataPin * _pin;
 
