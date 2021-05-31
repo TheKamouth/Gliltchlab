@@ -1,6 +1,7 @@
 #include "FlowGraph.h"
 
 #include "Nodes/Node.h"
+#include "Nodes/INode.h"
 
 #include "FlowGraphXmlConstants.h"
 
@@ -104,13 +105,13 @@ void FlowGraph::UpdateFlowGraph()
 
         QString nodeTypeString = attributeMap.namedItem(XML_FGF_NODE_ATTRIBUTE_TYPE).nodeValue();
         NodeType nodeType = (NodeType)nodeTypeString.toInt();
-        Node * node = AddNode(nodeType);
+        INode * node = AddNode(nodeType);
 
         QString nodeName = attributeMap.namedItem(XML_FGF_NODE_ATTRIBUTE_NAME).nodeValue();
         QString nodePosition = attributeMap.namedItem(XML_FGF_NODE_ATTRIBUTE_POSITION).nodeValue();
 
-        node->SetPosition(nodePosition.toInt());
-        //node->SetName(nodeName);
+        //node->SetPosition(nodePosition.toInt());
+        node->SetName(nodeName);
 
         emit NodeAdded(node);
     }
@@ -143,17 +144,12 @@ void FlowGraph::LoadFlowGraphFile(QString filePath)
     Process();
 }
 
-void FlowGraph::OnNodeInputChanged(Node * node)
+void FlowGraph::OnNodeInputChanged(INode * node)
 {
     // Reprocess all dependent nodes
-    int position = node->Position();
+    QList<INode *> nodesToProcess = GetDependantNodeList(node);
 
-    if (position >= _nodes.count() || position < 0)
-    {
-        qDebug() << __FUNCTION__ << " invalid position." ;
-        return;
-    }
-
+    /*
     Node * previousNode = nullptr;
     for(int i = std::max(1, position) ; i < _nodes.count() ; i++)
     {
@@ -166,22 +162,23 @@ void FlowGraph::OnNodeInputChanged(Node * node)
             qDebug() << "Failed to process node: " << node->Name();
         }
     }
+    */
 
     qDebug() << __FUNCTION__<< "Reprocessed, node changed: " << node->Name();
 }
 
-void FlowGraph::OnNodeOutputChanged(Node * node)
+void FlowGraph::OnNodeOutputChanged(const INode * node) const
 {
     emit NodeOutputChanged(node);
 }
 
-Node * FlowGraph::AddNode(NodeType nodeType)
+INode * FlowGraph::AddNode(NodeType nodeType)
 {
-    Node * node =_nodeFactory.CreateNode(nodeType);
-    node->SetPosition(_nodes.count());
+    INode * node =_nodeFactory.CreateNode(nodeType);
+    //node->SetPosition(_nodes.count());
 
-    QObject::connect(node , &Node::NodeInputChanged, this, &FlowGraph::OnNodeInputChanged);
-    QObject::connect(node , &Node::NodeOutputChanged, this, &FlowGraph::OnNodeOutputChanged);
+    QObject::connect(node , &INode::NodeInputChanged, this, &FlowGraph::OnNodeInputChanged);
+    QObject::connect(node , &INode::NodeOutputChanged, this, &FlowGraph::OnNodeOutputChanged);
 
     AddNodeToDom(node);
 
@@ -192,13 +189,13 @@ Node * FlowGraph::AddNode(NodeType nodeType)
     return node;
 }
 
-Node * FlowGraph::InsertNode(NodeType nodeType, int index)
+INode * FlowGraph::InsertNode(NodeType nodeType, int index)
 {
-    Node * node =_nodeFactory.CreateNode(nodeType);
-    node->SetPosition(_nodes.count());
+    INode * node =_nodeFactory.CreateNode(nodeType);
+    //node->SetPosition(_nodes.count());
 
-    QObject::connect(node , &Node::NodeInputChanged, this, &FlowGraph::OnNodeInputChanged);
-    QObject::connect(node , &Node::NodeOutputChanged, this, &FlowGraph::OnNodeOutputChanged);
+    QObject::connect(node , &INode::NodeInputChanged, this, &FlowGraph::OnNodeInputChanged);
+    QObject::connect(node , &INode::NodeOutputChanged, this, &FlowGraph::OnNodeOutputChanged);
 
     AddNodeToDom(node);
 
@@ -209,9 +206,9 @@ Node * FlowGraph::InsertNode(NodeType nodeType, int index)
     return node;
 }
 
-void FlowGraph::RemoveNode(Node * node)
+void FlowGraph::RemoveNode(INode * node)
 {
-    _nodes.removeAt(node->Position());
+    //_nodes.remove(node);
     delete node;
 }
 
@@ -235,13 +232,13 @@ void FlowGraph::Process()
         return;
     }
 
-    Node * previousNode = nullptr;
-    Node * node;
+    INode * previousNode = nullptr;
+    INode * node;
     for(int i = 1 ; i < _nodes.count() ; i++)
     {
         previousNode = _nodes[i-1];
         node = _nodes[i];
-        node->SetInput( previousNode->Output());
+        //node->SetInput( previousNode->Output());
 
         if( node->TryProcess() == false)
         {
@@ -252,7 +249,7 @@ void FlowGraph::Process()
     emit Processed();
 }
 
-QImage *FlowGraph::Output()
+FlowData * FlowGraph::Output()
 {
     if(_nodes.count() == 0)
     {
@@ -261,11 +258,16 @@ QImage *FlowGraph::Output()
     }
 
     int lastNodeIndex = _nodes.count() - 1;
-    Node * lastNode = _nodes.at(lastNodeIndex);
-    return lastNode->Output();
+    INode * lastNode = _nodes.at(lastNodeIndex);
+    return lastNode->MainOutput();
 }
 
-void FlowGraph::AddNodeToDom(Node * node)
+QList<INode *> FlowGraph::GetDependantNodeList(INode * node)
+{
+    return QList<INode*>();
+}
+
+void FlowGraph::AddNodeToDom(INode * node)
 {
     if( _domDocument == nullptr)
     {
@@ -279,7 +281,8 @@ void FlowGraph::AddNodeToDom(Node * node)
     QDomElement nodeDomElement = _domDocument->createElement(XML_FGF_NODE_ELEMENT);
     nodeDomElement.setAttribute(XML_FGF_NODE_ATTRIBUTE_NAME, node->Name());
     nodeDomElement.setAttribute(XML_FGF_NODE_ATTRIBUTE_TYPE, node->Type());
-    nodeDomElement.setAttribute(XML_FGF_NODE_ATTRIBUTE_POSITION, node->FlowGraphNodePosition());
+    nodeDomElement.setAttribute(XML_FGF_NODE_ATTRIBUTE_POSITION_X, node->FlowGraphNodePosition().x());
+    nodeDomElement.setAttribute(XML_FGF_NODE_ATTRIBUTE_POSITION_Y, node->FlowGraphNodePosition().y());
 
     root.appendChild(nodeDomElement);
 }

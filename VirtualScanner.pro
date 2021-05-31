@@ -18,6 +18,7 @@ SOURCES += \
 	FlowGraph/FlowGraphSceneView.cpp \
 	FlowGraph/NodeConnection.cpp \
 	FlowGraph/NodeGraphicsItem.cpp \
+	FlowGraph/PinGraphicsItem.cpp \
 	Nodes/FilterNodes/Desaturate/DesaturateFilterNode.cpp \
 	Nodes/FilterNodes/ImageFilterExample.cpp \
 	Nodes/FilterNodes/PixelSort/PixelSortFilterNode.cpp \
@@ -36,6 +37,7 @@ SOURCES += \
 	Nodes/GenericNode.cpp \
 	Nodes/GenericNodePin.cpp \
 	Nodes/GenericNodeTest.cpp \
+	Nodes/INode.cpp \
 	Nodes/Node.cpp \
 	Nodes/NodeCommonWidget.cpp \
 	Nodes/NodeFactory.cpp \
@@ -55,13 +57,16 @@ SOURCES += \
 HEADERS += \
 	CommonPreferences.h \
 	FlowGraph/ConnectionGraphicsItem.h \
+	FlowGraph/DataPin.h \
 	FlowGraph/FlowData.h \
 	FlowGraph/FlowGraph.h \
+	FlowGraph/FlowGraphConstants.h \
 	FlowGraph/FlowGraphScene.h \
 	FlowGraph/FlowGraphSceneView.h \
 	FlowGraph/FlowGraphXmlConstants.h \
 	FlowGraph/NodeConnection.h \
 	FlowGraph/NodeGraphicsItem.h \
+	FlowGraph/PinGraphicsItem.h \
 	Loki/Sequence.h \
 	Nodes/FilterNodes/Desaturate/DesaturateFilterNode.h \
 	Nodes/FilterNodes/DesaturateFilterNode.h \
@@ -84,6 +89,7 @@ HEADERS += \
 	Nodes/GenericNodePin.h \
 	Nodes/GenericNodeTest.h \
 	Nodes/GenericTemplateHelpers.h \
+	Nodes/INode.h \
 	Nodes/ImageInputNode.h \
 	Nodes/ImageOutputNode.h \
 	Nodes/Node.h \

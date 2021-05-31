@@ -7,7 +7,7 @@
 
 #include <QDockWidget>
 #include <QThread>
-
+/*
 namespace Ui {
 class ProcessorFlowDockWidget;
 }
@@ -21,11 +21,11 @@ public:
     ~ProcessorFlowDockWidget();
 
     void OnAddNodeClicked();
-    void OnNodeAdded(Node * node);
-    void AddNodeWidget(Node * node);
+    void OnNodeAdded(INode * node);
+    void AddNodeWidget(INode * node);
 
     void OnProcessFlowClicked();
-    void OnPeakNodeClicked(Node * node);
+    void OnPeakNodeClicked(INode * node);
     void PeakLastFlowNode();
 
     FlowGraph * CurrentFlowGraph() { return _flowGraph;};
@@ -33,7 +33,7 @@ public:
 signals:
     void InputLoaded(QImage* input, int flowIndex);
     void OutputProcessed(QImage * output);
-    void PeakNode(Node * node);
+    void PeakNode(INode * node);
 
 private:
     Ui::ProcessorFlowDockWidget *ui;
@@ -47,8 +47,8 @@ private:
     QImage * _output;
 
     void InitNodeTypeComboBox();
-    void DeleteNode(Node* node);
+    void DeleteNode(INode* node);
 
 };
-
+*/
 #endif // PROCESSORFLOWDOCKWIDGET_H

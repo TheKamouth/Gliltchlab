@@ -5,7 +5,7 @@
 
 #include <QFileDialog>
 #include <QDebug>
-
+/*
 ProcessorFlowDockWidget::ProcessorFlowDockWidget(QWidget *parent) :
     QDockWidget(parent),
     ui(new Ui::ProcessorFlowDockWidget)
@@ -36,14 +36,14 @@ void ProcessorFlowDockWidget::OnAddNodeClicked()
     NodeType nodeType = (NodeType)currentIndex;
 
     // Create Node and add to flow
-    Node* node = _flowGraph->AddNode(nodeType);
+    INode* node = _flowGraph->AddNode(nodeType);
 
     OnProcessFlowClicked();
 
     OnPeakNodeClicked(node);
 }
 
-void ProcessorFlowDockWidget::OnNodeAdded(Node * node)
+void ProcessorFlowDockWidget::OnNodeAdded(INode * node)
 {
     AddNodeWidget( node);
 }
@@ -64,27 +64,16 @@ void ProcessorFlowDockWidget::AddNodeWidget(Node *node)
     ui->vboxLayoutProcessors->insertWidget(_flowGraph->NodeCount() - 1, node->Widget());
 }
 
-void ProcessorFlowDockWidget::DeleteNode(Node* node)
+void ProcessorFlowDockWidget::DeleteNode(INode* node)
 {
     QObject::disconnect(node->CommonWidget(), &NodeCommonWidget::DeleteClicked, this, &ProcessorFlowDockWidget::DeleteNode);
 
     _flowGraph->RemoveNode(node);
 }
 
-void ProcessorFlowDockWidget::OnPeakNodeClicked(Node * node)
+void ProcessorFlowDockWidget::OnPeakNodeClicked(INode * node)
 {
     node->CommonWidget()->SetIsPeakedAt(true);
-
-    /*
-    for(int i = 0 ; i < _nodes.count(); i++ )
-    {
-        Node * n = _nodes.at(i);
-        if(n != node)
-        {
-            n->CommonWidget()->SetIsPeaked(false);
-        }
-    }
-    */
 
     emit PeakNode(node);
 }
@@ -108,3 +97,4 @@ void ProcessorFlowDockWidget::OnProcessFlowClicked()
 
     emit OutputProcessed(_flowGraph->Output());
 }
+*/

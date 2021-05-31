@@ -63,7 +63,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
-    ProcessorFlowDockWidget * _flowGraphDockWidget;
+    //ProcessorFlowDockWidget * _flowGraphDockWidget;
     TimeControlWidget _timeControlWidget;
     TimelineWidget * _timeLineWidget;
 
@@ -71,11 +71,11 @@ private:
     CommonPreferences _preferences;
     PreferencesDialog _preferencesDialog;
 
-    void OnPeakNode(Node * node);
-    void OnNodeOutputChanged(Node * node);
+    void OnPeakNode(INode * node);
+    void OnNodeOutputChanged(INode * node);
     void OnFlowGraphProcessed();
 
-    Node * _nodePeaked;
+    INode * _nodePeaked;
 
     QDockWidget _previewWidget;
     // A widget per observable output type ?
@@ -84,6 +84,7 @@ private:
     //QAudioWidget _audioWidget;
 
     FlowGraphSceneView _flowGraphSceneWidget;
+    FlowGraph * _flowGraph;
 
     // TODO:
     // Main gliltchlab process.

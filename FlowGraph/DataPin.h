@@ -7,7 +7,7 @@
 
 // A node should not be able to modify its input
 // It also should not be able to read its output
-
+/*
 class IDataPin
 {
 public:
@@ -28,12 +28,15 @@ public:
     virtual bool IsInput() override final { return false; };
 };
 
+template <typename T>
 class IInputDataPin : public IDataPin
 {
 public:
-    virtual void SetData(FlowData * data) override final { qDebug() << "Warning : Setting data on an input node. data: ";};
+    //IInputDataPin(){_flowData->SetType = T}
+    virtual void SetData(FlowData * data) override final { qDebug() << "Warning : Setting data on an input node. data: "; Q_UNUSED(data);};
     virtual FlowData * GetData() override final{ return _flowData;}
     virtual bool IsInput() override final { return true; };
 };
 
+*/
 #endif // DATAPIN_H

@@ -56,19 +56,21 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     // Should be removed when FlowGraphSceneView is done
-    _flowGraphDockWidget = new ProcessorFlowDockWidget(this);
-    _flowGraphDockWidget->setAllowedAreas(Qt::AllDockWidgetAreas);
-    _flowGraphDockWidget->show();
-    addDockWidget(Qt::RightDockWidgetArea, _flowGraphDockWidget);
+    //_flowGraphDockWidget = new ProcessorFlowDockWidget(this);
+    //_flowGraphDockWidget->setAllowedAreas(Qt::AllDockWidgetAreas);
+    //_flowGraphDockWidget->show();
+    //addDockWidget(Qt::RightDockWidgetArea, _flowGraphDockWidget);
+    //_flowGraphSceneWidget.SetFlowGraph( _flowGraphDockWidget->CurrentFlowGraph());
 
-    _flowGraphSceneWidget.SetFlowGraph( _flowGraphDockWidget->CurrentFlowGraph());
+    _flowGraph = new FlowGraph();
+    _flowGraphSceneWidget.SetFlowGraph(_flowGraph);
     setCentralWidget(&_flowGraphSceneWidget);
 
-    QObject::connect(_flowGraphDockWidget->CurrentFlowGraph(), &FlowGraph::NodeOutputChanged, this, &MainWindow::OnNodeOutputChanged);
-    QObject::connect(_flowGraphDockWidget->CurrentFlowGraph(), &FlowGraph::Processed, this, &MainWindow::OnFlowGraphProcessed);
-
-    QObject::connect(_flowGraphDockWidget, &ProcessorFlowDockWidget::PeakNode, this, &MainWindow::OnPeakNode);
-    QObject::connect(_flowGraphDockWidget, &ProcessorFlowDockWidget::OutputProcessed, this, &MainWindow::OnOutputProcessed);
+    //QObject::connect(_flowGraphDockWidget->CurrentFlowGraph(), &FlowGraph::NodeOutputChanged, this, &MainWindow::OnNodeOutputChanged);
+    //QObject::connect(_flowGraphDockWidget->CurrentFlowGraph(), &FlowGraph::Processed, this, &MainWindow::OnFlowGraphProcessed);
+    //
+    //QObject::connect(_flowGraphDockWidget, &ProcessorFlowDockWidget::PeakNode, this, &MainWindow::OnPeakNode);
+    //QObject::connect(_flowGraphDockWidget, &ProcessorFlowDockWidget::OutputProcessed, this, &MainWindow::OnOutputProcessed);
 
     QObject::connect(ui->actionNewFlow, &QAction::triggered ,this, &MainWindow::OnNewFlowGraphFileTriggered);
     QObject::connect(ui->actionSaveFlow, &QAction::triggered ,this, &MainWindow::OnSaveFlowGraphFileTriggered);
@@ -115,8 +117,8 @@ void MainWindow::OnNewFlowGraphFileTriggered()
     }
     */
 
-    _flowGraphDockWidget->CurrentFlowGraph()->CreateNewFlowGraphFile();
-    _flowGraphDockWidget->show();
+    //_flowGraphDockWidget->CurrentFlowGraph()->CreateNewFlowGraphFile();
+    //_flowGraphDockWidget->show();
 }
 
 void MainWindow::OnLoadFlowGraphFileTriggered()
@@ -135,8 +137,8 @@ void MainWindow::OnLoadFlowGraphFileTriggered()
         return;
     }
 
-    _flowGraphDockWidget->CurrentFlowGraph()->LoadFlowGraphFile(inputFilename);
-    _flowGraphDockWidget->show();
+    //_flowGraphDockWidget->CurrentFlowGraph()->LoadFlowGraphFile(inputFilename);
+    //_flowGraphDockWidget->show();
 }
 
 void MainWindow::OnSaveFlowGraphFileTriggered()
@@ -155,7 +157,7 @@ void MainWindow::OnSaveFlowGraphFileTriggered()
         return;
     }
 
-    _flowGraphDockWidget->CurrentFlowGraph()->SaveFlowGraphFile(inputFilename);
+    //_flowGraphDockWidget->CurrentFlowGraph()->SaveFlowGraphFile(inputFilename);
 }
 
 void MainWindow::OnReadTimerTimout()
@@ -170,7 +172,7 @@ void MainWindow::OnReadTimerTimout()
 
 void MainWindow::OnViewFlowWidgetTriggered(bool checked)
 {
-    _flowGraphDockWidget->setVisible(checked);
+    //_flowGraphDockWidget->setVisible(checked);
 }
 
 
@@ -189,7 +191,7 @@ void MainWindow::OnShowDebugConsoleTriggered(bool checked)
     ui->actionDebug_console->setVisible(checked);
 }
 
-void MainWindow::OnPeakNode(Node *node)
+void MainWindow::OnPeakNode(INode *node)
 {
     if (node == _nodePeaked)
     {
@@ -197,7 +199,8 @@ void MainWindow::OnPeakNode(Node *node)
         return;
     }
 
-    _glWidget.SetDisplayedImage(node->Output());
+    /*
+    _glWidget.SetDisplayedImage(node->MainOutput());
     _nodePeaked = node;
 
     FlowGraph * flowGraph = _flowGraphDockWidget->CurrentFlowGraph();
@@ -210,14 +213,17 @@ void MainWindow::OnPeakNode(Node *node)
     }
 
     _nodePeaked->CommonWidget()->SetIsPeakedAt(true);
+    */
 }
 
-void MainWindow::OnNodeOutputChanged(Node *node)
+void MainWindow::OnNodeOutputChanged(INode *node)
 {
+    /*
     if(node == _nodePeaked)
     {
         _glWidget.SetDisplayedImage(node->Output());
     }
+    */
 }
 
 void MainWindow::OnFlowGraphProcessed()
@@ -227,5 +233,5 @@ void MainWindow::OnFlowGraphProcessed()
         return;
     }
 
-    _glWidget.SetDisplayedImage(_nodePeaked->Output());
+    //_glWidget.SetDisplayedImage(_nodePeaked->Output());
 }

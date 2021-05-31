@@ -10,8 +10,7 @@ FlowGraphScene::FlowGraphScene()
     float maxX = 10000.0f;
     float minY = -10000.0f;
     float maxY = 10000.0f;
-
-    float interval = 10.0f;
+    float interval = 100.0f;
 
     //setForegroundBrush(QColor(5, 21, 21, 255));
 

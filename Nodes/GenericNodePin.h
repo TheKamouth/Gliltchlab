@@ -10,6 +10,70 @@
 #include <type_traits>
 #include <string>
 
+// A node should not be able to modify its input
+// It also should not be able to read its output
+
+class IDataPin
+{
+public:
+    IDataPin() { _flowData = new FlowData(); _flowData->SetType(Int); }
+    virtual void SetData(FlowData * data) = 0;
+    virtual FlowData * GetData() = 0;
+    virtual bool IsInput() = 0;
+    virtual QString Name() { return QString("") + (IsInput()?"input ":"output ")+ "pin"; }
+
+protected:
+    FlowData * _flowData;
+};
+
+template <typename T>
+class IOutputDataPin : public IDataPin
+{
+public:
+    //IOutputDataPin() { _flowData = new FlowData(); }
+    virtual void SetData(FlowData * data) override final { _flowData = data;};
+    virtual FlowData * GetData() override final{ return nullptr;}
+    virtual bool IsInput() override final { return false; };
+};
+
+template <typename T>
+class IInputDataPin : public IDataPin
+{
+public:
+    virtual void SetData(FlowData * data) override final { qDebug() << "Warning : Setting data on an input node. data: "; Q_UNUSED(data);};
+    virtual FlowData * GetData() override final{ return _flowData;}
+    virtual bool IsInput() override final { return true; };
+};
+
+// IInputDataPin specialization
+template <>
+class IInputDataPin<int> : public IDataPin
+{
+public:
+    IInputDataPin() { _flowData = new FlowData(); _flowData->SetType(Int);}
+    virtual void SetData(FlowData * data) override final { qDebug() << "Warning : Setting data on an input node. data: "; Q_UNUSED(data);};
+    virtual FlowData * GetData() override final{ return _flowData;}
+    virtual bool IsInput() override final { return true; };
+};
+
+template <>
+class IInputDataPin<QImage *> : public IDataPin
+{
+public:
+    IInputDataPin() { _flowData = new FlowData(); _flowData->SetType(Image);}
+    virtual void SetData(FlowData * data) override final { qDebug() << "Warning : Setting data on an input node. data: "; Q_UNUSED(data);};
+    virtual FlowData * GetData() override final{ return _flowData;}
+    virtual bool IsInput() override final { return true; };
+};
+
+typedef IInputDataPin<QImage *> InputImagePin;
+
+typedef class IInputDataPin<int> IntInputPin ;
+typedef class IOutputDataPin<int> IntOutputPin ;
+typedef class IInputDataPin<QImage *> ImageInputPin ;
+typedef class IOutputDataPin<QImage *> ImageOutputPin ;
+
+// Below is the first Pin classes
 // NodePin is either input or output
 template<bool IsInput>
 class IsInputNodePin{};
@@ -36,19 +100,20 @@ public:
 };
 
 template <class A>
-class GenericNodePin<A, InputNodePin> : public IInputDataPin
+class GenericNodePin<A, InputNodePin> : public IInputDataPin<A>
 {
 public:
     GenericNodePin();
 };
 
 template <class A>
-class GenericNodePin<A, OutputNodePin> : public IOutputDataPin
+class GenericNodePin<A, OutputNodePin> : public IOutputDataPin<A>
 {
 public:
     GenericNodePin();
 };
 
+/*
 typedef class GenericNodePin< int, InputNodePin > IntInputPin ;
 typedef class GenericNodePin< int, OutputNodePin > IntOutputPin ;
 typedef class GenericNodePin< float, InputNodePin > FloatInputPin ;
@@ -57,5 +122,6 @@ typedef class GenericNodePin< QImage *, InputNodePin > ImageInputPin;
 typedef class GenericNodePin< QImage *, OutputNodePin > ImageOutputPin ;
 typedef class GenericNodePin< QString, InputNodePin > StringInputPin ;
 typedef class GenericNodePin< QString, OutputNodePin > StringOutputPin ;
+*/
 
 #endif // GENERICNODEPIN_H

@@ -8,7 +8,8 @@
 #include <QObject>
 #include <QDomDocument>
 
-class Node;
+class INode;
+class FlowData;
 
 class FlowGraph : public QObject
 {
@@ -24,20 +25,20 @@ public:
 
     //
     int NodeCount(){ return _nodes.count();}
-    Node * GetNode(int index){return _nodes[index];}
+    INode * GetNode(int index){return _nodes[index];}
 
-    void OnNodeInputChanged(Node * node);
-    void OnNodeOutputChanged(Node * node);
+    void OnNodeInputChanged(INode * node);
+    void OnNodeOutputChanged(const INode * node) const;
 
-    Node * AddNode(NodeType nodeType);
-    Node * InsertNode(NodeType nodeType, int index);
+    INode * AddNode(NodeType nodeType);
+    INode * InsertNode(NodeType nodeType, int index);
     void RemoveNode(int index);
     void Process();
-    QImage * Output();
+    FlowData * Output();
 
     // Only linear flowgraph are handled
     // This class might be useful in a future generalisation (11/05)
-    QList<Node*> _nodes;
+    QList<INode*> _nodes;
     QString _flowName;
 
     // IO
@@ -45,18 +46,19 @@ public:
     QIODevice * _flowGraphFileDevice;
     QDomDocument * _domDocument;
 
-    void RemoveNode(Node *node);
+    void RemoveNode(INode *node);
+    QList<INode*> GetDependantNodeList(INode * node);
 
 signals:
-    void NodeAdded(Node * node);
-    void NodeOutputChanged(Node * node);
+    void NodeAdded(INode * node);
+    void NodeOutputChanged(const INode * node) const;
     void Processed();
 
 private:
     NodeFactory _nodeFactory;
 
     void UpdateFgfFileWithCurrentDom();
-    void AddNodeToDom(Node *node);
+    void AddNodeToDom(INode *node);
     void UpdateDomWithFgfFile();
     void UpdateFlowGraph();
     void SaveDialogBeforeChangingCurrentFile();

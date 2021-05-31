@@ -17,7 +17,8 @@ FlowGraphSceneView::FlowGraphSceneView( QWidget *parent) :
     _isLeftMouseButtonPressed( false),
     _leftClickedOnNodeItem(false),
     _dragStartPosition( QPointF( 0.0f,0.0f)),
-    _dragItemOffsetPosition(QPointF( 0.0f,0.0f)),
+    _dragItemStartPosition( QPointF( 0.0f,0.0f)),
+    _dragItemOffsetPosition( QPointF( 0.0f,0.0f)),
     _currentScale( 1.0f)
 {
     setScene(&_flowGraphScene);
@@ -33,7 +34,7 @@ FlowGraphSceneView::~FlowGraphSceneView(){}
 void FlowGraphSceneView::AddNodeAction(NodeType type, QPointF nodePosition)
 {
     // Create Node and add to flow
-    class Node * node = _flowGraph->AddNode(type);
+    INode * node = _flowGraph->AddNode(type);
     node->SetFlowGraphScenePosition(nodePosition);
     qDebug() << __FUNCTION__ << " at position: " << nodePosition;
 
@@ -41,11 +42,24 @@ void FlowGraphSceneView::AddNodeAction(NodeType type, QPointF nodePosition)
     //OnPeakNodeClicked(node);
 
     // Somehow this forces redraw
-    scale(1.0f,1.0f);
+    //scale(1.0f,1.0f);
     update();
 }
 
+void FlowGraphSceneView::DeleteNodeAction(INode *node)
+{
+    delete node;
+}
+
 void FlowGraphSceneView::OnSelectionChanged()
+{
+    qDebug() << __FUNCTION__;
+
+    // forcing redraw/update somehow
+    //scale(_currentScale,_currentScale);
+}
+
+void FlowGraphSceneView::OnNodeChanged()
 {
     qDebug() << __FUNCTION__;
 }
@@ -56,12 +70,12 @@ void FlowGraphSceneView::SetFlowGraph( FlowGraph * flowGraph)
     QObject::connect( _flowGraph, &FlowGraph::NodeAdded, this, &FlowGraphSceneView::OnNodeAdded);
 }
 
-void FlowGraphSceneView::OnNodeAdded( class Node * node)
+void FlowGraphSceneView::OnNodeAdded( INode * node)
 {
     AddNodeWidget(node);
 }
 
-void FlowGraphSceneView::AddNodeWidget( class Node * node)
+void FlowGraphSceneView::AddNodeWidget( INode * node)
 {
     if(node == nullptr)
     {
@@ -72,17 +86,27 @@ void FlowGraphSceneView::AddNodeWidget( class Node * node)
     NodeGraphicsItem * nodeGraphicsItem = new NodeGraphicsItem(node);
     _flowGraphScene.addItem(nodeGraphicsItem);
 
+    _flowGraphScene.installEventFilter(this);
+
+    //QObject::connect( nodeGraphicsItem, &NodeGraphicsItem::NodeChanged, this, &FlowGraphSceneView::OnNodeChanged);
+
     //node->InitializeNodeCommonWidget();
 
     //QObject::connect(node->CommonWidget(), &NodeCommonWidget::DeleteClicked, this, &ProcessorFlowDockWidget::DeleteNode);
     //QObject::connect(node->CommonWidget(), &NodeCommonWidget::PeakClicked, this, &ProcessorFlowDockWidget::OnPeakNodeClicked);
 
+
     //ui->vboxLayoutProcessors->insertWidget(_flowGraph->NodeCount() - 1, node->Widget());
+    scale(1.0f,1.0f);
 }
 
 void FlowGraphSceneView::mousePressEvent( QMouseEvent *event)
 {
-    QGraphicsItem * clickedItem = _flowGraphScene.itemAt( _dragStartPosition, transform());
+    QPointF sceneClickPos = mapToScene(event->pos());
+    QGraphicsItem * clickedItem = _flowGraphScene.itemAt(sceneClickPos, transform());
+
+    QGraphicsItem * clickedItem2 = itemAt( event->pos());
+
     if (event->buttons() == Qt::MiddleButton )
     {
         _isMiddleMouseButtonPressed = true;
@@ -94,7 +118,9 @@ void FlowGraphSceneView::mousePressEvent( QMouseEvent *event)
         // Build and show context menu
         _contextMenu.clear();
 
-        if( clickedItem)
+        NodeGraphicsItem * nodeItem = dynamic_cast<NodeGraphicsItem *>(clickedItem);
+
+        if( nodeItem == nullptr)
         {
             _contextMenu.addSection("Add");
 
@@ -103,11 +129,19 @@ void FlowGraphSceneView::mousePressEvent( QMouseEvent *event)
 
             for( int i = 0; i < NodeFactory::AvailableNodeTypesCount(); i++)
             {
-                _contextMenu.addAction(
-                            nodeNames[i],
-                            [=]() -> void { AddNodeAction((NodeType)i, newNodePosition);}
+                _contextMenu.addAction( nodeNames[i],
+                                        [=]() -> void { AddNodeAction((NodeType)i, newNodePosition);}
                 );
             }
+        }
+        else if(nodeItem != nullptr)
+        {
+            _contextMenu.addAction("Delete node",
+                                   [=]() -> void {
+                _flowGraphScene.removeItem(nodeItem);
+                DeleteNodeAction(nodeItem->Node());
+                delete nodeItem;
+            });
         }
 
         _contextMenu.move(event->globalPos());
@@ -115,40 +149,80 @@ void FlowGraphSceneView::mousePressEvent( QMouseEvent *event)
     }
     else if( event->buttons() == Qt::LeftButton)
     {
+        qDebug() << "Click at : " << sceneClickPos << " clickedItem is " << (clickedItem!=nullptr?"not":"") << "null"
+                 << ". clickedItem2 "<< (clickedItem2!=nullptr?"not null":"null");
+
         _isLeftMouseButtonPressed = true;
-        _dragStartPosition = mapToScene(event->pos());
+        _dragItemStartPosition = QPointF(0.0f, 0.0f);
 
-
-        NodeGraphicsItem * nodeItem = dynamic_cast<NodeGraphicsItem *>(clickedItem);
-        if(nodeItem != nullptr)
+        if(clickedItem != nullptr)
         {
-            _leftClickedOnNodeItem = true;
+            _dragItemStartPosition = mapToScene(event->pos());
 
-            if (_flowGraphScene.selectedItems().count() != 0)
+            // clicked on an GraphicsItem
+            NodeGraphicsItem * nodeItem = dynamic_cast<NodeGraphicsItem *>(clickedItem);
+            if(nodeItem != nullptr)
             {
-                QGraphicsItem * selectedItem = _flowGraphScene.selectedItems()[0];
-                NodeGraphicsItem * selectedNodeItem = dynamic_cast<NodeGraphicsItem *>(selectedItem);
+                _leftClickedOnNodeItem = true;
+                //_dragItemOffsetPosition = nodeItem->mapToItem(_dragItemStartPosition);
 
-                _flowGraphScene.clearSelection();
+                //qDebug() << "LeftClickedOnNodeItem: " << _dragItemOffsetPosition;
 
-                nodeItem->setSelected(false);
+                if (nodeItem->isSelected() == false)
+                {
+                    //QGraphicsItem * selectedItem = _flowGraphScene.selectedItems()[0];
+                    //NodeGraphicsItem * selectedNodeItem = dynamic_cast<NodeGraphicsItem *>(selectedItem);
+
+                    nodeItem->SetSelected(true);
+
+                    QPainterPath path;
+                    path.addRect(nodeItem->boundingRect());
+
+                    _flowGraphScene.SetSelectionArea( path, transform());
+                    //_flowGraphScene.clearSelection();
+
+                    //nodeItem->setSelected(false);
+                }
+                else
+                {
+                    // unselect if there is no move
+                    //nodeItem->setSelected(false);
+
+                    // Move selected items if one selected items is clicked on
+                    /*
+                    QPointF sceneDragPosition = mapToScene(event->pos());
+                    QPointF itemDraggedPosition = nodeItem->mapFromScene(sceneDragPosition);
+                    _dragItemOffsetPosition = itemDraggedPosition;
+                    qDebug() << _dragItemOffsetPosition;
+                    */
+                }
             }
             else
             {
-                nodeItem->setSelected(true);
-
-                QPointF sceneDragPosition = mapToScene(event->pos());
-                QPointF itemDraggedPosition = nodeItem->mapFromScene(sceneDragPosition);
-                _dragItemOffsetPosition = itemDraggedPosition;
-                qDebug() << _dragItemOffsetPosition;
+                //_leftClickedOnNodeItem = false;
+                //_flowGraphScene.clearSelection();
+                //nodeItem->setSelected(false);
+                //QPointF newPosition = mapToScene(event->pos()) + _dragItemOffsetPosition;
+                //nodeItem->Node()->SetFlowGraphScenePosition(newPosition);
             }
-
         }
         else
         {
-            _leftClickedOnNodeItem = false;
+            // Unselect All
+            QList<QGraphicsItem *> allItems = _flowGraphScene.items();
+            for (int i = 0 ; i < allItems.count(); i++)
+            {
+                QGraphicsItem * item = allItems.at(i);
+                NodeGraphicsItem * nodeGraphicsItem = dynamic_cast<NodeGraphicsItem *>(item);
+                if (nodeGraphicsItem != nullptr)
+                {
+                    nodeGraphicsItem->SetSelected(false);
+                }
+            }
+
             _flowGraphScene.clearSelection();
-            //nodeItem->setSelected(false);
+
+            _leftClickedOnNodeItem = false;
         }
     }
 }
@@ -159,7 +233,9 @@ void FlowGraphSceneView::mouseMoveEvent(QMouseEvent * event)
     {
         horizontalScrollBar()->setValue(horizontalScrollBar()->value() - (event->x() - _dragStartPosition.x()));
         verticalScrollBar()->setValue(verticalScrollBar()->value() - (event->y() - _dragStartPosition.y()));
+
         _dragStartPosition = QPointF(event->x(), event->y());
+
     }
     else if(_isLeftMouseButtonPressed && _leftClickedOnNodeItem /*&& _flowGraphScene.selectedItems().isEmpty() == false*/)
     {
@@ -192,10 +268,24 @@ void FlowGraphSceneView::mouseReleaseEvent(QMouseEvent *event)
     if(event->button() == Qt::MiddleButton)
     {
         _isMiddleMouseButtonPressed = false;
+        _dragStartPosition = QPointF( 0.0f, 0.0f);
     }
     else if(event->button() == Qt::LeftButton)
     {
         _isLeftMouseButtonPressed = false;
+
+        if(event->pos() == _dragStartPosition)
+        {
+            // unselect if there is no move
+            if(_selectedItem != nullptr)
+            {
+                _selectedItem->setSelected(false);
+                _dragItemOffsetPosition = QPointF(0.0f, 0.0f);
+            }
+        }
+
+        _dragStartPosition = QPointF( 0.0f, 0.0f);
+        _dragItemOffsetPosition = QPointF(0.0f, 0.0f);
     }
 
     //qDebug() << __FUNCTION__;
@@ -217,4 +307,21 @@ void FlowGraphSceneView::wheelEvent(QWheelEvent * event)
     }
 
     scale(_currentScale, _currentScale);
+}
+
+bool FlowGraphSceneView::eventFilter(QObject *obj, QEvent *event)
+{
+    //qDebug() << "event: " << event->type();
+
+    if (event->type() == QEvent::KeyPress)
+    {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+        qDebug("Ate key press %d", keyEvent->key());
+        return true;
+    }
+    else
+    {
+        // standard event processing
+        return QObject::eventFilter(obj, event);
+    }
 }

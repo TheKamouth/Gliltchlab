@@ -61,6 +61,7 @@ bool ImageFilterNodeExample::ProcessInternal()
 
     IDataPin * pin0 = GetDataPinAt<0>();
     FlowData * pin0Data = pin0->GetData();
+    FlowData * pin0DataTest = GetPinData<0>();
 
     return true;
 }

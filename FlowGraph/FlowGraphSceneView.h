@@ -18,17 +18,22 @@ public:
     ~FlowGraphSceneView();
 
     void AddNodeAction(NodeType type, QPointF nodePosition);
+    void DeleteNodeAction(INode * node);
     void OnSelectionChanged();
+    void OnNodeChanged();
 
     void SetFlowGraph( FlowGraph * flowGraph);
-    void OnNodeAdded( Node * node);
-    void AddNodeWidget( Node * node);
+    void OnNodeAdded( INode * node);
+    void AddNodeWidget( INode * node);
 
 protected:
     virtual void mousePressEvent(QMouseEvent * event) override;
     virtual void mouseMoveEvent(QMouseEvent * event) override;
     virtual void mouseReleaseEvent(QMouseEvent * event) override;
     virtual void wheelEvent(QWheelEvent * event) override;
+
+    //
+    bool eventFilter(QObject *obj, QEvent *event) override;
 
 private:
     FlowGraphScene _flowGraphScene;
@@ -39,12 +44,16 @@ private:
     bool _leftClickedOnNodeItem;
 
     QPointF _dragStartPosition;
+    QPointF _dragItemStartPosition;
     QPointF _dragItemOffsetPosition;
     QRectF _sceneRect;
 
     float _currentScale;
 
     QMenu _contextMenu;
+    QGraphicsItem * _selectedItem;
+
+    void Repaint();
 };
 
 #endif // FLOWGRAPHSCENEWIDGET_H

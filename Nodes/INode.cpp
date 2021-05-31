@@ -13,6 +13,34 @@ void INode::SetFlowGraphScenePosition(QPointF graphScenePosition)
     _flowGraphNodePostion = graphScenePosition;
 }
 
+int INode::GetPinVerticalIndex(IDataPin * pin)
+{
+    int inputIndex = 0;
+    int outputIndex = 0;
+
+    for( int i = 0 ; i < GetPinCount() ; i++)
+    {
+        IDataPin * pinAtIndex = GetDataPinAt(i);
+        if( pinAtIndex == pin)
+        {
+            return pin->IsInput() ? inputIndex : outputIndex;
+        }
+
+        if(pinAtIndex->IsInput())
+        {
+            inputIndex++;
+        }
+        else
+        {
+            outputIndex++;
+        }
+    }
+
+    qDebug() << __FUNCTION__ << "Pin not found.";
+
+    return -1;
+}
+
 bool INode::IsEnabled()
 {
     return _isEnabled;

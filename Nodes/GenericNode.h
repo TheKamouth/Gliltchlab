@@ -21,10 +21,8 @@
 template<class T1>
 struct GenericNodePinHolder
 {
-    //GenericNodePinHolder(){test = 1;_genericPin = new T1();}
-    //GenericNodePinHolder(T1 * t){test = 0; _genericPin = t;}
-    T1 * _genericPin;
-    int test;
+    // This should be a pointer ?
+    T1 _genericPin;
 };
 
 // T1 is a GenericNodePin type list, data describing node pins in/out and type
@@ -75,32 +73,43 @@ public:
     IDataPin * GetDataPinAt()
     {
         typedef typename TypeAt<GenericPinTypeList,i>::Result TypeAtIndex;
-        GenericNodePinHolder<TypeAtIndex> pinHolder = Field<i, PinHierarchy>(_pins);
+        GenericNodePinHolder<TypeAtIndex> & pinHolder = Field<i, PinHierarchy>(_pins);
         //IDataPin pin = pinHolder._genericPin;
-        return pinHolder._genericPin;
+        return &pinHolder._genericPin;
     }
 
     virtual IDataPin * GetDataPinAt(int index) override
     {
+        IDataPin * dataPin = nullptr;
+
         // This could be better
         switch(index)
         {
             case 0:
-                return GetDataPinAt<0>();
+                dataPin = GetDataPinAt<0>();
+                break;
             case 1:
-                return GetDataPinAt<1>();
+                dataPin = GetDataPinAt<1>();
+                break;
             case 2:
-                return GetDataPinAt<2>();
+                dataPin = GetDataPinAt<2>();
+                break;
            /* case 3:
                 return GetDataPinAt<3>();
+                break;
             case 4:
                 return GetDataPinAt<4>();
+                break;
             case 5:
-                return GetDataPinAt<5>();*/
+                return GetDataPinAt<5>();
+                break;*/
             default:
                 qDebug() << "maximum 6 pin handled";
-                return GetDataPinAt<0>();
+                dataPin = GetDataPinAt<0>();
+                break;
         }
+
+        return dataPin;
     }
 
     PinHierarchy Pins() { return _pins;}
@@ -109,8 +118,39 @@ public:
     QPointF FlowGraphNodePosition(){ return _flowGraphScenePosition; }
     void SetFlowGraphScenePosition(QPointF graphScenePosition){ _flowGraphScenePosition = graphScenePosition; }
 
+    // This does not need to be virtua, right ?
+    // This could be compile time
     virtual int GetPinCount() override { return PinCount::value; }
-    virtual int GetMaxInOutPin() override { return PinCount::value; }
+    virtual int GetInputPinCount() override
+    {
+        int inputPinCount = 0;
+        int pinCount = GetPinCount();
+
+        for( int i = 0 ; i < pinCount ; i ++)
+        {
+            if (GetDataPinAt(i)->IsInput())
+            {
+                inputPinCount++;
+            }
+        }
+        return inputPinCount;
+
+    }
+    virtual int GetOutputPinCount() override
+    {
+        int outputPinCount = 0;
+        int pinCount = GetPinCount();
+
+        for( int i = 0 ; i < pinCount ; i ++)
+        {
+            if (GetDataPinAt(i)->IsInput() == false)
+            {
+                outputPinCount++;
+            }
+        }
+        return outputPinCount;
+
+    }
 
 protected:
     PinHierarchy _pins;

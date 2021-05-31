@@ -7,6 +7,8 @@
 #define XML_FGF_NODE_ATTRIBUTE_NAME "name"
 #define XML_FGF_NODE_ATTRIBUTE_TYPE "type"
 #define XML_FGF_NODE_ATTRIBUTE_POSITION "position"
+#define XML_FGF_NODE_ATTRIBUTE_POSITION_X "positionX"
+#define XML_FGF_NODE_ATTRIBUTE_POSITION_Y "positionY"
 
 // These should be in each Node
 #define XML_FGF_INPUT_FILEPATH "inputImageFilePath"
