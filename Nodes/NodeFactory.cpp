@@ -44,9 +44,6 @@ INode * NodeFactory::CreateNode(NodeType type)
             break;
         }
 
-        case Desaturate:
-            node = new DesaturateFilterNode();
-            break;
 
         case ScannerFilter:
             node = new ScannerFilterNode();
@@ -57,6 +54,9 @@ INode * NodeFactory::CreateNode(NodeType type)
             break;
             */
 
+        case Desaturate:
+            node = new DesaturateFilterNode();
+            break;
         case ImageFilterExample:
             node = new ImageFilterNodeExample();
             break;

@@ -2,9 +2,11 @@
 
 #include "FlowGraphConstants.h"
 #include "PinGraphicsItem.h"
+#include "FlowGraph/DataPin.h"
 
 #include <QDebug>
 #include <QGraphicsSceneMouseEvent>
+#include <QPointF>
 
 NodeGraphicsItem::NodeGraphicsItem(INode * node) :
     _node(node),
@@ -12,7 +14,7 @@ NodeGraphicsItem::NodeGraphicsItem(INode * node) :
 {
     update();
 
-    setZValue(10.0f);
+    //setZValue(10.0f);
 
     //setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
 }
@@ -33,22 +35,11 @@ QRectF NodeGraphicsItem::boundingRect() const
 void NodeGraphicsItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
 {
     painter->setRenderHint(QPainter::Antialiasing, true);
-
     QBrush painterBrush = painter->brush();
-
-    QPointF flowGraphScenePosition = _node->FlowGraphNodePosition();
-    QRect headerRect = QRect( flowGraphScenePosition.x(),
-                              flowGraphScenePosition.y(),
-                              NODE_WIDTH,
-                              NODE_HEADER_HEIGHT);
-
     int nodeHeight = NodeHeight();
+    QPointF flowGraphScenePosition = _node->FlowGraphNodePosition();
 
-    QRect pinRect = QRect( flowGraphScenePosition.x(),
-                           flowGraphScenePosition.y() + NODE_HEADER_HEIGHT,
-                           NODE_WIDTH,
-                           nodeHeight - NODE_HEADER_HEIGHT);
-
+    // Whole item
     QRect wholeNodeRect = QRect(flowGraphScenePosition.x() - NODE_SELECTION_WIDTH ,
                                 flowGraphScenePosition.y() - NODE_SELECTION_WIDTH,
                                 NODE_WIDTH +  2.0 * NODE_SELECTION_WIDTH,
@@ -57,8 +48,6 @@ void NodeGraphicsItem::paint(QPainter * painter, const QStyleOptionGraphicsItem 
     // fill whole rect
     painterBrush.setColor(CLEAR_COLOR);
     painter->fillRect(wholeNodeRect, painterBrush);
-
-    //qDebug() << isSelected();
 
     // selection rect
     painterBrush.setStyle(Qt::SolidPattern);
@@ -69,17 +58,45 @@ void NodeGraphicsItem::paint(QPainter * painter, const QStyleOptionGraphicsItem 
         painter->drawRoundedRect( wholeNodeRect, 2, 2);
     }
 
-    // header rect
+    // Header
+    QRect headerRect = QRect( flowGraphScenePosition.x(),
+                              flowGraphScenePosition.y(),
+                              NODE_WIDTH,
+                              NODE_HEADER_HEIGHT);
+
     painterBrush.setStyle(Qt::SolidPattern);
     painterBrush.setColor(NODE_HEADER_BACKGROUND_COLOR);
     painter->setBrush(painterBrush);
     painter->drawRoundedRect( headerRect, 2, 2);
 
-    // Header text
+    // name
     painterBrush.setStyle(Qt::NoBrush);
     painterBrush.setColor(NODE_TEXT_COLOR);
     painter->setBrush(painterBrush);
-    painter->drawText( headerRect, Qt::AlignCenter, _node->Name());
+    painter->drawText( headerRect, Qt::AlignLeft | Qt::AlignTop, _node->Name());
+
+    // performance statistics could be refreshed perdiodically and smoothed
+    // last frame time spent processing
+    painterBrush.setStyle(Qt::NoBrush);
+    painterBrush.setColor(NODE_TEXT_COLOR);
+    painter->setBrush(painterBrush);
+    float lastFrameProcessingTime =_node->LastFrameProcessingTime();
+    QString lastFrameProcessingTimeString = QString::number(lastFrameProcessingTime) + "ms";
+    painter->drawText( headerRect, Qt::AlignRight | Qt::AlignTop, lastFrameProcessingTimeString);
+
+    // memory used
+    painterBrush.setStyle(Qt::NoBrush);
+    painterBrush.setColor(NODE_TEXT_COLOR);
+    painter->setBrush(painterBrush);
+    float memoryConsumptionMB = _node->MemoryConsumption() / 1000000;
+    QString memoryConsumptionString = QString::number(memoryConsumptionMB, 'g', 3) + "MB";
+    painter->drawText( headerRect, Qt::AlignRight | Qt::AlignBottom, memoryConsumptionString);
+
+    // Content
+    QRect pinRect = QRect( flowGraphScenePosition.x(),
+                           flowGraphScenePosition.y() + NODE_HEADER_HEIGHT,
+                           NODE_WIDTH,
+                           nodeHeight - NODE_HEADER_HEIGHT);
 
     // pin rect
     painterBrush.setStyle(Qt::SolidPattern);
@@ -91,47 +108,6 @@ void NodeGraphicsItem::paint(QPainter * painter, const QStyleOptionGraphicsItem 
     painterBrush.setStyle(Qt::NoBrush);
     painterBrush.setColor(NODE_TEXT_COLOR);
     painter->setBrush(painterBrush);
-
-    /*
-    int inputIndex = 0;
-    int outputIndex = 0;
-
-    int pinCount = _node->GetPinCount();
-    for( int i = 0; i < pinCount ; i++)
-    {
-        IDataPin * dataPin = _node->GetDataPinAt(0);
-
-        float xPosition = 0.0f;
-        float yPosition = 0.0f;
-        float width = NODE_PIN_TEXT_WIDTH;
-        float height = NODE_HEIGHT_PER_INPUT;
-        QTextOption option;
-
-        float heightPerPin = (nodeHeight - NODE_HEADER_HEIGHT - NODE_PIN_MARGIN * 2 ) / _node->GetPinCount();
-
-        if(true)
-        {
-            xPosition = NODE_PIN_MARGIN;
-            yPosition = heightPerPin * inputIndex + NODE_PIN_MARGIN;
-            option.setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-            inputIndex++;
-        }
-        else
-        {
-            xPosition = NODE_PIN_MARGIN;
-            yPosition = heightPerPin * outputIndex;
-            option.setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-            outputIndex++;
-        }
-
-        QRectF pinNameRect = QRectF(pinRect.x() + xPosition,
-                                    pinRect.y() + yPosition,
-                                    width,
-                                    height);
-
-        painter->drawText( pinNameRect, "-", option);
-    }
-    */
 }
 
 QPointF NodeGraphicsItem::GetPinConnectionPosition(IDataPin * pin)
@@ -142,9 +118,13 @@ QPointF NodeGraphicsItem::GetPinConnectionPosition(IDataPin * pin)
         IDataPin * currentPin = _node->GetDataPinAt(i);
         if (currentPin == pin)
         {
-
+            //return pin->FlowGraphNodePosition();
         }
     }
+
+    qDebug() << __FUNCTION__ << " : Cannot find pin: " << pin->Name();
+
+    return QPointF(0.0f, 0.0f);
 }
 
 void NodeGraphicsItem::SetGraphicsScenePosition(QPointF graphicsScenePosititon)

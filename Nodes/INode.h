@@ -13,7 +13,7 @@ class INode : public QObject
 {
     Q_OBJECT
 public:
-    INode():_name("unnamed node"){;}
+    INode();
     virtual ~INode(){}
 
     template<int i>
@@ -39,6 +39,12 @@ public:
     void SetEnabled(bool enable);
     bool TryProcess();
 
+    //
+    float LastFrameProcessingTime();
+
+    // returns node allocated memory for processing in MB
+    virtual float MemoryConsumption();
+
 signals:
     void OnDeleteNodeClicked(INode * node);
     void NodeInputChanged(INode * node);
@@ -55,6 +61,9 @@ private:
     bool _isEnabled;
     QString _name;
     QPointF _flowGraphNodePostion;
+
+    // stats
+    float _lastFrameProcessingTimeMs;
 };
 
 #endif // INODE_H

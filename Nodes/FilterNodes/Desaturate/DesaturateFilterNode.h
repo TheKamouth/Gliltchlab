@@ -19,10 +19,6 @@
 #include <QOpenGLTexture>
 #include <QOpenGLBuffer>
 
-namespace Ui {
-class DesaturateFilterNode;
-}
-
 enum DesaturationMethod
 {
     Lightness,
@@ -35,28 +31,22 @@ enum DesaturationMethod
     DesaturationMethodCount
 };
 
-//typedef GenScatterHierarchy< TYPE_LIST_2(ImageInputPin, ImageOutputPin), GenericNodePinHolder> DesaturateNodePins;
+typedef TYPE_LIST_3(ImageInputPin, ImageOutputPin, IntInputPin) DesaturateFilterPinsTlist ;
 
-class DesaturateFilterNode : public Node
+class DesaturateFilterNode : public GenericNode<DesaturateFilterPinsTlist>
 {
-    Q_OBJECT
-
 public:
     explicit DesaturateFilterNode();
     virtual ~DesaturateFilterNode();
 
     // Node
     virtual QString Name() override { return "Desaturate"; }
-    virtual QWidget * Widget() override { return this; };
-    virtual QWidget * NodeUiBaseWidgetInForm() override;
-    virtual QLayout* NodeUiBaseLayoutInForm() override;
-    virtual QWidget * SpecificUI() override;
-    virtual QLayout * SpecificUiLayout() override;
+    virtual NodeType Type() override { return Desaturate;}
+    virtual FlowData * MainOutput() override { return GetPinData<1>();}
 
-    // ImageProcessorBase / Filter
-    virtual bool TryReadInputs() override;
     virtual bool BeforeProcessing() override;
     virtual bool ProcessInternal() override;
+    virtual float MemoryConsumption() override;
 
     //
     void OnDesaturationMethodChanged(int index);
@@ -64,8 +54,6 @@ public:
     void OnSaturationSpinBoxValueChanged(double value);
 
 private:
-    Ui::DesaturateFilterNode * ui;
-
     // Desaturation parameters
     DesaturationMethod _desaturationMode;
     float _desaturationValue;

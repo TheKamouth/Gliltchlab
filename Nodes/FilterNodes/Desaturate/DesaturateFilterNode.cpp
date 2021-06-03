@@ -13,79 +13,49 @@
 #include <QDoubleSpinBox>
 
 DesaturateFilterNode::DesaturateFilterNode() :
-    Node(),
-    ui(new Ui::DesaturateFilterNode),
     _desaturationValue(0.5f)
 {
-    ui->setupUi(this);
-
     InitNodeTypeComboBox();
-    QObject::connect( ui->cb_desaturationMethod, QOverload<int>::of(&QComboBox::activated), this, &DesaturateFilterNode::OnDesaturationMethodChanged);
-    QObject::connect( ui->sl_desaturationValue, &QSlider::valueChanged, this, &DesaturateFilterNode::OnSaturationValueChanged);
-    QObject::connect( ui->dsb_desaturationValue, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &DesaturateFilterNode::OnSaturationSpinBoxValueChanged);
+    //QObject::connect( ui->cb_desaturationMethod, QOverload<int>::of(&QComboBox::activated), this, &DesaturateFilterNode::OnDesaturationMethodChanged);
+    //QObject::connect( ui->sl_desaturationValue, &QSlider::valueChanged, this, &DesaturateFilterNode::OnSaturationValueChanged);
+    //QObject::connect( ui->dsb_desaturationValue, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &DesaturateFilterNode::OnSaturationSpinBoxValueChanged);
 }
 
 DesaturateFilterNode::~DesaturateFilterNode()
 {
-    delete ui;
-}
-
-QWidget * DesaturateFilterNode::NodeUiBaseWidgetInForm()
-{
-    return ui->NodeUiBase;
-}
-
-QLayout *DesaturateFilterNode::NodeUiBaseLayoutInForm()
-{
-    return ui->NodeCommonWidgetLayout;
-}
-
-QWidget * DesaturateFilterNode::SpecificUI()
-{
-    return ui->widget;
-}
-
-QLayout *DesaturateFilterNode::SpecificUiLayout()
-{
-    return ui->widget->layout();
-}
-
-bool DesaturateFilterNode::TryReadInputs()
-{
-    return true;
 }
 
 void DesaturateFilterNode::InitNodeTypeComboBox()
 {
     QStringList availableDesaturationMethodNames = AvailableDesaturationMethodNames();
-    ui->cb_desaturationMethod->addItems(availableDesaturationMethodNames);
+    //ui->cb_desaturationMethod->addItems(availableDesaturationMethodNames);
 }
 
 void DesaturateFilterNode::OnDesaturationMethodChanged(int index)
 {
     _desaturationMode = (DesaturationMethod)index;
 
-     EmitNodeInputChanged();
+     emit NodeInputChanged(this);
 }
 
 void DesaturateFilterNode::OnSaturationValueChanged(int value)
 {
     //float sliderValue = ui->sl_desaturationValue->value();
     _desaturationValue = value != 0.0f ? value / 100.0f : 0.0f;
-    ui->dsb_desaturationValue->setValue( _desaturationValue);
+    //ui->dsb_desaturationValue->setValue( _desaturationValue);
     qDebug() << _desaturationValue;
 
-    EmitNodeInputChanged();
+    emit NodeInputChanged(this);
 }
 
 void DesaturateFilterNode::OnSaturationSpinBoxValueChanged(double value)
 {
-    _desaturationValue = ui->dsb_desaturationValue->value();
+    //_desaturationValue = ui->dsb_desaturationValue->value();
 
-    ui->sl_desaturationValue->setValue(value * 100.0f);
+    //ui->sl_desaturationValue->setValue(value * 100.0f);
     qDebug() << _desaturationValue;
 
-    EmitNodeInputChanged();
+    emit NodeInputChanged(this);
 }
 
 QStringList DesaturateFilterNode::AvailableDesaturationMethodNames()
@@ -137,12 +107,10 @@ QString DesaturateFilterNode::AvailableDesaturationMethodName(DesaturationMethod
 
 bool DesaturateFilterNode::BeforeProcessing()
 {
-    if( Node::BeforeProcessing() == false)
-    {
-        return false;
-    }
-
-    _fboSize = _input->size();
+    //_fboSize = _input->size();
+    FlowData * data = GetPinData<0>();
+    QImage * inputImage = data->GetImage();
+    _fboSize = inputImage->size();
 
     if(!_glContext.create())
     {
@@ -191,7 +159,7 @@ bool DesaturateFilterNode::BeforeProcessing()
     }
 
     _inputTexture = new QOpenGLTexture(QOpenGLTexture::Target2D);
-    _inputTexture->setData(*_input);
+    _inputTexture->setData(*inputImage);
     _inputTexture->bind(0);
     if(!_inputTexture->isBound())
     {
@@ -267,9 +235,9 @@ bool DesaturateFilterNode::ProcessInternal()
 
     // Getting parameters
     // This could be done in BeforeProcessing()
-    _desaturationMode = (DesaturationMethod)ui->cb_desaturationMethod->currentIndex();
+    //_desaturationMode = (DesaturationMethod)ui->cb_desaturationMethod->currentIndex();
 
-    float sliderValue = ui->sl_desaturationValue->value();
+    float sliderValue = 100.0f;//ui->sl_desaturationValue->value();
     _desaturationValue = sliderValue != 0.0f ? sliderValue / 100.0f : 0.0f;
 
     // Setting uniforms/parameters
@@ -279,9 +247,17 @@ bool DesaturateFilterNode::ProcessInternal()
 
     _glContext.functions()->glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, Q_NULLPTR);
 
-    _output = new QImage(_glFrameBufferObject->toImage(false));
+
+    IDataPin * outputDataPin = GetDataPinAt(1);
+    outputDataPin->SetData( new FlowData( new QImage( _glFrameBufferObject->toImage(false))));
 
     return true;
+}
+
+float DesaturateFilterNode::MemoryConsumption()
+{
+    // this does not include heap memory....
+    return sizeof (DesaturateFilterNode);
 }
 
 QVector2D DesaturateFilterNode::ToTexCoord(QVector2D position)

@@ -135,12 +135,26 @@ void FlowGraphSceneView::mousePressEvent( QMouseEvent *event)
 
         NodeGraphicsItem * nodeItem = dynamic_cast<NodeGraphicsItem *>(clickedItem);
         PinGraphicsItem * pinItem = dynamic_cast<PinGraphicsItem *>(clickedItem);
+        ConnectionGraphicsItem * connectionItem = dynamic_cast<ConnectionGraphicsItem *>(clickedItem);
 
         // We could get top most item but we dont. Have to start with more specific items
         if (pinItem != nullptr)
         {
             qDebug() << "pin item clicked";
             _fromPinItem = pinItem;
+
+        }
+        else if (connectionItem != nullptr)
+        {
+            qDebug() << "pin item clicked";
+            _fromPinItem = pinItem;
+            _contextMenu.addAction( "Disconnect",
+                                    [=]() -> void {
+                connectionItem->Disconnect();
+                _flowGraphScene.removeItem(nodeItem);
+                delete connectionItem;
+            });
+
         }
         else if(nodeItem != nullptr)
         {
@@ -331,10 +345,18 @@ void FlowGraphSceneView::mouseReleaseEvent(QMouseEvent *event)
                     PinGraphicsItem * tmp = _fromPinItem;
                     _fromPinItem = _toPinItem;
                     _toPinItem = tmp;
+
+                    // is input already connected ?
+                    // if so, reset input side pin value to default
                 }
+
+
 
                 ConnectionGraphicsItem * connectionItem = new ConnectionGraphicsItem(_fromPinItem, _toPinItem);
                 _flowGraphScene.addItem(connectionItem);
+
+                _fromPinItem->SetConnection(connectionItem);
+                _toPinItem->SetConnection(connectionItem);
 
                 qDebug() << "Connect pins";
             }

@@ -111,6 +111,7 @@ public:
 
         return dataPin;
     }
+    virtual float MemoryConsumption() override{}
 
     PinHierarchy Pins() { return _pins;}
     virtual QString Name() {return "GenericNode"; };

@@ -10,7 +10,11 @@ PinGraphicsItem::PinGraphicsItem()
 
 }
 
-PinGraphicsItem::PinGraphicsItem(INode * node, IDataPin * pin) : _node(node), _pin(pin)
+PinGraphicsItem::PinGraphicsItem(INode * node, IDataPin * pin) :
+    _pin(pin),
+    _connectedToPin(nullptr),
+   // _connection(nullptr),
+    _node(node)
 {
 
 }
@@ -146,4 +150,20 @@ QPointF PinGraphicsItem::GetConnectionPosition()
 
     return QPointF( nodePosition.x() + pinConnectionPositionX,
                     nodePosition.y() + pinConnectionPositionY);
+}
+
+void PinGraphicsItem::SetConnection(ConnectionGraphicsItem * connectionTo)
+{
+    _connection = connectionTo;
+    _connectedToPin = connectionTo->OtherEndPin(this);
+}
+
+void PinGraphicsItem::Disconnect()
+{
+    _connection = nullptr;
+}
+
+ConnectionGraphicsItem *PinGraphicsItem::GetConnection()
+{
+    return _connection;
 }

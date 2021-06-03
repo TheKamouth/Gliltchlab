@@ -3,6 +3,11 @@
 #include <QDebug>
 #include <QElapsedTimer>
 
+INode::INode() :
+    _name("unnamed node"),
+    _lastFrameProcessingTimeMs(0.0f)
+{}
+
 QPointF INode::FlowGraphNodePosition()
 {
     return _flowGraphNodePostion;
@@ -68,12 +73,11 @@ bool INode::TryProcess()
     QString processingLogOutput = "";
     QElapsedTimer processingTimer;
     processingTimer.start();
-    int processingTime;
 
     ProcessInternal();
 
-    processingTime = processingTimer.elapsed();
-    processingLogOutput += "took " + QString::number(processingTime) + "ms to process." /*+ (_isEnabled == false ? "(disabled)":"")*/;
+    _lastFrameProcessingTimeMs = processingTimer.elapsed();
+    processingLogOutput += "took " + QString::number(_lastFrameProcessingTimeMs) + "ms to process." /*+ (_isEnabled == false ? "(disabled)":"")*/;
 
     if( false/*_output == nullptr*/)
     {
@@ -96,6 +100,16 @@ bool INode::TryProcess()
     //emit NodeOutputChanged(this);
 
     return true;
+}
+
+float INode::LastFrameProcessingTime()
+{
+    return _lastFrameProcessingTimeMs;
+}
+
+float INode::MemoryConsumption()
+{
+    return 0;
 }
 
 bool INode::BeforeProcessing()

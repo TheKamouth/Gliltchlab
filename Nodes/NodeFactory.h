@@ -8,12 +8,12 @@ class INode;
 enum NodeType
 {
     ImageFilterExample,
+    Desaturate,
 
     // Misc
     ImageInput,
 
     // Images processors
-    Desaturate,
     ScannerFilter,
     PixelSort,
 

@@ -3,7 +3,9 @@
 
 #include "Nodes/GenericNode.h"
 #include "Nodes/GenericNodePin.h"
+
 #include "NodeGraphicsItem.h"
+#include "PinConnectionGraphicsItem.h"
 
 #include <QGraphicsItem>
 
@@ -18,9 +20,17 @@ public:
 
     QPointF GetConnectionPosition();
     IDataPin * Pin() { return _pin;}
+    void SetConnection(class ConnectionGraphicsItem * connection);
+    void Disconnect();
+
+    class ConnectionGraphicsItem * GetConnection();
 
 private:
     IDataPin * _pin;
+
+    PinGraphicsItem * _connectedToPin;
+
+    class ConnectionGraphicsItem * _connection;
 
     // used to retrieve pin position
     INode * _node;

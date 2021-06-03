@@ -22,9 +22,9 @@ void ConnectionGraphicsItem::paint( QPainter * painter, const QStyleOptionGraphi
     painter->setRenderHint( QPainter::Antialiasing, true);
 
     QPointF fromPinPos = _fromPinItem->GetConnectionPosition() + QPointF( 0.0f, 0.0f);
-    QPointF fromPinPosB = _fromPinItem->GetConnectionPosition() + QPointF( 150.0f, 0.0f);
+    QPointF fromPinPosB = _fromPinItem->GetConnectionPosition() + QPointF( 110.0f, 0.0f);
     QPointF toPinPos = _toPinItem->GetConnectionPosition() + QPointF( 0.0f, 0.0f);
-    QPointF toPinPosB = _toPinItem->GetConnectionPosition() - QPointF( 150.0f, 0.0f);
+    QPointF toPinPosB = _toPinItem->GetConnectionPosition() - QPointF( 110.0f, 0.0f);
 
     QPainterPath connectionPath;
     connectionPath.moveTo(fromPinPos);
@@ -54,4 +54,28 @@ void ConnectionGraphicsItem::paint( QPainter * painter, const QStyleOptionGraphi
     painter->drawPoint(fromPinPosB);
     painter->drawPoint(toPinPosB);
     */
+}
+
+void ConnectionGraphicsItem::Disconnect()
+{
+    _fromPinItem->Disconnect();
+    _toPinItem->Disconnect();
+}
+
+PinGraphicsItem *ConnectionGraphicsItem::FromPin()
+{
+    return _fromPinItem;
+}
+
+PinGraphicsItem *ConnectionGraphicsItem::ToPin()
+{
+    return _toPinItem;
+}
+
+PinGraphicsItem *ConnectionGraphicsItem::OtherEndPin(PinGraphicsItem *pin)
+{
+    if (pin == _toPinItem)
+        return _fromPinItem;
+    else if (pin == _fromPinItem)
+        return _toPinItem;
 }
