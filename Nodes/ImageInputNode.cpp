@@ -44,6 +44,8 @@ void ImageInputNode::SetInputFilePath(QString filePath)
 
 bool ImageInputNode::BeforeProcessing()
 {
+
+
     return true;
 }
 

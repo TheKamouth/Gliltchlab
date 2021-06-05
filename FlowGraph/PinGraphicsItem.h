@@ -23,6 +23,8 @@ public:
     void SetConnection(class ConnectionGraphicsItem * connection);
     void Disconnect();
 
+    bool IsInPinRect(QPoint position);
+
     class ConnectionGraphicsItem * GetConnection();
 
 private:

@@ -17,7 +17,7 @@ public:
     virtual QRectF boundingRect() const override;
     virtual void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) override;
 
-    QPointF GetPinConnectionPosition(IDataPin * pin);
+    //QPointF GetPinConnectionPosition(IDataPin * pin);
 
     void SetGraphicsScenePosition(QPointF graphicsScenePosititon);
     void SetSelected(bool selected);

@@ -34,9 +34,6 @@ protected:
     virtual void mouseReleaseEvent(QMouseEvent * event) override;
     virtual void wheelEvent(QWheelEvent * event) override;
 
-    //
-    bool eventFilter(QObject *obj, QEvent *event) override;
-
 private:
     FlowGraphScene _flowGraphScene;
     FlowGraph * _flowGraph;
@@ -62,6 +59,7 @@ private:
     PinGraphicsItem * _toPinItem;
 
     void Repaint();
+    void ConnectPins(PinGraphicsItem * pinA, PinGraphicsItem * pinB);
 };
 
 #endif // FLOWGRAPHSCENEWIDGET_H

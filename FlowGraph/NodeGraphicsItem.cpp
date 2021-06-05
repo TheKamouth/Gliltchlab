@@ -110,25 +110,25 @@ void NodeGraphicsItem::paint(QPainter * painter, const QStyleOptionGraphicsItem 
     painter->setBrush(painterBrush);
 }
 
+/*
 QPointF NodeGraphicsItem::GetPinConnectionPosition(IDataPin * pin)
 {
     int pinCount = _node->GetPinCount();
     for(int i = 0 ; i < pinCount ; i++)
     {
-        // TODO : Use DataPinList
-        /*
-        IDataPin * currentPin = _node->GetDataPinAt(i);
-        if (currentPin == pin)
-        {
-            return pin->FlowGraphNodePosition();
-        }
-        */
+//        QList<IDataPin*> dataPinList = _node->GetDataPinList();
+//        IDataPin * currentPin = dataPinList[i];
+//        if (currentPin == pin)
+//        {
+//            return pin->FlowGraphNodePosition();
+//        }
     }
 
     qDebug() << __FUNCTION__ << " : Cannot find pin: " << pin->Name();
 
     return QPointF(0.0f, 0.0f);
 }
+*/
 
 void NodeGraphicsItem::SetGraphicsScenePosition(QPointF graphicsScenePosititon)
 {

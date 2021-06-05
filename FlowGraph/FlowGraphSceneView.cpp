@@ -121,7 +121,9 @@ void FlowGraphSceneView::mousePressEvent( QMouseEvent *event)
 {
     QPointF sceneClickPos = mapToScene(event->pos());
     QGraphicsItem * clickedItem = _flowGraphScene.itemAt(sceneClickPos, transform());
-    QGraphicsItem * clickedItem2 = itemAt( event->pos());
+    NodeGraphicsItem * nodeItem = dynamic_cast<NodeGraphicsItem *>(clickedItem);
+    PinGraphicsItem * pinItem = dynamic_cast<PinGraphicsItem *>(clickedItem);
+    ConnectionGraphicsItem * connectionItem = dynamic_cast<ConnectionGraphicsItem *>(clickedItem);
 
     if (event->buttons() == Qt::MiddleButton )
     {
@@ -134,20 +136,18 @@ void FlowGraphSceneView::mousePressEvent( QMouseEvent *event)
         // Build and show context menu
         _contextMenu.clear();
 
-        NodeGraphicsItem * nodeItem = dynamic_cast<NodeGraphicsItem *>(clickedItem);
-        PinGraphicsItem * pinItem = dynamic_cast<PinGraphicsItem *>(clickedItem);
-        ConnectionGraphicsItem * connectionItem = dynamic_cast<ConnectionGraphicsItem *>(clickedItem);
-
         // We could get top most item but we dont. Have to start with more specific items
         if (pinItem != nullptr)
         {
-            qDebug() << "pin item clicked";
+            qDebug() << "pin clicked";
+
             _fromPinItem = pinItem;
 
         }
         else if (connectionItem != nullptr)
         {
-            qDebug() << "pin item clicked";
+            qDebug() << "conection clicked";
+
             _fromPinItem = pinItem;
             _contextMenu.addAction( "Disconnect",
                                     [=]() -> void {
@@ -159,6 +159,8 @@ void FlowGraphSceneView::mousePressEvent( QMouseEvent *event)
         }
         else if(nodeItem != nullptr)
         {
+            qDebug() << "node clicked";
+
             _contextMenu.addAction("Delete node",
                                    [=]() -> void {
                 _flowGraphScene.removeItem(nodeItem);
@@ -186,8 +188,7 @@ void FlowGraphSceneView::mousePressEvent( QMouseEvent *event)
     }
     else if( event->buttons() == Qt::LeftButton)
     {
-        qDebug() << "Click at : " << sceneClickPos << " clickedItem is " << (clickedItem!=nullptr?"not":"") << "null"
-                 << ". clickedItem2 "<< (clickedItem2!=nullptr?"not null":"null");
+        //qDebug() << "Click at : " << sceneClickPos << "clickedItem is " << (clickedItem!=nullptr?"not":"") << "null";
 
         _isLeftMouseButtonPressed = true;
         _dragItemStartPosition = QPointF(0.0f, 0.0f);
@@ -196,18 +197,15 @@ void FlowGraphSceneView::mousePressEvent( QMouseEvent *event)
         {
             _dragItemStartPosition = mapToScene(event->pos());
 
-            // clicked on an GraphicsItem
-            NodeGraphicsItem * nodeItem = dynamic_cast<NodeGraphicsItem *>(clickedItem);
-            PinGraphicsItem * pinItem = dynamic_cast<PinGraphicsItem *>(clickedItem);
-
             // We could get top most item but we dont. Have to start with more specific items
-            if (pinItem != nullptr)
+            if (pinItem != nullptr /*&& pinItem->IsInPinRect( event->pos())*/ )
             {
-                qDebug() << "pin item clicked";
                 _fromPinItem = pinItem;
+                //qDebug() << "pin item clicked: " << &(*_fromPinItem);
             }
-            else if(nodeItem != nullptr)
+            else if(nodeItem != nullptr /*&& pinItem == nullptr*/)
             {
+                qDebug() << "node item clicked";
                 _clickedNodeItem = nodeItem;
                 _leftClickedOnNodeItem = true;
                 //_dragItemOffsetPosition = nodeItem->mapToItem(_dragItemStartPosition);
@@ -243,6 +241,7 @@ void FlowGraphSceneView::mousePressEvent( QMouseEvent *event)
             }
             else
             {
+                qDebug() << "another item type clicked";
                 //_leftClickedOnNodeItem = false;
                 //_flowGraphScene.clearSelection();
                 //nodeItem->setSelected(false);
@@ -252,6 +251,8 @@ void FlowGraphSceneView::mousePressEvent( QMouseEvent *event)
         }
         else
         {
+            qDebug() << "no item clicked";
+
             // Unselect All
             QList<QGraphicsItem *> allItems = _flowGraphScene.items();
             for (int i = 0 ; i < allItems.count(); i++)
@@ -303,6 +304,7 @@ void FlowGraphSceneView::mouseMoveEvent(QMouseEvent * event)
 void FlowGraphSceneView::mouseReleaseEvent(QMouseEvent *event)
 {
     QPointF sceneClickPos = mapToScene(event->pos());
+
     QGraphicsItem * clickedItem = _flowGraphScene.itemAt(sceneClickPos, transform());
     NodeGraphicsItem * nodeItem = dynamic_cast<NodeGraphicsItem *>(clickedItem);
     PinGraphicsItem * pinItem = dynamic_cast<PinGraphicsItem *>(clickedItem);
@@ -333,39 +335,15 @@ void FlowGraphSceneView::mouseReleaseEvent(QMouseEvent *event)
         {
             _toPinItem = pinItem;
 
-            // Should check if pins are from a different node
-            // todo : connect pins
-            // create a connection graphics item
-            // actually connect nodes : meaning ?
-            if (_fromPinItem != _toPinItem ||
-                    _fromPinItem->Pin()->Type() == _toPinItem->Pin()->Type() ||
-                    _fromPinItem->Pin()->IsInput() != _toPinItem->Pin()->IsInput())
-            {
-                if(_fromPinItem->Pin()->IsInput())
-                {
-                    PinGraphicsItem * tmp = _fromPinItem;
-                    _fromPinItem = _toPinItem;
-                    _toPinItem = tmp;
+            ConnectPins( _fromPinItem, _toPinItem);
 
-                    // is input already connected ?
-                    // if so, reset input side pin value to default
-                }
-
-
-
-                ConnectionGraphicsItem * connectionItem = new ConnectionGraphicsItem(_fromPinItem, _toPinItem);
-                _flowGraphScene.addItem(connectionItem);
-
-                _fromPinItem->SetConnection(connectionItem);
-                _toPinItem->SetConnection(connectionItem);
-
-                qDebug() << "Connect pins";
-            }
-
+            _fromPinItem = nullptr;
+            _toPinItem = nullptr;
         }
         else
         {
             _clickedNodeItem = nullptr;
+
             _fromPinItem = nullptr;
             _toPinItem = nullptr;
         }
@@ -391,19 +369,42 @@ void FlowGraphSceneView::wheelEvent(QWheelEvent * event)
     scale(_currentScale, _currentScale);
 }
 
-bool FlowGraphSceneView::eventFilter(QObject *obj, QEvent *event)
+void FlowGraphSceneView::ConnectPins(PinGraphicsItem * pinA, PinGraphicsItem * pinB)
 {
-    //qDebug() << "event: " << event->type();
-
-    if (event->type() == QEvent::KeyPress)
+    // This shoudl be a function, where ?
+    // actually connect nodes : meaning ?
+    if (pinA == pinB)
     {
-        QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
-        qDebug("Ate key press %d", keyEvent->key());
-        return true;
+        qDebug() << "Cannot connect pin with self...";
+    }
+    else if(pinA->Pin()->Type() != pinB->Pin()->Type())
+    {
+        // There could be some cast (or simple converter node)
+        qDebug() << "Cannot connect pins of different types.";
+    }
+    else if (pinA->Pin()->IsInput() == pinB->Pin()->IsInput())
+    {
+        QString directionType = pinA->Pin()->IsInput() ? "input" : "output" ;
+        qDebug() << "Cannot connect " << directionType << " pin with " << directionType << " pin.";
     }
     else
     {
-        // standard event processing
-        return QObject::eventFilter(obj, event);
+        if(pinA->Pin()->IsInput())
+        {
+            PinGraphicsItem & tmp = *pinA;
+            pinA = pinB;
+            pinB = &tmp;
+
+            // is input already connected ?
+            // if so, reset input side pin value to default
+        }
+
+        ConnectionGraphicsItem * connectionItem = new ConnectionGraphicsItem(pinA, pinB);
+        _flowGraphScene.addItem(connectionItem);
+
+        pinA->SetConnection(connectionItem);
+        pinB->SetConnection(connectionItem);
+
+        qDebug() << "Pins connected";
     }
 }

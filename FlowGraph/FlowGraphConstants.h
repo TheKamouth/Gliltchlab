@@ -20,6 +20,7 @@ const QColor CLEAR_COLOR = QColor(255, 0, 0);
 const int NODE_PIN_MARGIN = 5;
 const int NODE_PIN_TOP_MARGIN = 5;
 static const int PIN_RADIUS = 15;
+const int DATA_PIN_TYPE_TEXT_WIDTH = 5;
 const int NODE_PIN_TEXT_WIDTH = NODE_WIDTH/2 - NODE_PIN_MARGIN - PIN_RADIUS;
 static const QColor PIN_INT_COLOR = QColor(255,0,0);
 static const QColor PIN_FLOAT_COLOR = QColor(0,255,0);
