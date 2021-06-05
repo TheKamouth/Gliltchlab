@@ -20,11 +20,31 @@ enum FlowDataType
 struct FlowData
 {
 
-    FlowData(){_data.INT    = 666; _type = Int;};
-    FlowData(int   e) { _data.INT    = e; _type = Int;}
-    FlowData(float e) { _data.FLOAT  = e; _type = Float;}
-    FlowData(QString * e) { _data.STRING = e; _type = String;}
-    FlowData(QImage * e) { _data.IMAGE = e; _type = Image;}
+    FlowData()
+    {
+        _data.INT    = 666;
+        _type = Int;
+    };
+    FlowData(int   e)
+    {
+        _data.INT    = e;
+        _type = Int;
+    }
+    FlowData(float e)
+    {
+        _data.FLOAT  = e;
+        _type = Float;
+    }
+    FlowData(QString * e)
+    {
+        _data.STRING = e;
+        _type = String;
+    }
+    FlowData(QImage * e)
+    {
+        _data.IMAGE = e;
+        _type = Image;
+    }
 
     void SetType(FlowDataType type){ _type = type; }
     FlowDataType GetType() const { return _type; }

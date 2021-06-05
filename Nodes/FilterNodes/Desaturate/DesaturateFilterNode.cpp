@@ -248,7 +248,7 @@ bool DesaturateFilterNode::ProcessInternal()
     _glContext.functions()->glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, Q_NULLPTR);
 
 
-    IDataPin * outputDataPin = GetDataPinAt(1);
+    IDataPin * outputDataPin = GetDataPinAt<1>();
     outputDataPin->SetData( new FlowData( new QImage( _glFrameBufferObject->toImage(false))));
 
     return true;

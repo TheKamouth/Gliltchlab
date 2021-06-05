@@ -6,11 +6,13 @@
 #include "Nodes/GenericNodePin.h"
 #include "Nodes/GenScatterHierarchy.h"
 #include "Nodes/TypeList.h"
+#include "Nodes/IDataPin.h"
 
 typedef TYPE_LIST_3(ImageInputPin, ImageOutputPin, IntInputPin) ImageFilterExamplePinsTlist ;
 
 class ImageFilterNodeExample : public GenericNode<ImageFilterExamplePinsTlist>
 {
+
 public:
     ~ImageFilterNodeExample(){};
 
@@ -23,10 +25,5 @@ protected:
     virtual bool BeforeProcessing() override;
     virtual bool ProcessInternal() override;
 };
-
-
-
-
-
 
 #endif // IMAGEFILTEREXAMPLE_H

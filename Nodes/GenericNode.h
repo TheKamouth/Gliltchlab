@@ -5,6 +5,7 @@
 #include "Nodes/GenericNodePin.h"
 #include "Nodes/ProcessorNode.h"
 #include "Nodes/INode.h"
+#include "Nodes/IDataPin.h"
 #include "NodeFactory.h"
 
 #include "TypeList.h"
@@ -17,6 +18,7 @@
 #include <memory>
 #include <tuple>
 #include <vector>
+#include <array>
 
 template<class T1>
 struct GenericNodePinHolder
@@ -26,7 +28,7 @@ struct GenericNodePinHolder
 };
 
 // T1 is a GenericNodePin type list, data describing node pins in/out and type
-// T2 is a NodeProcessor implementation
+// T2 is a NodeProcessor implementation ?
 template< class T1/*, class T2*/>
 class GenericNode : public INode
 {
@@ -69,20 +71,61 @@ public:
         emit NodeInputChanged(this);
     }
 
+    // GetDataPinAt
     template<int i>
     IDataPin * GetDataPinAt()
     {
+        if( i < 0 || i >= PinCount::value)
+        {
+            return nullptr;
+        }
+
         typedef typename TypeAt<GenericPinTypeList,i>::Result TypeAtIndex;
         GenericNodePinHolder<TypeAtIndex> & pinHolder = Field<i, PinHierarchy>(_pins);
         //IDataPin pin = pinHolder._genericPin;
         return &pinHolder._genericPin;
     }
 
+    // DataPinList
+    virtual QList<IDataPin*> GetDataPinList() override
+    {
+        return DataPinList();
+    }
+
+    static constexpr int lastPinIndex = PinCount::value - 1;
+    QList<IDataPin *> DataPinList(std::integral_constant<int, lastPinIndex>)
+    {
+        IDataPin * lastDataPin = GetDataPinAt<PinCount::value - 1>();
+        QList<IDataPin *> dataPinList;
+        dataPinList.append(lastDataPin);
+        return dataPinList;
+    }
+
+    template<int index = 0>
+    QList<IDataPin *> DataPinList(std::integral_constant<int, index> = std::integral_constant<int, 0>())
+    {
+        IDataPin * dataPin = GetDataPinAt<index>();
+        QList<IDataPin *> dataPinList;
+        dataPinList.append(dataPin);
+
+        QList<IDataPin *> remainingPinList = DataPinList( std::integral_constant<int, index + 1>());
+
+        dataPinList += remainingPinList;
+
+        return dataPinList;// += DataPinList<index + 1>();
+    };
+
+    // max 10 pins per node
+    //using fakeDataPinList = std::array<IDataPin*,10>;
+
+    /*
     virtual IDataPin * GetDataPinAt(int index) override
     {
+        //constexpr bool isIndexValid = LesserThanStrict<index, PinCount>::value;
+
         IDataPin * dataPin = nullptr;
 
-        // This could be better
+        // This could be better and also working for different PinCount values
         switch(index)
         {
             case 0:
@@ -94,23 +137,15 @@ public:
             case 2:
                 dataPin = GetDataPinAt<2>();
                 break;
-           /* case 3:
-                return GetDataPinAt<3>();
-                break;
-            case 4:
-                return GetDataPinAt<4>();
-                break;
-            case 5:
-                return GetDataPinAt<5>();
-                break;*/
             default:
                 qDebug() << "maximum 6 pin handled";
                 dataPin = GetDataPinAt<0>();
                 break;
         }
-
         return dataPin;
     }
+    */
+
     virtual float MemoryConsumption() override{}
 
     PinHierarchy Pins() { return _pins;}
@@ -127,30 +162,32 @@ public:
         int inputPinCount = 0;
         int pinCount = GetPinCount();
 
+        // TODO use DataPinList instead
+        QList<IDataPin*> dataPins = GetDataPinList();
         for( int i = 0 ; i < pinCount ; i ++)
         {
-            if (GetDataPinAt(i)->IsInput())
+            if (dataPins[i]->IsInput())
             {
                 inputPinCount++;
             }
         }
         return inputPinCount;
-
     }
     virtual int GetOutputPinCount() override
     {
         int outputPinCount = 0;
         int pinCount = GetPinCount();
 
+        // TODO use DataPinList instead
+        QList<IDataPin*> dataPins = GetDataPinList();
         for( int i = 0 ; i < pinCount ; i ++)
         {
-            if (GetDataPinAt(i)->IsInput() == false)
+            if (dataPins[i]->IsInput() == false)
             {
                 outputPinCount++;
             }
         }
         return outputPinCount;
-
     }
 
 protected:

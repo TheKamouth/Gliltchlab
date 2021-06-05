@@ -15,6 +15,13 @@ struct TypeList
 
 struct NullType{};
 
+// Compile time integral_type comparison
+template <class T1, class T2>
+struct LesserThanStrict
+{
+    static constexpr bool value = (T1::value < T2::value);
+};
+
 // Length
 template <class TList>
 struct Length;
@@ -56,16 +63,16 @@ struct TypeToType
 template <class TList, unsigned int index>
 struct TypeAt;
 
-template <class Head, class Tail>
-struct TypeAt<TypeList<Head, Tail>, 0>
-{
-    typedef Head Result;
-};
-
 template <class Head, class Tail, unsigned int i>
 struct TypeAt<TypeList<Head, Tail>, i>
 {
     typedef typename TypeAt<Tail, i - 1>::Result Result;
+};
+
+template <class Head, class Tail>
+struct TypeAt<TypeList<Head, Tail>, 0>
+{
+    typedef Head Result;
 };
 
 // class template TypeAtNonStrict

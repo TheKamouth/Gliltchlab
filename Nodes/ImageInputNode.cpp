@@ -1,40 +1,17 @@
 #include "ImageInputNode.h"
-#include "ui_ImageInputNode.h"
 
 #include <QFileDialog>
+#include <QImage>
 #include <QDebug>
 
-ImageInputNode::ImageInputNode() :
-    Node(),
-    ui(new Ui::ImageInputNode),
-    _previewPixMap(nullptr)
+ImageInputNode::ImageInputNode()
 {
-    ui->setupUi(this);
-
-    QObject::connect( ui->pb_loadInput, &QPushButton::clicked, this, &ImageInputNode::OnLoadInputClicked);
-    QObject::connect( ui->pb_reload, &QPushButton::clicked, this, &ImageInputNode::OnReloadClicked);
-
-    ui->pb_reload->setEnabled(false);
+    //QObject::connect( ui->pb_loadInput, &QPushButton::clicked, this, &ImageInputNode::OnLoadInputClicked);
+    //QObject::connect( ui->pb_reload, &QPushButton::clicked, this, &ImageInputNode::OnReloadClicked);
 }
 
 ImageInputNode::~ImageInputNode()
 {
-    delete ui;
-}
-
-QWidget * ImageInputNode::NodeUiBaseWidgetInForm()
-{
-    return ui->NodeUiBase;
-}
-
-QLayout *ImageInputNode::NodeUiBaseLayoutInForm()
-{
-    return ui->NodeCommonWidgetLayout;
-}
-
-QWidget * ImageInputNode::SpecificUI()
-{
-    return ui->widget;
 }
 
 void ImageInputNode::OnLoadInputClicked()
@@ -47,12 +24,12 @@ void ImageInputNode::OnLoadInputClicked()
     // QString filter = _preferences.InputFolder();
 
     QString selectedFilter = QString("Images (*.png *.xpm *.jpg)");
-    QString inputFilename = QFileDialog::getOpenFileName(this, directory, *filter, selectedFilter);
+    QString inputFilename = QFileDialog::getOpenFileName( nullptr, directory, *filter, selectedFilter);
 
     if( inputFilename == "" )
     {
         qDebug() << "Error loading file: " << inputFilename << Qt::endl;
-        _output = nullptr;
+        GetDataPinAt<1>()->SetData(nullptr);
         return;
     }
 
@@ -62,33 +39,24 @@ void ImageInputNode::OnLoadInputClicked()
 void ImageInputNode::SetInputFilePath(QString filePath)
 {
     _inputFileName = filePath;
-    _outputFileName = filePath;
-
-    _output = new QImage(_inputFileName);
-
-    ui->label->setText(_outputFileName);
-    ui->pb_reload->setEnabled(true);
-
-    EmitNodeInputChanged();
-
-    // only one flow for now
-    //emit InputLoaded(_input, 0);
+    emit NodeOutputChanged(this);
 }
 
-// Reload _inputFileName
-void ImageInputNode::OnReloadClicked()
+bool ImageInputNode::BeforeProcessing()
 {
-    if(_inputFileName.isEmpty())
-    {
-        qDebug() << "A file muste be opened";
-        return;
-    }
+    return true;
+}
 
-    ui->label->setText(_inputFileName);
-    _output = new QImage(_outputFileName);
+bool ImageInputNode::ProcessInternal()
+{
+    QString * inputFilename = GetDataPinAt<0>()->GetData()->GetString();
 
-    EmitNodeInputChanged();
+    if(inputFilename->isEmpty())
+        return false;
 
-    // only one flow for now
-    //emit InputLoaded(_input, 0);
+    QImage * outputImage = new QImage(*inputFilename);
+    FlowData * outputImageData = new FlowData(outputImage);
+    GetDataPinAt<1>()->SetData(outputImageData);
+
+    return true;
 }

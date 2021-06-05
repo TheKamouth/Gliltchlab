@@ -15,6 +15,12 @@ public:
     explicit TimeControlWidget(QWidget *parent = nullptr);
     ~TimeControlWidget();
 
+    void OnFirstFrameButtonClicked();
+    void OnBackwardOneFrameButtonClicked();
+    void OnPlayPauseButtonClicked();
+    void OnForwardOneFrameButtonClicked();
+    void OnLastFrameButtonClicked();
+
 private:
     Ui::TimeControlWidget *ui;
 };

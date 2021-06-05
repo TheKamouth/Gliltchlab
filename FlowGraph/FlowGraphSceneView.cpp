@@ -74,6 +74,9 @@ void FlowGraphSceneView::SetFlowGraph( FlowGraph * flowGraph)
 {
     _flowGraph = flowGraph;
     QObject::connect( _flowGraph, &FlowGraph::NodeAdded, this, &FlowGraphSceneView::OnNodeAdded);
+
+    // TODO (or something similar, get pin creation logic out of GraphicsItem classes, this need ScatterHierarchy knowledge at compile time
+    // QObject::connect( _flowGraph, &FlowGraph::NodeAdded, this, &FlowGraphSceneView::OnNodeAdded);
 }
 
 void FlowGraphSceneView::OnNodeAdded( INode * node)
@@ -94,15 +97,15 @@ void FlowGraphSceneView::AddNodeWidget( INode * node)
 
     // Create a PinGraphicsItem per pin
     int pinCount = node->GetPinCount();
+    QList<IDataPin*> dataPinList = node->GetDataPinList();
     for( int i = 0; i < pinCount; i++)
     {
-        IDataPin * dataPin = node->GetDataPinAt(i);
+        IDataPin * dataPin = dataPinList[i];
         PinGraphicsItem * pinItem = new PinGraphicsItem(node, dataPin);
         pinItem->setParentItem(nodeGraphicsItem);
         _flowGraphScene.addItem(pinItem);
     }
 
-    //_flowGraphScene.installEventFilter(this);
 
     //QObject::connect( nodeGraphicsItem, &NodeGraphicsItem::NodeChanged, this, &FlowGraphSceneView::OnNodeChanged);
 
@@ -111,8 +114,6 @@ void FlowGraphSceneView::AddNodeWidget( INode * node)
     //QObject::connect(node->CommonWidget(), &NodeCommonWidget::DeleteClicked, this, &ProcessorFlowDockWidget::DeleteNode);
     //QObject::connect(node->CommonWidget(), &NodeCommonWidget::PeakClicked, this, &ProcessorFlowDockWidget::OnPeakNodeClicked);
 
-
-    //ui->vboxLayoutProcessors->insertWidget(_flowGraph->NodeCount() - 1, node->Widget());
     scale(1.0f,1.0f);
 }
 

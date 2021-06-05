@@ -23,9 +23,10 @@ int INode::GetPinVerticalIndex(IDataPin * pin)
     int inputIndex = 0;
     int outputIndex = 0;
 
+    QList<IDataPin*> dataPinList = GetDataPinList();
     for( int i = 0 ; i < GetPinCount() ; i++)
     {
-        IDataPin * pinAtIndex = GetDataPinAt(i);
+        IDataPin * pinAtIndex = dataPinList[i];
         if( pinAtIndex == pin)
         {
             return pin->IsInput() ? inputIndex : outputIndex;

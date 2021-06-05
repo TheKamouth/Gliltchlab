@@ -88,9 +88,11 @@ HEADERS += \
 	Nodes/FilterNodes/ScannerFilterNode.h \
 	Nodes/GenScatterHierarchy.h \
 	Nodes/GenericNode.h \
+	Nodes/GenericNodeHelpers.h \
 	Nodes/GenericNodePin.h \
 	Nodes/GenericNodeTest.h \
 	Nodes/GenericTemplateHelpers.h \
+	Nodes/IDataPin.h \
 	Nodes/INode.h \
 	Nodes/ImageInputNode.h \
 	Nodes/ImageOutputNode.h \

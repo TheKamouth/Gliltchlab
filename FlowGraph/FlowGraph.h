@@ -60,7 +60,7 @@ private:
     void UpdateFgfFileWithCurrentDom();
     void AddNodeToDom(INode *node);
     void UpdateDomWithFgfFile();
-    void UpdateFlowGraph();
+    void UpdateFlowGraphFromDom();
     void SaveDialogBeforeChangingCurrentFile();
 };
 

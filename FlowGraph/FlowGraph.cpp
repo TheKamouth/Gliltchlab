@@ -51,7 +51,7 @@ void FlowGraph::UpdateFgfFileWithCurrentDom()
 
     _flowGraphFileDevice->close();
 
-    UpdateFlowGraph();
+    UpdateFlowGraphFromDom();
 }
 
 void FlowGraph::UpdateDomWithFgfFile()
@@ -76,10 +76,10 @@ void FlowGraph::UpdateDomWithFgfFile()
 
     _flowGraphFileDevice->close();
 
-    UpdateFlowGraph();
+    UpdateFlowGraphFromDom();
 }
 
-void FlowGraph::UpdateFlowGraph()
+void FlowGraph::UpdateFlowGraphFromDom()
 {
     // Clear previous nodes
     for(int i = _nodes.count() - 1 ; i >= 0 ; i--)
@@ -110,7 +110,6 @@ void FlowGraph::UpdateFlowGraph()
         QString nodeName = attributeMap.namedItem(XML_FGF_NODE_ATTRIBUTE_NAME).nodeValue();
         QString nodePosition = attributeMap.namedItem(XML_FGF_NODE_ATTRIBUTE_POSITION).nodeValue();
 
-        //node->SetPosition(nodePosition.toInt());
         node->SetName(nodeName);
 
         emit NodeAdded(node);
@@ -278,11 +277,26 @@ void FlowGraph::AddNodeToDom(INode * node)
     QDomNode root = _domDocument->firstChild();
     QDomNodeList nodeList = _domDocument->elementsByTagName(XML_FGF_NODE_ELEMENT);
 
+    // Node
     QDomElement nodeDomElement = _domDocument->createElement(XML_FGF_NODE_ELEMENT);
     nodeDomElement.setAttribute(XML_FGF_NODE_ATTRIBUTE_NAME, node->Name());
     nodeDomElement.setAttribute(XML_FGF_NODE_ATTRIBUTE_TYPE, node->Type());
     nodeDomElement.setAttribute(XML_FGF_NODE_ATTRIBUTE_POSITION_X, node->FlowGraphNodePosition().x());
     nodeDomElement.setAttribute(XML_FGF_NODE_ATTRIBUTE_POSITION_Y, node->FlowGraphNodePosition().y());
+
+    // Pins
+    for( int i = 0; i < NodeCount(); i++)
+    {
+        QList<IDataPin*> dataPinList = node->GetDataPinList();
+
+        //QDomElement nodeDomElement = _domDocument->createElement(XML_FGF_PIN_ELEMENT);
+        /*
+        nodeDomElement.setAttribute(XML_FGF_NODE_ATTRIBUTE_NAME, pin->Name());
+        nodeDomElement.setAttribute(XML_FGF_NODE_ATTRIBUTE_TYPE, node->Type());
+        nodeDomElement.setAttribute(XML_FGF_NODE_ATTRIBUTE_POSITION_X, node->FlowGraphNodePosition().x());
+        nodeDomElement.setAttribute(XML_FGF_NODE_ATTRIBUTE_POSITION_Y, node->FlowGraphNodePosition().y());
+        */
+    }
 
     root.appendChild(nodeDomElement);
 }

@@ -115,11 +115,14 @@ QPointF NodeGraphicsItem::GetPinConnectionPosition(IDataPin * pin)
     int pinCount = _node->GetPinCount();
     for(int i = 0 ; i < pinCount ; i++)
     {
+        // TODO : Use DataPinList
+        /*
         IDataPin * currentPin = _node->GetDataPinAt(i);
         if (currentPin == pin)
         {
-            //return pin->FlowGraphNodePosition();
+            return pin->FlowGraphNodePosition();
         }
+        */
     }
 
     qDebug() << __FUNCTION__ << " : Cannot find pin: " << pin->Name();

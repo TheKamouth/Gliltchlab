@@ -29,7 +29,8 @@ public:
     virtual int GetInputPinCount() = 0;
     virtual int GetOutputPinCount() = 0;
 
-    virtual IDataPin * GetDataPinAt(int index) = 0;
+
+    virtual QList<IDataPin*> GetDataPinList() = 0;
 
     QPointF FlowGraphNodePosition();
     void SetFlowGraphScenePosition(QPointF graphScenePosition);

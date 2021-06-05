@@ -1,48 +1,41 @@
 #ifndef IMAGEINPUTNODE_H
 #define IMAGEINPUTNODE_H
 
-#include "Node.h"
-
-#include "NodeCommonWidget.h"
+#include "Nodes/Node.h"
+#include "Nodes/GenericNode.h"
+#include "Nodes/GenericNodePin.h"
+#include "Nodes/GenScatterHierarchy.h"
+#include "Nodes/TypeList.h"
+#include "Nodes/IDataPin.h"
 
 #include <QWidget>
 #include <QPixmap>
 
-namespace Ui {
-class ImageInputNode;
-}
+typedef TYPE_LIST_2(StringInputPin, ImageOutputPin) ImageIntpuPinsTlist ;
 
-class ImageInputNode : public Node
+class ImageInputNode : public GenericNode<ImageIntpuPinsTlist>
 {
     Q_OBJECT
-
 
 public:
     explicit ImageInputNode();
     virtual ~ImageInputNode();
 
-    virtual QString Name() override { return "Image input"; }
-    virtual QWidget * Widget() override { return this; };
-    virtual QWidget * NodeUiBaseWidgetInForm() override;
-    virtual QLayout* NodeUiBaseLayoutInForm() override;
-    virtual QWidget * SpecificUI() override;
+    // INode
+    virtual NodeType Type() override { return ImageInput;}
+    virtual QString Name() override { return "ImageInput";}
+    virtual FlowData * MainOutput() override { return GetPinData<1>();}
 
     void OnLoadInputClicked();
-    void OnReloadClicked();
     void SetInputFilePath(QString filePath);
 
-//signals:
-    //void InputLoaded(QImage* input, int flowIndex);
+protected:
+    virtual bool BeforeProcessing() override;
+    virtual bool ProcessInternal() override;
 
 private:
-    Ui::ImageInputNode *ui;
-
-    //NodeUiBase * _nodeCommonUi;
 
     QString _inputFileName;
-    QString _outputFileName;
-
-    QPixmap * _previewPixMap;
+    QImage _outputImage;
 };
-
 #endif // IMAGEINPUTNODE_H

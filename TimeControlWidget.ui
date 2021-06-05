@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>128</width>
-    <height>43</height>
+    <height>46</height>
    </rect>
   </property>
   <property name="allowedAreas">
@@ -45,8 +45,8 @@
        <string/>
       </property>
       <property name="icon">
-       <iconset resource="icons.qrc">
-        <normaloff>:/icons/Icons/002-backward-button.png</normaloff>:/icons/Icons/002-backward-button.png</iconset>
+       <iconset resource="resources.qrc">
+        <normaloff>:/icons/Resources/Icons/002-backward-button.png</normaloff>:/icons/Resources/Icons/002-backward-button.png</iconset>
       </property>
       <property name="flat">
        <bool>true</bool>
@@ -65,8 +65,11 @@
        <string/>
       </property>
       <property name="icon">
-       <iconset resource="icons.qrc">
-        <normaloff>:/icons/Icons/004-step-backward.png</normaloff>:/icons/Icons/004-step-backward.png</iconset>
+       <iconset resource="resources.qrc">
+        <normaloff>:/icons/Resources/Icons/004-step-backward.png</normaloff>:/icons/Resources/Icons/004-step-backward.png</iconset>
+      </property>
+      <property name="flat">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
@@ -82,8 +85,11 @@
        <string/>
       </property>
       <property name="icon">
-       <iconset resource="icons.qrc">
-        <normaloff>:/icons/Icons/005-play-arrow.png</normaloff>:/icons/Icons/005-play-arrow.png</iconset>
+       <iconset resource="resources.qrc">
+        <normaloff>:/icons/Resources/Icons/005-play-arrow.png</normaloff>:/icons/Resources/Icons/005-play-arrow.png</iconset>
+      </property>
+      <property name="flat">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
@@ -99,8 +105,11 @@
        <string/>
       </property>
       <property name="icon">
-       <iconset resource="icons.qrc">
-        <normaloff>:/icons/Icons/004-step-forward.png</normaloff>:/icons/Icons/004-step-forward.png</iconset>
+       <iconset resource="resources.qrc">
+        <normaloff>:/icons/Resources/Icons/004-step-forward.png</normaloff>:/icons/Resources/Icons/004-step-forward.png</iconset>
+      </property>
+      <property name="flat">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
@@ -116,8 +125,11 @@
        <string/>
       </property>
       <property name="icon">
-       <iconset resource="icons.qrc">
-        <normaloff>:/icons/Icons/004-step-forward.png</normaloff>:/icons/Icons/004-step-forward.png</iconset>
+       <iconset resource="resources.qrc">
+        <normaloff>:/icons/Resources/Icons/002-forward-button.png</normaloff>:/icons/Resources/Icons/002-forward-button.png</iconset>
+      </property>
+      <property name="flat">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
@@ -125,7 +137,7 @@
   </widget>
  </widget>
  <resources>
-  <include location="icons.qrc"/>
+  <include location="resources.qrc"/>
  </resources>
  <connections/>
 </ui>

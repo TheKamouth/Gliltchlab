@@ -26,7 +26,7 @@ INode * NodeFactory::CreateNode(NodeType type)
 
     switch(type)
     {
-        /*
+
         case ImageInput:
         {
             node = new ImageInputNode();
@@ -36,6 +36,7 @@ INode * NodeFactory::CreateNode(NodeType type)
             break;
         }
 
+/*
         case ImageOutput:
         {
             node = new ImageOutputNode();
@@ -57,6 +58,7 @@ INode * NodeFactory::CreateNode(NodeType type)
         case Desaturate:
             node = new DesaturateFilterNode();
             break;
+
         case ImageFilterExample:
             node = new ImageFilterNodeExample();
             break;
@@ -84,8 +86,7 @@ QStringList NodeFactory::AvailableNodeTypesNames()
 
 int NodeFactory::AvailableNodeTypesCount()
 {
-    return ImageInput;
-    // return COUNT
+    return AVAILABLE_NODES_COUNT;
 }
 
 QString NodeFactory::NodeTypeName(NodeType nodeType)
