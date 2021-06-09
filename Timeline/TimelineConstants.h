@@ -1,0 +1,9 @@
+#ifndef TIMELINECONSTANTS_H
+#define TIMELINECONSTANTS_H
+
+static const float TIMELINE_UPPER_RULE_HEIGHT = 20.0;
+static const float TIMELINE_TRACK_HEIGHT = 50.0;
+static const float TIMELINE_TRACK_INFO_WIDTH = 70.0;
+static const float TIMELINE_TRACK_MAX_DURATION_SEC = 60.0;
+
+#endif // TIMELINECONSTANTS_H

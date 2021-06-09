@@ -1,6 +1,8 @@
 #ifndef TIMELINEWIDGET_H
 #define TIMELINEWIDGET_H
 
+#include "Track.h"
+
 #include <QDockWidget>
 
 namespace Ui {
@@ -14,6 +16,8 @@ class TimelineWidget : public QDockWidget
 public:
     explicit TimelineWidget(QWidget *parent = nullptr);
     ~TimelineWidget();
+
+    void SetTimeline(QWidget * timeline);
 
 private:
     Ui::TimelineWidget *ui;

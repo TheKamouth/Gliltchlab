@@ -12,7 +12,7 @@
 #include <QDebug>
 #include <QCoreApplication>
 
-const QString NodeFactory::DEFAULT_IMAGE_PATH = ":/images/Resources/Images/default.png";
+//const QString NodeFactory::DEFAULT_IMAGE_PATH = ":/images/Resources/Images/default.png";
 const QString NodeFactory::DEFAULT_IMAGE_OUTPUT_PATH = "..";
 
 NodeFactory::NodeFactory()
@@ -31,8 +31,8 @@ INode * NodeFactory::CreateNode(NodeType type)
         {
             node = new ImageInputNode();
             ImageInputNode * inputImageNode = dynamic_cast<ImageInputNode *>(node);
-            QString defaultInputImagePath = DEFAULT_IMAGE_PATH;
-            inputImageNode->SetInputFilePath(defaultInputImagePath);
+            //QString defaultInputImagePath = DEFAULT_IMAGE_PATH;
+            //inputImageNode->SetInputFilePath(defaultInputImagePath);
             break;
         }
 

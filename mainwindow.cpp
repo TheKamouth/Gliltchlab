@@ -38,11 +38,6 @@ MainWindow::MainWindow(QWidget *parent) :
     //    _readOutputTimer.start();
 
 
-
-    _timeLineWidget = new TimelineWidget();
-    addDockWidget(Qt::BottomDockWidgetArea, _timeLineWidget);
-    _timeLineWidget->show();
-
     //_timeControlWidget.hide();
 
     _glWidget.setParent(&_previewWidget);
@@ -54,22 +49,23 @@ MainWindow::MainWindow(QWidget *parent) :
     //_previewWidget.setWindowFlags(Qt::Tool | Qt::WindowTitleHint);
     //_previewWidget.show();
 
-
-    // Should be removed when FlowGraphSceneView is done
-    //_flowGraphDockWidget = new ProcessorFlowDockWidget(this);
-    //_flowGraphDockWidget->setAllowedAreas(Qt::AllDockWidgetAreas);
-    //_flowGraphDockWidget->show();
-    //addDockWidget(Qt::RightDockWidgetArea, _flowGraphDockWidget);
-    //_flowGraphSceneWidget.SetFlowGraph( _flowGraphDockWidget->CurrentFlowGraph());
-
+    // Flowgraph
     _flowGraph = new FlowGraph();
-    _flowGraphSceneWidget.SetFlowGraph(_flowGraph);
-    setCentralWidget(&_flowGraphSceneWidget);
+    _flowGraphSceneView.SetFlowGraph(_flowGraph);
+    setCentralWidget(&_flowGraphSceneView);
+
+    // Timeline
+    _timeline = new Timeline();
+    _timelineDockWidget = new TimelineWidget();
+    addDockWidget(Qt::BottomDockWidgetArea, _timelineDockWidget);
+
+    _timelineView.SetTimeline(_timeline);
+    _timelineDockWidget->SetTimeline(&_timelineView);
 
     //QObject::connect(_flowGraphDockWidget->CurrentFlowGraph(), &FlowGraph::NodeOutputChanged, this, &MainWindow::OnNodeOutputChanged);
     //QObject::connect(_flowGraphDockWidget->CurrentFlowGraph(), &FlowGraph::Processed, this, &MainWindow::OnFlowGraphProcessed);
     //
-    //QObject::connect(_flowGraphDockWidget, &ProcessorFlowDockWidget::PeakNode, this, &MainWindow::OnPeakNode);
+    QObject::connect(&_flowGraphSceneView, &FlowGraphSceneView::NodeSelected, this, &MainWindow::OnNodeSelected);
     //QObject::connect(_flowGraphDockWidget, &ProcessorFlowDockWidget::OutputProcessed, this, &MainWindow::OnOutputProcessed);
 
     QObject::connect(ui->actionNewFlow, &QAction::triggered ,this, &MainWindow::OnNewFlowGraphFileTriggered);
@@ -170,6 +166,12 @@ void MainWindow::OnReadTimerTimout()
 
 }
 
+void MainWindow::OnNodeSelected(INode *node)
+{
+    _glWidget.SetDisplayedImage(node->MainOutput()->GetImage());
+    _nodePeaked = node;
+}
+
 void MainWindow::OnViewFlowWidgetTriggered(bool checked)
 {
     //_flowGraphDockWidget->setVisible(checked);
@@ -183,7 +185,7 @@ void MainWindow::OnViewTimeControlsTriggered(bool checked)
 
 void MainWindow::OnViewTimeLineTriggered(bool checked)
 {
-    _timeLineWidget->setVisible(checked);
+    _timelineDockWidget->setVisible(checked);
 }
 
 void MainWindow::OnShowDebugConsoleTriggered(bool checked)

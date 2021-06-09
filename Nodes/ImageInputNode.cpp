@@ -4,10 +4,22 @@
 #include <QImage>
 #include <QDebug>
 
+const QString ImageInputNode::DEFAULT_IMAGE_PATH = ":/images/Resources/Images/default.png";
+
 ImageInputNode::ImageInputNode()
 {
     //QObject::connect( ui->pb_loadInput, &QPushButton::clicked, this, &ImageInputNode::OnLoadInputClicked);
     //QObject::connect( ui->pb_reload, &QPushButton::clicked, this, &ImageInputNode::OnReloadClicked);
+
+    // TMP : easing tests
+
+    // Setting default value for pin 0:
+    IDataPin * inputFileNamePin = GetDataPinAt<0>();
+    QString * defaultValue = new QString(DEFAULT_IMAGE_PATH);
+    QString * pinData = inputFileNamePin->GetData()->GetString();
+    pinData = defaultValue;
+
+    ProcessInternal();
 }
 
 ImageInputNode::~ImageInputNode()
@@ -44,17 +56,18 @@ void ImageInputNode::SetInputFilePath(QString filePath)
 
 bool ImageInputNode::BeforeProcessing()
 {
-
-
     return true;
 }
 
 bool ImageInputNode::ProcessInternal()
 {
-    QString * inputFilename = GetDataPinAt<0>()->GetData()->GetString();
+    IDataPin * inputFileNamePin = GetDataPinAt<0>();
+    QString * inputFilename = inputFileNamePin->GetData()->GetString();
 
-    if(inputFilename->isEmpty())
-        return false;
+    if(inputFilename == nullptr || inputFilename->isEmpty())
+    {
+        *(inputFileNamePin->GetData()->GetString()) = QString(DEFAULT_IMAGE_PATH);
+    }
 
     QImage * outputImage = new QImage(*inputFilename);
     FlowData * outputImageData = new FlowData(outputImage);

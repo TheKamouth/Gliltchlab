@@ -6,12 +6,13 @@
 
 #include "openglwidget.h"
 #include "TimeControlWidget.h"
-#include "TimelineWidget.h"
 
 #include "Nodes/FilterNodes/ScannerFilterNode.h"
 
 #include "FlowGraph/FlowGraphSceneView.h"
 #include "FlowGraph/ProcessorFlowDockWidget.h"
+#include "Timeline/TimelineWidget.h"
+#include "Timeline/TimelineView.h"
 
 #include <QMainWindow>
 #include <QImage>
@@ -29,9 +30,12 @@
 
 /// Icons from _scanned2021_05_03_23_19_50_788
 
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
+
+class Track;
 
 class MainWindow : public QMainWindow
 {
@@ -63,14 +67,11 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
-    //ProcessorFlowDockWidget * _flowGraphDockWidget;
-    TimeControlWidget _timeControlWidget;
-    TimelineWidget * _timeLineWidget;
-
     // Preferences
     CommonPreferences _preferences;
     PreferencesDialog _preferencesDialog;
 
+    void OnNodeSelected(INode * node);
     void OnPeakNode(INode * node);
     void OnNodeOutputChanged(INode * node);
     void OnFlowGraphProcessed();
@@ -83,8 +84,16 @@ private:
     //QVideoWidget _videoWidget;
     //QAudioWidget _audioWidget;
 
-    FlowGraphSceneView _flowGraphSceneWidget;
+    // Add a FlowGraphManager handling sceneView, flowgraph, .fgf
+    FlowGraphSceneView _flowGraphSceneView;
     FlowGraph * _flowGraph;
+
+    TimelineWidget * _timelineDockWidget;
+    TimelineView _timelineView;
+    Timeline * _timeline;
+    Track * _track;
+
+    TimeControlWidget _timeControlWidget;
 
     // TODO:
     // Main gliltchlab process.

@@ -197,6 +197,13 @@ void FlowGraphSceneView::mousePressEvent( QMouseEvent *event)
         {
             _dragItemStartPosition = mapToScene(event->pos());
 
+            // no multiselection for now
+            if(clickedItem->isSelected() == false)
+            {
+                UnselectAll();
+                _flowGraphScene.clearSelection();
+            }
+
             // We could get top most item but we dont. Have to start with more specific items
             if (pinItem != nullptr /*&& pinItem->IsInPinRect( event->pos())*/ )
             {
@@ -216,14 +223,13 @@ void FlowGraphSceneView::mousePressEvent( QMouseEvent *event)
                     //NodeGraphicsItem * selectedNodeItem = dynamic_cast<NodeGraphicsItem *>(selectedItem);
 
                     nodeItem->SetSelected(true);
+                    emit NodeSelected(nodeItem->Node());
 
                     QPainterPath path;
                     path.addRect(nodeItem->boundingRect());
 
                     _flowGraphScene.SetSelectionArea( path, transform());
                     //_flowGraphScene.clearSelection();
-
-                    //nodeItem->setSelected(false);
                 }
                 else
                 {
@@ -251,9 +257,10 @@ void FlowGraphSceneView::mousePressEvent( QMouseEvent *event)
         }
         else
         {
-            qDebug() << "no item clicked";
+            //qDebug() << "no item clicked";
 
             // Unselect All
+            /*
             QList<QGraphicsItem *> allItems = _flowGraphScene.items();
             for (int i = 0 ; i < allItems.count(); i++)
             {
@@ -264,7 +271,9 @@ void FlowGraphSceneView::mousePressEvent( QMouseEvent *event)
                     nodeGraphicsItem->SetSelected(false);
                 }
             }
+            */
 
+            UnselectAll();
             _flowGraphScene.clearSelection();
 
             _leftClickedOnNodeItem = false;
@@ -406,5 +415,20 @@ void FlowGraphSceneView::ConnectPins(PinGraphicsItem * pinA, PinGraphicsItem * p
         pinB->SetConnection(connectionItem);
 
         qDebug() << "Pins connected";
+    }
+}
+
+void FlowGraphSceneView::UnselectAll()
+{
+    // Unselect All
+    QList<QGraphicsItem *> allItems = _flowGraphScene.items();
+    for (int i = 0 ; i < allItems.count(); i++)
+    {
+        QGraphicsItem * item = allItems.at(i);
+        NodeGraphicsItem * nodeGraphicsItem = dynamic_cast<NodeGraphicsItem *>(item);
+        if (nodeGraphicsItem != nullptr)
+        {
+            nodeGraphicsItem->SetSelected(false);
+        }
     }
 }

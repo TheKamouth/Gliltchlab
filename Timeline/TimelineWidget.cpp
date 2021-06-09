@@ -13,3 +13,10 @@ TimelineWidget::~TimelineWidget()
 {
     delete ui;
 }
+
+void TimelineWidget::SetTimeline(QWidget * timeline)
+{
+    timeline->setParent(this);
+    timeline->show();
+    ui->dockWidgetContents->layout()->addWidget(timeline);
+}

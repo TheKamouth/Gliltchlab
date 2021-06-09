@@ -48,7 +48,15 @@ SOURCES += \
 	Nodes/ProcessorNode.cpp \
 	Nodes/TypeList.cpp \
 	TimeControlWidget.cpp \
-	TimelineWidget.cpp \
+	Timeline/ControlPoint.cpp \
+	Timeline/Curve.cpp \
+	Timeline/CurveGraphicsItem.cpp \
+	Timeline/Timeline.cpp \
+	Timeline/TimelineScene.cpp \
+	Timeline/TimelineView.cpp \
+	Timeline/TimelineWidget.cpp \
+	Timeline/Track.cpp \
+	Timeline/TrackGraphicsItem.cpp \
 	main.cpp \
 	mainwindow.cpp \
 	openglwidget.cpp \
@@ -56,6 +64,7 @@ SOURCES += \
 
 
 HEADERS += \
+	ColorPalette.h \
 	CommonPreferences.h \
 	FlowGraph/ConnectionGraphicsItem.h \
 	FlowGraph/DataPin.h \
@@ -105,7 +114,16 @@ HEADERS += \
 	Nodes/TypeManip.h \
 	Nodes/TypeTraits.h \
 	TimeControlWidget.h \
-	TimelineWidget.h \
+	Timeline/ControlPoint.h \
+	Timeline/Curve.h \
+	Timeline/CurveGraphicsItem.h \
+	Timeline/Timeline.h \
+	Timeline/TimelineConstants.h \
+	Timeline/TimelineScene.h \
+	Timeline/TimelineView.h \
+	Timeline/TimelineWidget.h \
+	Timeline/Track.h \
+	Timeline/TrackGraphicsItem.h \
 	mainwindow.h \
 	openglwidget.h \
 	preferencesdialog.h
@@ -122,7 +140,7 @@ FORMS += \
 	Nodes/FilterNodes/ScannerFilterNode.ui \
 	FlowGraph/ProcessorFlowDockWidget.ui \
 	TimeControlWidget.ui \
-	TimelineWidget.ui \
+	Timeline/TimelineWidget.ui \
 	mainwindow.ui \
 	preferencesdialog.ui \
 	Nodes/ImageInputNode.ui \

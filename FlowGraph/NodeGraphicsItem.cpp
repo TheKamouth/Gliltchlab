@@ -34,6 +34,8 @@ QRectF NodeGraphicsItem::boundingRect() const
 
 void NodeGraphicsItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
 {
+    //qDebug() << __FUNCTION__;
+
     painter->setRenderHint(QPainter::Antialiasing, true);
     QBrush painterBrush = painter->brush();
     int nodeHeight = NodeHeight();
@@ -46,8 +48,8 @@ void NodeGraphicsItem::paint(QPainter * painter, const QStyleOptionGraphicsItem 
                                 nodeHeight + 2.0 * NODE_SELECTION_WIDTH);
 
     // fill whole rect
-    painterBrush.setColor(CLEAR_COLOR);
-    painter->fillRect(wholeNodeRect, painterBrush);
+    //painterBrush.setColor(CLEAR_COLOR);
+    //painter->fillRect(wholeNodeRect, painterBrush);
 
     // selection rect
     painterBrush.setStyle(Qt::SolidPattern);

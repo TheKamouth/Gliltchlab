@@ -35,7 +35,7 @@ enum NodeType
 class NodeFactory
 {
 public:
-    static const QString DEFAULT_IMAGE_PATH;
+    //static const QString DEFAULT_IMAGE_PATH;
     static const QString DEFAULT_IMAGE_OUTPUT_PATH;
 
     NodeFactory();

@@ -17,6 +17,8 @@ class ImageInputNode : public GenericNode<ImageIntpuPinsTlist>
 {
     Q_OBJECT
 
+    static const QString DEFAULT_IMAGE_PATH;
+
 public:
     explicit ImageInputNode();
     virtual ~ImageInputNode();

@@ -19,10 +19,9 @@ enum FlowDataType
 // A struct that wraps data types handled by Nodes
 struct FlowData
 {
-
     FlowData()
     {
-        _data.INT    = 666;
+        _data.INT    = 0;
         _type = Int;
     };
     FlowData(int   e)
@@ -47,11 +46,16 @@ struct FlowData
     }
 
     void SetType(FlowDataType type){ _type = type; }
-    FlowDataType GetType() const { return _type; }
-    int GetInt() const { return _data.INT; }
-    float GetFloat() const { return _data.FLOAT; }
-    QString * GetString() const { return _data.STRING; }
-    QImage * GetImage() const { return _data.IMAGE; }
+    FlowDataType GetType() { return _type; }
+    int GetInt()
+    {
+        return _data.INT;
+    }
+    float GetFloat() { return _data.FLOAT; }
+    QString * GetString() { return _data.STRING; }
+    QImage * GetImage()
+    {
+        return _data.IMAGE; }
 
     QString TypeString()
     {
@@ -93,7 +97,7 @@ private:
     // use QVariant instead ?
     union
     {
-        int   INT;
+        int INT;
         float FLOAT;
         QString * STRING;
         QImage * IMAGE;
