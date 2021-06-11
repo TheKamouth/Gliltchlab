@@ -5,6 +5,7 @@
 #define TYPE_LIST_1(T1)             TypeList< T1, NullType>
 #define TYPE_LIST_2(T1, T2)         TypeList< T1, TYPE_LIST_1(T2)>
 #define TYPE_LIST_3(T1, T2, T3)     TypeList< T1, TYPE_LIST_2(T2, T3)>
+#define TYPE_LIST_4(T1, T2, T3, T4) TypeList< T1, TYPE_LIST_3(T2, T3, T4)>
 
 template <class T, class U>
 struct TypeList

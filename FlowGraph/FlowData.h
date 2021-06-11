@@ -6,6 +6,8 @@
 #include <QString>
 #include <QImage>
 
+const QString DEFAULT_IMAGE_PATH = ":/images/Resources/Images/default.png";
+
 enum FlowDataType
 {
     Int,
@@ -45,21 +47,51 @@ struct FlowData
         _type = Image;
     }
 
-    void SetType(FlowDataType type){ _type = type; }
-    FlowDataType GetType() { return _type; }
+    void SetType(FlowDataType type, bool createStringAndImage = true)
+    {
+        _type = type;
+
+        switch(_type)
+        {
+            case Int:
+                _data.INT = 0;
+                break;
+            case Float:
+                _data.FLOAT = 0.0f;
+                break;
+            case String:
+                if(createStringAndImage)
+                    _data.STRING = new QString("EmptyString");
+                break;
+            case Image:
+                if(createStringAndImage)
+                    _data.IMAGE = new QImage(DEFAULT_IMAGE_PATH);
+                break;
+            default :
+                break;
+        }
+    }
+
+    FlowDataType GetType()
+    {
+        return _type;
+    }
+
     int GetInt()
     {
         return _data.INT;
     }
+
+    void SetFloat(float value) { _data.FLOAT = value; }
     float GetFloat() { return _data.FLOAT; }
     QString * GetString() { return _data.STRING; }
     QImage * GetImage()
     {
         return _data.IMAGE; }
 
-    QString TypeString()
+    static QString TypeString(FlowDataType type)
     {
-        switch(_type)
+        switch(type)
         {
             case Int:
                 return "int";

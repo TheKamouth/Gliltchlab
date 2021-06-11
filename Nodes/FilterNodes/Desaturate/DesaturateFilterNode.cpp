@@ -235,10 +235,10 @@ bool DesaturateFilterNode::ProcessInternal()
 
     // Getting parameters
     // This could be done in BeforeProcessing()
-    //_desaturationMode = (DesaturationMethod)ui->cb_desaturationMethod->currentIndex();
+    _desaturationMode = (DesaturationMethod)GetDataPinAt<2>()->GetData()->GetInt();
 
-    float sliderValue = 100.0f;//ui->sl_desaturationValue->value();
-    _desaturationValue = sliderValue != 0.0f ? sliderValue / 100.0f : 0.0f;
+    // ugly call
+    _desaturationValue = GetDataPinAt<3>()->GetData()->GetFloat();
 
     // Setting uniforms/parameters
     _glShaderProgram->setUniformValue(textureVar.toLatin1().data(), 0);

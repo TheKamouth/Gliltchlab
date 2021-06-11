@@ -4,6 +4,9 @@
 #include "FlowGraph/ProcessorFlowDockWidget.h"
 #include "Nodes/NodeCommonWidget.h"
 
+#include "Timeline/TimelineManager.h"
+#include "FlowGraph/FlowGraphManager.h"
+
 #include <QDir>
 #include <QFileInfo>
 #include <QFileDialog>
@@ -42,6 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     _glWidget.setParent(&_previewWidget);
     _previewWidget.setWidget(&_glWidget);
+    _previewWidget.setWindowTitle("Preview");
     addDockWidget(Qt::RightDockWidgetArea, &_previewWidget);
     _glWidget.setMinimumWidth(300);
 
@@ -49,23 +53,17 @@ MainWindow::MainWindow(QWidget *parent) :
     //_previewWidget.setWindowFlags(Qt::Tool | Qt::WindowTitleHint);
     //_previewWidget.show();
 
-    // Flowgraph
-    _flowGraph = new FlowGraph();
-    _flowGraphSceneView.SetFlowGraph(_flowGraph);
-    setCentralWidget(&_flowGraphSceneView);
+    FlowGraphSceneView * view =  FlowGraphManager::Instance().GetFlowGraphSceneView();
+    setCentralWidget(view);
 
-    // Timeline
-    _timeline = new Timeline();
-    _timelineDockWidget = new TimelineWidget();
-    addDockWidget(Qt::BottomDockWidgetArea, _timelineDockWidget);
-
-    _timelineView.SetTimeline(_timeline);
-    _timelineDockWidget->SetTimeline(&_timelineView);
+    QDockWidget * timelineDockWidget = TimelineManager::Instance().TimelineDockWidget();
+    timelineDockWidget = dynamic_cast<TimelineWidget*>(timelineDockWidget);
+    addDockWidget(Qt::BottomDockWidgetArea, timelineDockWidget);
 
     //QObject::connect(_flowGraphDockWidget->CurrentFlowGraph(), &FlowGraph::NodeOutputChanged, this, &MainWindow::OnNodeOutputChanged);
     //QObject::connect(_flowGraphDockWidget->CurrentFlowGraph(), &FlowGraph::Processed, this, &MainWindow::OnFlowGraphProcessed);
     //
-    QObject::connect(&_flowGraphSceneView, &FlowGraphSceneView::NodeSelected, this, &MainWindow::OnNodeSelected);
+    QObject::connect(view, &FlowGraphSceneView::NodeSelected, this, &MainWindow::OnNodeSelected);
     //QObject::connect(_flowGraphDockWidget, &ProcessorFlowDockWidget::OutputProcessed, this, &MainWindow::OnOutputProcessed);
 
     QObject::connect(ui->actionNewFlow, &QAction::triggered ,this, &MainWindow::OnNewFlowGraphFileTriggered);
@@ -168,6 +166,12 @@ void MainWindow::OnReadTimerTimout()
 
 void MainWindow::OnNodeSelected(INode *node)
 {
+    if(node->MainOutput()->GetImage() == nullptr)
+    {
+        qDebug() << __FUNCTION__ << " cannot display null image.";
+        return;
+    }
+
     _glWidget.SetDisplayedImage(node->MainOutput()->GetImage());
     _nodePeaked = node;
 }
@@ -177,7 +181,6 @@ void MainWindow::OnViewFlowWidgetTriggered(bool checked)
     //_flowGraphDockWidget->setVisible(checked);
 }
 
-
 void MainWindow::OnViewTimeControlsTriggered(bool checked)
 {
     _timeControlWidget.setVisible(checked);
@@ -185,7 +188,9 @@ void MainWindow::OnViewTimeControlsTriggered(bool checked)
 
 void MainWindow::OnViewTimeLineTriggered(bool checked)
 {
-    _timelineDockWidget->setVisible(checked);
+    QDockWidget * timelineDockWidget = TimelineManager::Instance().TimelineDockWidget();
+    timelineDockWidget = dynamic_cast<TimelineWidget*>(timelineDockWidget);
+    timelineDockWidget->setVisible(checked);
 }
 
 void MainWindow::OnShowDebugConsoleTriggered(bool checked)

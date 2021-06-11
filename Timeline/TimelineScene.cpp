@@ -1,11 +1,13 @@
 #include "TimelineScene.h"
 
 #include "TimelineConstants.h"
+#include "ColorPalette.h"
 
 #include <QGraphicsTextItem>
 
 TimelineScene::TimelineScene()
 {
+    /*
     // Draw grid
     float minX = TIMELINE_TRACK_INFO_WIDTH;
     // pos x = 1000 = 1000ms from start
@@ -30,9 +32,9 @@ TimelineScene::TimelineScene()
     do
     {
         linePen.setWidth(1);
-        linePen.setColor(QColor(80, 80, 80, 255));
+        linePen.setColor(BLACK);
 
-        addLine(currentX, minY, currentX, maxY, linePen);
+        addLine(currentX, minY, currentX, 0.0f, linePen);
 
         float timeValue = currentX - TIMELINE_TRACK_INFO_WIDTH;
         QString timeValueString = QString::number( timeValue / 1000.0f,'g',2);
@@ -66,4 +68,6 @@ TimelineScene::TimelineScene()
 
     QRect upperRule = QRect(0.0f, 0.0f, width(),TIMELINE_UPPER_RULE_HEIGHT);
     //addRect( upperRule, pen, brush);
+
+    */
 }

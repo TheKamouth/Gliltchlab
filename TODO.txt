@@ -41,6 +41,9 @@ x	- FragmentShader input int not working => Desaturation mode change broken
 # Scanner Node :
 	- Broken right now
 	- Add specific PeakWidget override that shows sensor preset animation
+	
+# Timeline :
+	- Add AddTrackSignal
 
 
 

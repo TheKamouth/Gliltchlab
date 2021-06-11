@@ -21,6 +21,9 @@ public:
     void OnForwardOneFrameButtonClicked();
     void OnLastFrameButtonClicked();
 
+signals:
+    void PlayPauseClicked();
+
 private:
     Ui::TimeControlWidget *ui;
 };

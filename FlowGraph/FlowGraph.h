@@ -3,6 +3,8 @@
 
 #include "Nodes/NodeFactory.h"
 
+#include "Timeline/TimelineManager.h"
+
 #include <QList>
 #include <QImage>
 #include <QObject>
@@ -30,7 +32,8 @@ public:
     void OnNodeInputChanged(INode * node);
     void OnNodeOutputChanged(const INode * node) const;
 
-    INode * AddNode(NodeType nodeType);
+    void OnAddTrackNode(Track * track);
+    INode * AddNode(NodeType nodeType, QString nodeName = "unnamed node");
     INode * InsertNode(NodeType nodeType, int index);
     void RemoveNode(int index);
     void Process();

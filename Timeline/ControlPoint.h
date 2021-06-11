@@ -4,7 +4,8 @@
 enum InterpolationMode
 {
     Constant,
-    Linear,
+    LinearInterp,
+    CubicInterp,
     InterpolationModeCount
 };
 
@@ -12,6 +13,8 @@ class ControlPoint
 {
 public:
     ControlPoint();
+
+    void SetValue(float value);
     float Value();
     InterpolationMode Mode();
 

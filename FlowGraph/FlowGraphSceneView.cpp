@@ -40,7 +40,7 @@ FlowGraphSceneView::~FlowGraphSceneView(){}
 void FlowGraphSceneView::AddNodeAction(NodeType type, QPointF nodePosition)
 {
     // Create Node and add to flow
-    INode * node = _flowGraph->AddNode(type);
+    INode * node = _flowGraph->AddNode(type, NodeFactory::NodeTypeName(type));
     node->SetFlowGraphScenePosition(nodePosition);
     qDebug() << __FUNCTION__ << " at position: " << nodePosition;
 

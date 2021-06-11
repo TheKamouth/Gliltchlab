@@ -115,41 +115,32 @@ public:
         return dataPinList;// += DataPinList<index + 1>();
     };
 
-    // max 10 pins per node
-    //using fakeDataPinList = std::array<IDataPin*,10>;
-
-    /*
-    virtual IDataPin * GetDataPinAt(int index) override
+    virtual bool HaveSourceNodesBeenProcessed() override
     {
-        //constexpr bool isIndexValid = LesserThanStrict<index, PinCount>::value;
-
-        IDataPin * dataPin = nullptr;
-
-        // This could be better and also working for different PinCount values
-        switch(index)
+        QList<IDataPin*> dataPinList = DataPinList();
+        for(int i = 0 ; i < dataPinList.count() ; i ++)
         {
-            case 0:
-                dataPin = GetDataPinAt<0>();
-                break;
-            case 1:
-                dataPin = GetDataPinAt<1>();
-                break;
-            case 2:
-                dataPin = GetDataPinAt<2>();
-                break;
-            default:
-                qDebug() << "maximum 6 pin handled";
-                dataPin = GetDataPinAt<0>();
-                break;
+            IDataPin * dataPin = dataPinList[i];
+            if( dataPin->IsInput() && dataPin->IsConnected())
+            {
+                // Get connect node
+                IDataPin * sourcePin = dataPin->ConnectedPin();
+                INode * connectedNode =  sourcePin->Node();
+
+                // if connected node has not been processed return false
+                if(connectedNode->HasBeenProcessedThisFrame() == false)
+                {
+                    return false;
+                }
+            }
         }
-        return dataPin;
+
+        return true;
     }
-    */
 
     virtual float MemoryConsumption() override{}
 
     PinHierarchy Pins() { return _pins;}
-    virtual QString Name() {return "GenericNode"; };
     virtual NodeType Type() = 0;
     QPointF FlowGraphNodePosition(){ return _flowGraphScenePosition; }
     void SetFlowGraphScenePosition(QPointF graphScenePosition){ _flowGraphScenePosition = graphScenePosition; }

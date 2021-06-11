@@ -2,9 +2,15 @@
 
 #include "TimelineConstants.h"
 #include "TrackGraphicsItem.h"
+#include "CurveGraphicsItem.h"
+#include "TimeBarGraphicsItem.h"
+
+#include "TimelineManager.h"
+#include "TimeManager.h"
 
 #include <QMouseEvent>
 #include <QScrollBar>
+#include <QDebug>
 
 TimelineView::TimelineView() :
     _currentScale(1.0f),
@@ -24,34 +30,100 @@ TimelineView::TimelineView() :
     //float yScaleFactor = height() / 8.0f * TIMELINE_TRACK_HEIGHT + TIMELINE_UPPER_RULE_HEIGHT;
     //scale(1.0f, yScaleFactor);
 
-    _currentPositionPointF = QPointF(horizontalScrollBar()->value(), verticalScrollBar()->value());
+    _currentPositionPointF = QPointF(0.0f, 0.0f);
     horizontalScrollBar()->setValue( _currentPositionPointF.x());
     verticalScrollBar()->setValue( _currentPositionPointF.y());
-
-    // TMP : Test
-    AddTrack();
 }
 
 void TimelineView::SetTimeline(Timeline * timeline)
 {
     _timeline = timeline;
+
+    InitTimeline();
 }
 
-void TimelineView::AddTrack()
+void TimelineView::InitTimeline()
 {
-    TrackGraphicsItem * trackItem = new TrackGraphicsItem();
+    const QList<Track*> & tracks = _timeline->Tracks();
+    int trackCount = tracks.count();
+
+    for(int i = 0 ; i < trackCount ; i++)
+    {
+        Track * track = tracks.at(i);
+        AddTrackGraphicsItem(i, track);
+    }
+}
+
+void TimelineView::AddTrackGraphicsItem(int trackIndex, Track * track)
+{
+    TrackGraphicsItem * trackItem = new TrackGraphicsItem( trackIndex, track);
     _timelineScene.addItem(trackItem);
+
+    // TODO : add curve graphics item
+    CurveGraphicsItem * curveGraphicsItem = new CurveGraphicsItem( track->GetCurve(), trackItem);
+    _timelineScene.addItem(curveGraphicsItem);
 }
 
 void TimelineView::mousePressEvent(QMouseEvent * event)
 {
     QPointF sceneClickPos = mapToScene(event->pos());
     QGraphicsItem * clickedItem = _timelineScene.itemAt(sceneClickPos, transform());
+    TrackGraphicsItem * trackItem = dynamic_cast<TrackGraphicsItem *>(clickedItem);
+    CurveGraphicsItem * curveItem = dynamic_cast<CurveGraphicsItem *>(clickedItem);
+    TimeBarGraphicsItem * timeBarItem = dynamic_cast<TimeBarGraphicsItem *>(clickedItem);
 
     if (event->buttons() == Qt::MiddleButton )
     {
         _isMiddleMouseButtonPressed = true;
         _dragStartPosition = event->pos();
+
+        if(timeBarItem != nullptr)
+        {
+            qDebug() << "timeBarItem clicked at " << event->pos();
+            TimeManager::Instance().SetTime(sceneClickPos.x() - TIMELINE_TRACK_INFO_WIDTH);
+        }
+    }
+    else if(event->button() == Qt::RightButton)
+    {
+        _contextMenu.clear();
+
+        if( curveItem != nullptr)
+        {
+            qDebug() << "curveItem clicked at " << event->pos();
+
+            _contextMenu.addAction( "Add point",
+                                    [=]() -> void {
+                curveItem->AddPoint(sceneClickPos);
+                curveItem->update();
+            });
+        }
+        else if(trackItem != nullptr)
+        {
+            qDebug() << "trackItem clicked at " << event->pos();
+        }
+        else if(timeBarItem != nullptr)
+        {
+            qDebug() << "timeBarItem clicked at " << event->pos();
+            timeBarItem->SetSelectionTime(sceneClickPos.x() - TIMELINE_TRACK_INFO_WIDTH);
+        }
+        else
+        {
+            _contextMenu.addAction( "Add float track",
+                                    [=]() -> void {
+
+                int trackIndex = _timeline->TrackCount();
+                QString trackName = "Track" + QString::number(trackIndex);
+                Track * track = _timeline->AddTrack(trackName, Float);
+
+                TimelineManager::Instance().EmitAddTrackNode(track);
+
+                // This should happen after TrackNode is created
+                AddTrackGraphicsItem(trackIndex, track);
+            });
+        }
+
+        _contextMenu.move(event->globalPos());
+        _contextMenu.show();
     }
 }
 

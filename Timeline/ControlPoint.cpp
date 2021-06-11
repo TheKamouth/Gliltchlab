@@ -2,9 +2,14 @@
 
 ControlPoint::ControlPoint() :
     _value(0.0f),
-    _interpolationMode(Constant)
+    _interpolationMode(LinearInterp)
 {
 
+}
+
+void ControlPoint::SetValue(float value)
+{
+    _value = value;
 }
 
 float ControlPoint::Value()

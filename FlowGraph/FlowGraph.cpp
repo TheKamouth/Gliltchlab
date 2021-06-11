@@ -1,9 +1,14 @@
 #include "FlowGraph.h"
 
-#include "Nodes/Node.h"
-#include "Nodes/INode.h"
-
 #include "FlowGraphXmlConstants.h"
+
+#include "Nodes/INode.h"
+#include "Nodes/Node.h"
+
+// Should/could have a generic TrackNode
+#include "Nodes/FloatTrackNode.h"
+
+#include "Timeline/TimelineManager.h"
 
 #include <QDebug>
 #include <QFile>
@@ -17,6 +22,8 @@ FlowGraph::FlowGraph() :
     _domDocument(nullptr)
 {
     CreateNewFlowGraphFile();
+
+    QObject::connect(&TimelineManager::Instance(), &TimelineManager::AddTrackNode, this, &FlowGraph::OnAddTrackNode);
 }
 
 void FlowGraph::CreateNewFlowGraphFile()
@@ -171,10 +178,10 @@ void FlowGraph::OnNodeOutputChanged(const INode * node) const
     emit NodeOutputChanged(node);
 }
 
-INode * FlowGraph::AddNode(NodeType nodeType)
+INode * FlowGraph::AddNode(NodeType nodeType, QString nodeName)
 {
     INode * node =_nodeFactory.CreateNode(nodeType);
-    //node->SetPosition(_nodes.count());
+    node->SetName(nodeName);
 
     QObject::connect(node , &INode::NodeInputChanged, this, &FlowGraph::OnNodeInputChanged);
     QObject::connect(node , &INode::NodeOutputChanged, this, &FlowGraph::OnNodeOutputChanged);
@@ -220,29 +227,54 @@ void FlowGraph::RemoveNode(int index)
 
 void FlowGraph::Process()
 {
+    // TODO
+    // Node processing order is wrong here
+    // A node can be processed if all its input have been provided/processed for this frame
+
     if(_nodes.count() == 0)
     {
         qDebug() << "No node to process." << Qt::endl;
         return;
     }
 
-    if(_nodes.count() == 1)
+    INode * node;
+    for(int i = 0 ; i < _nodes.count() ; i++)
     {
-        return;
+        _nodes[i]->OnNewFrame();
     }
 
-    INode * previousNode = nullptr;
-    INode * node;
-    for(int i = 1 ; i < _nodes.count() ; i++)
-    {
-        previousNode = _nodes[i-1];
-        node = _nodes[i];
-        //node->SetInput( previousNode->Output());
+    QList<INode*> _nodeToProcess = _nodes;
+    int previousRemainingNodesCount;
 
-        if( node->TryProcess() == false)
+    while( _nodeToProcess.count() != 0)
+    {
+        for( int i = _nodeToProcess.count() - 1 ; i >= 0 ; i--)
         {
-            qDebug() << "Failed to process node: " << node->Name();
+            node = _nodes[i];
+            if( node->HasBeenProcessedThisFrame() == false && node->TryProcess())
+            {
+                _nodeToProcess.removeOne(node);
+            }
         }
+
+        if (_nodeToProcess.count() == 0)
+            break;
+
+        if (previousRemainingNodesCount ==  _nodeToProcess.count())
+        {
+            qDebug() << "Unable to process all nodes";
+            qDebug() << "Remaining nodes :";
+
+            for( int i = 0 ; i < _nodeToProcess.count() ; i++)
+            {
+                node = _nodes[i];
+                qDebug() << node->Name();
+            }
+
+            break;
+        }
+
+        previousRemainingNodesCount = _nodeToProcess.count();
     }
 
     emit Processed();
@@ -259,6 +291,18 @@ FlowData * FlowGraph::Output()
     int lastNodeIndex = _nodes.count() - 1;
     INode * lastNode = _nodes.at(lastNodeIndex);
     return lastNode->MainOutput();
+}
+
+void FlowGraph::OnAddTrackNode(Track * track)
+{
+    INode * node = AddNode(FloatTrackOutput, track->Name());
+    node->SetFlowGraphScenePosition(QPointF(0.0f, 0.0f));
+
+    FloatTrackNode * floatTrackNode = dynamic_cast<FloatTrackNode*>(node);
+    if(floatTrackNode)
+    {
+        floatTrackNode->SetAssociatedTrack(track);
+    }
 }
 
 QList<INode *> FlowGraph::GetDependantNodeList(INode * node)

@@ -12,6 +12,7 @@ enum NodeType
 
     // Misc
     ImageInput,
+    FloatTrackOutput,
     AVAILABLE_NODES_COUNT,
 
     // Images processors

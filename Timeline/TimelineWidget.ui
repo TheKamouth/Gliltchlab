@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="features">
-   <set>QDockWidget::AllDockWidgetFeatures</set>
+   <set>QDockWidget::NoDockWidgetFeatures</set>
   </property>
   <property name="allowedAreas">
    <set>Qt::BottomDockWidgetArea</set>

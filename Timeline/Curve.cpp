@@ -1,14 +1,16 @@
 #include "Curve.h"
 
+#include "TimelineConstants.h"
+
 #include <QDebug>
 
 Curve::Curve() :
-    _duration( 6.66f),
-    _minValue( -1.0f),
-    _maxValue( 1.0f)
+    _durationMs( 10000.0f),
+    _lowerBound( -1.0f),
+    _upperBound( 1.0f)
 {
     _controlPoints.insert(0.0f, ControlPoint());
-    _controlPoints.insert(_duration, ControlPoint());
+    _controlPoints.insert(_durationMs, ControlPoint());
 }
 
 float Curve::Evaluate(float time)
@@ -18,7 +20,7 @@ float Curve::Evaluate(float time)
         ControlPoint & firstControlPoint = _controlPoints.first();
         return firstControlPoint.Value();
     }
-    else if( time > _duration || qFuzzyCompare(time, _duration))
+    else if( time > _durationMs || qFuzzyCompare(time, _durationMs))
     {
         ControlPoint & lastControlPoint = _controlPoints.last();
         return lastControlPoint.Value();
@@ -36,16 +38,18 @@ float Curve::Evaluate(float time)
         {
             nextControlPointIterator++;
             previousControlPointIterator++;
+
+            keyTime = nextControlPointIterator.key();
         }
 
-        ControlPoint & previousControlPoint = previousControlPointIterator.value();
-        ControlPoint & nextControlPoint = nextControlPointIterator.value();
+        ControlPoint previousControlPoint = previousControlPointIterator.value();
+        ControlPoint nextControlPoint = nextControlPointIterator.value();
 
         float previousValue = previousControlPoint.Value();
-        float nextValue = previousControlPoint.Value();
+        float nextValue = nextControlPoint.Value();
 
         float previousKeyTime = previousControlPointIterator.key();
-        float nextKeyTime = previousControlPointIterator.key();
+        float nextKeyTime = nextControlPointIterator.key();
 
         InterpolationMode previousValueMode = previousControlPoint.Mode();
 
@@ -57,7 +61,7 @@ float Curve::Evaluate(float time)
                 value = previousValue;
                 break;
 
-            case Linear:
+            case LinearInterp:
             {
                 float timeInterval = nextKeyTime - previousKeyTime;
                 float alpha = (time - previousKeyTime) / timeInterval;
@@ -66,10 +70,48 @@ float Curve::Evaluate(float time)
             }
 
             default:
-                qDebug() << "This interpolationMode is not handled";
+            {
+                qDebug() << "This interpolationMode is not properly handled";
+
+                float timeInterval = nextKeyTime - previousKeyTime;
+                float alpha = (time - previousKeyTime) / timeInterval;
+                value = alpha * previousValue + ( 1.0f - alpha ) * nextValue;
                 break;
+            }
         }
 
         return value;
     }
+}
+
+void Curve::AddPoint(float time, ControlPoint controlPoint)
+{
+    qDebug() << "Adding control point at " << time << "ms, value = " << controlPoint.Value();
+
+    _controlPoints.insert(time, controlPoint);
+}
+
+float Curve::LowerBound()
+{
+    return _lowerBound;
+}
+
+float Curve::UpperBound()
+{
+    return _upperBound;
+}
+
+float Curve::Range()
+{
+    return std::abs(_upperBound - _lowerBound);
+}
+
+float Curve::Duration()
+{
+    return _durationMs;
+}
+
+QMap<float, ControlPoint> * Curve::ControlPoints()
+{
+    return &_controlPoints;
 }

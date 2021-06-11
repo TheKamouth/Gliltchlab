@@ -18,7 +18,6 @@ public:
 
     // INode
     virtual NodeType Type() override { return ImageFilterExample;}
-    virtual QString Name() override { return "ImageFilterExample";}
     virtual FlowData * MainOutput() override { return GetPinData<0>();}
 
 protected:

@@ -3,6 +3,7 @@
 #include "Nodes/Node.h"
 #include "Nodes/ImageInputNode.h"
 #include "Nodes/ImageOutputNode.h"
+#include "Nodes/FloatTrackNode.h"
 #include "Nodes/FilterNodes/Desaturate/DesaturateFilterNode.h"
 #include "Nodes/FilterNodes/ScannerFilterNode.h"
 #include "Nodes/FilterNodes/PixelSort/PixelSortFilterNode.h"
@@ -26,17 +27,19 @@ INode * NodeFactory::CreateNode(NodeType type)
 
     switch(type)
     {
-
         case ImageInput:
         {
             node = new ImageInputNode();
-            ImageInputNode * inputImageNode = dynamic_cast<ImageInputNode *>(node);
-            //QString defaultInputImagePath = DEFAULT_IMAGE_PATH;
-            //inputImageNode->SetInputFilePath(defaultInputImagePath);
             break;
         }
 
-/*
+        case FloatTrackOutput:
+        {
+            node = new FloatTrackNode();
+            break;
+        }
+
+        /*
         case ImageOutput:
         {
             node = new ImageOutputNode();
@@ -44,7 +47,6 @@ INode * NodeFactory::CreateNode(NodeType type)
             outputImageNode->SetOutputFilePath(QCoreApplication::applicationDirPath());
             break;
         }
-
 
         case ScannerFilter:
             node = new ScannerFilterNode();
@@ -98,6 +100,9 @@ QString NodeFactory::NodeTypeName(NodeType nodeType)
 
         case ImageOutput:
             return "Output Image";
+
+        case FloatTrackOutput:
+            return "Float track output";
 
         case Desaturate:
             return "Desaturate";

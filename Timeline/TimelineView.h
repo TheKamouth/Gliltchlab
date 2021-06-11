@@ -4,15 +4,18 @@
 #include "Timeline.h"
 #include "TimelineScene.h"
 
-#include "QGraphicsView"
+#include <QGraphicsView>
+#include <QMenu>
 
 class TimelineView : public QGraphicsView
 {
 public:
     TimelineView();
-    void SetTimeline(Timeline * timeline);
 
-    void AddTrack();
+    void SetTimeline(Timeline * timeline);
+    void InitTimeline();
+
+    void AddTrackGraphicsItem(int trackIndex, Track * track);
 
 protected:
     virtual void mousePressEvent(QMouseEvent * event) override;
@@ -24,6 +27,8 @@ protected:
 private:
     TimelineScene _timelineScene;
     Timeline * _timeline;
+
+    QMenu _contextMenu;
 
     float _currentScale;
     float _leftViewPos;

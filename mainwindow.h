@@ -84,15 +84,6 @@ private:
     //QVideoWidget _videoWidget;
     //QAudioWidget _audioWidget;
 
-    // Add a FlowGraphManager handling sceneView, flowgraph, .fgf
-    FlowGraphSceneView _flowGraphSceneView;
-    FlowGraph * _flowGraph;
-
-    TimelineWidget * _timelineDockWidget;
-    TimelineView _timelineView;
-    Timeline * _timeline;
-    Track * _track;
-
     TimeControlWidget _timeControlWidget;
 
     // TODO:

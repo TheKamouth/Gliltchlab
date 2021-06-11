@@ -5,6 +5,7 @@
 
 INode::INode() :
     _name("unnamed node"),
+    _processedThisFrame(false),
     _lastFrameProcessingTimeMs(0.0f)
 {}
 
@@ -59,16 +60,15 @@ void INode::SetEnabled(bool enable)
 
 bool INode::TryProcess()
 {
-    qDebug() << "##################";
-
     // Read inputs (if changed ?)
-    if( BeforeProcessing() == false)
+    // Does haveSourceNodesBeenProcessed suffices ?
+    bool haveSourceNodesBeenProcessed = HaveSourceNodesBeenProcessed();
+
+    if( haveSourceNodesBeenProcessed == false || BeforeProcessing() == false)
     {
         qDebug() << "Failed to process " << __FUNCTION__;
         return false;
     }
-
-    qDebug() << "Processing " << __FUNCTION__;
 
     // Display processing time
     QString processingLogOutput = "";
@@ -93,14 +93,21 @@ bool INode::TryProcess()
 
     // Write outputs
 
-    //CommonWidget()->ShowLastProcessingTime(processingTime);
-
-    qDebug() << processingLogOutput;
-    qDebug() << "----------------------";
-
     //emit NodeOutputChanged(this);
 
+    _processedThisFrame = true;
+
     return true;
+}
+
+void INode::OnNewFrame()
+{
+    _processedThisFrame = false;
+}
+
+bool INode::HasBeenProcessedThisFrame()
+{
+    return _processedThisFrame;
 }
 
 float INode::LastFrameProcessingTime()

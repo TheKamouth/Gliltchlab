@@ -31,7 +31,7 @@ enum DesaturationMethod
     DesaturationMethodCount
 };
 
-typedef TYPE_LIST_3(ImageInputPin, ImageOutputPin, IntInputPin) DesaturateFilterPinsTlist ;
+typedef TYPE_LIST_4(ImageInputPin, ImageOutputPin, IntInputPin, FloatInputPin) DesaturateFilterPinsTlist ;
 
 class DesaturateFilterNode : public GenericNode<DesaturateFilterPinsTlist>
 {
@@ -39,8 +39,7 @@ public:
     explicit DesaturateFilterNode();
     virtual ~DesaturateFilterNode();
 
-    // Node
-    virtual QString Name() override { return "Desaturate"; }
+    // INode
     virtual NodeType Type() override { return Desaturate;}
     virtual FlowData * MainOutput() override { return GetPinData<1>();}
 

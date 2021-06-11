@@ -9,13 +9,22 @@ class Curve
 {
 public:
     Curve();
+
     float Evaluate(float time);
+    void AddPoint(float time, ControlPoint controlPoint);
+
+    QMap< float,ControlPoint > * ControlPoints();
+
+    float LowerBound();
+    float UpperBound();
+    float Range();
+    float Duration();
 
 private:
     QMap< float,ControlPoint > _controlPoints;
-    float _duration;
-    float _minValue;
-    float _maxValue;
+    float _durationMs;
+    float _lowerBound;
+    float _upperBound;
 };
 
 #endif // CURVE_H

@@ -1,6 +1,8 @@
 #include "TimeControlWidget.h"
 #include "ui_TimeControlWidget.h"
 
+#include "TimeManager.h"
+
 TimeControlWidget::TimeControlWidget(QWidget *parent) :
     QDockWidget(parent),
     ui(new Ui::TimeControlWidget)
@@ -33,7 +35,14 @@ void TimeControlWidget::OnBackwardOneFrameButtonClicked()
 
 void TimeControlWidget::OnPlayPauseButtonClicked()
 {
-
+    if(ui->pb_playPause->isChecked())
+    {
+        TimeManager::Instance().Play();
+    }
+    else
+    {
+        TimeManager::Instance().Pause();
+    }
 }
 
 void TimeControlWidget::OnForwardOneFrameButtonClicked()

@@ -75,7 +75,10 @@ void NodeGraphicsItem::paint(QPainter * painter, const QStyleOptionGraphicsItem 
     painterBrush.setStyle(Qt::NoBrush);
     painterBrush.setColor(NODE_TEXT_COLOR);
     painter->setBrush(painterBrush);
-    painter->drawText( headerRect, Qt::AlignLeft | Qt::AlignTop, _node->Name());
+
+    QString nodeName =_node->Name();
+    painter->drawText( headerRect, Qt::AlignLeft | Qt::AlignTop, nodeName);
+    //painter->drawText( headerRect, Qt::AlignLeft | Qt::AlignTop, "test");
 
     // performance statistics could be refreshed perdiodically and smoothed
     // last frame time spent processing

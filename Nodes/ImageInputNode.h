@@ -25,7 +25,6 @@ public:
 
     // INode
     virtual NodeType Type() override { return ImageInput;}
-    virtual QString Name() override { return "ImageInput";}
     virtual FlowData * MainOutput() override { return GetPinData<1>();}
 
     void OnLoadInputClicked();

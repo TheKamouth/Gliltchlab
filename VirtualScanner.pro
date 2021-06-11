@@ -14,6 +14,7 @@ SOURCES += \
 	FlowGraph/ConnectionGraphicsItem.cpp \
 	FlowGraph/FlowData.cpp \
 	FlowGraph/FlowGraph.cpp \
+	FlowGraph/FlowGraphManager.cpp \
 	FlowGraph/FlowGraphScene.cpp \
 	FlowGraph/FlowGraphSceneView.cpp \
 	FlowGraph/NodeConnection.cpp \
@@ -35,6 +36,7 @@ SOURCES += \
 	Nodes/FilterNodes/PixelSort/ui/processprogressbar.cpp \
 	Nodes/FilterNodes/RgbShiftFilterNode.cpp \
 	Nodes/FilterNodes/ScannerFilterNode.cpp \
+	Nodes/FloatTrackNode.cpp \
 	Nodes/GenericNode.cpp \
 	Nodes/GenericNodePin.cpp \
 	Nodes/GenericNodeTest.cpp \
@@ -48,10 +50,13 @@ SOURCES += \
 	Nodes/ProcessorNode.cpp \
 	Nodes/TypeList.cpp \
 	TimeControlWidget.cpp \
+	TimeManager.cpp \
 	Timeline/ControlPoint.cpp \
 	Timeline/Curve.cpp \
 	Timeline/CurveGraphicsItem.cpp \
+	Timeline/TimeBarGraphicsItem.cpp \
 	Timeline/Timeline.cpp \
+	Timeline/TimelineManager.cpp \
 	Timeline/TimelineScene.cpp \
 	Timeline/TimelineView.cpp \
 	Timeline/TimelineWidget.cpp \
@@ -71,6 +76,7 @@ HEADERS += \
 	FlowGraph/FlowData.h \
 	FlowGraph/FlowGraph.h \
 	FlowGraph/FlowGraphConstants.h \
+	FlowGraph/FlowGraphManager.h \
 	FlowGraph/FlowGraphScene.h \
 	FlowGraph/FlowGraphSceneView.h \
 	FlowGraph/FlowGraphXmlConstants.h \
@@ -95,6 +101,7 @@ HEADERS += \
 	Nodes/FilterNodes/PixelSort/ui/processprogressbar.h \
 	Nodes/FilterNodes/RgbShiftFilterNode.h \
 	Nodes/FilterNodes/ScannerFilterNode.h \
+	Nodes/FloatTrackNode.h \
 	Nodes/GenScatterHierarchy.h \
 	Nodes/GenericNode.h \
 	Nodes/GenericNodeHelpers.h \
@@ -114,11 +121,14 @@ HEADERS += \
 	Nodes/TypeManip.h \
 	Nodes/TypeTraits.h \
 	TimeControlWidget.h \
+	TimeManager.h \
 	Timeline/ControlPoint.h \
 	Timeline/Curve.h \
 	Timeline/CurveGraphicsItem.h \
+	Timeline/TimeBarGraphicsItem.h \
 	Timeline/Timeline.h \
 	Timeline/TimelineConstants.h \
+	Timeline/TimelineManager.h \
 	Timeline/TimelineScene.h \
 	Timeline/TimelineView.h \
 	Timeline/TimelineWidget.h \

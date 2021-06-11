@@ -2,12 +2,15 @@
 #define INODE_H
 
 #include "NodeFactory.h"
+#include "GenericNodePin.h"
+
 #include "FlowGraph/FlowData.h"
 #include "FlowGraph/DataPin.h"
-#include "GenericNodePin.h"
 
 #include <QString>
 #include <QObject>
+
+class IDataPin;
 
 class INode : public QObject
 {
@@ -19,7 +22,7 @@ public:
     template<int i>
     static QString GetPinName(int index);
 
-    virtual QString Name() {return _name; };
+    QString Name() {return _name; };
     virtual void SetName( QString name){ _name = name; };
     virtual NodeType Type() = 0;
     virtual FlowData * MainOutput() = 0;
@@ -29,8 +32,8 @@ public:
     virtual int GetInputPinCount() = 0;
     virtual int GetOutputPinCount() = 0;
 
-
     virtual QList<IDataPin*> GetDataPinList() = 0;
+    virtual bool HaveSourceNodesBeenProcessed() = 0;
 
     QPointF FlowGraphNodePosition();
     void SetFlowGraphScenePosition(QPointF graphScenePosition);
@@ -39,6 +42,8 @@ public:
     bool IsEnabled();
     void SetEnabled(bool enable);
     bool TryProcess();
+    void OnNewFrame();
+    bool HasBeenProcessedThisFrame();
 
     //
     float LastFrameProcessingTime();
@@ -62,6 +67,8 @@ private:
     bool _isEnabled;
     QString _name;
     QPointF _flowGraphNodePostion;
+
+    bool _processedThisFrame;
 
     // stats
     float _lastFrameProcessingTimeMs;

@@ -86,7 +86,11 @@
       </property>
       <property name="icon">
        <iconset resource="resources.qrc">
-        <normaloff>:/icons/Resources/Icons/005-play-arrow.png</normaloff>:/icons/Resources/Icons/005-play-arrow.png</iconset>
+        <normaloff>:/icons/Resources/Icons/005-play-arrow.png</normaloff>
+        <normalon>:/icons/Resources/Icons/008-pause.png</normalon>:/icons/Resources/Icons/005-play-arrow.png</iconset>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
       </property>
       <property name="flat">
        <bool>true</bool>
