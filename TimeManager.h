@@ -29,9 +29,13 @@ public:
 
     float Time();
     void SetTime(float timeMs);
+    void PlayPause();
     void Play();
     void Pause();
     void ForwardOneFrame();
+
+signals:
+    void TimeChanged(int time);
 
 private:
     float _time;
@@ -40,7 +44,6 @@ private:
 
     bool _processingFrame;
     QTimer _updateTimer;
-    QElapsedTimer _updateDurationTimer;
 
     void Update();
 };

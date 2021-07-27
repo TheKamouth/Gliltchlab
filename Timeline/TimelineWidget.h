@@ -19,6 +19,9 @@ public:
 
     void SetTimeline(QWidget * timeline);
 
+protected:
+    virtual void keyPressEvent(QKeyEvent *event) override;
+
 private:
     Ui::TimelineWidget *ui;
 };

@@ -2,23 +2,30 @@
 #define CURVE_H
 
 #include "ControlPoint.h"
+#include "ClipBase.h"
+
+#include "ITrackDataSequence.h"
 
 #include <QMap>
+#include <QUrl>
 
-class Curve
+class Curve : public ClipBase
 {
 public:
-    Curve();
+    Curve(QUrl url);
 
+    // Duration is a property of all BaseClip implementation
+    // Add IClip
+    float Duration();
     float Evaluate(float time);
-    void AddPoint(float time, ControlPoint controlPoint);
-
-    QMap< float,ControlPoint > * ControlPoints();
 
     float LowerBound();
     float UpperBound();
     float Range();
-    float Duration();
+
+    ControlPoint * AddPoint(float time, ControlPoint controlPoint);
+
+    QMap< float,ControlPoint > * ControlPoints();
 
 private:
     QMap< float,ControlPoint > _controlPoints;

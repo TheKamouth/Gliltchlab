@@ -6,6 +6,7 @@
 
 #include "openglwidget.h"
 #include "TimeControlWidget.h"
+#include "UserDataWidget.h"
 
 #include "Nodes/FilterNodes/ScannerFilterNode.h"
 
@@ -75,8 +76,10 @@ private:
     void OnPeakNode(INode * node);
     void OnNodeOutputChanged(INode * node);
     void OnFlowGraphProcessed();
+    void OnProcessed();
 
     INode * _nodePeaked;
+    QImage * _floatPreviewImage;
 
     QDockWidget _previewWidget;
     // A widget per observable output type ?
@@ -85,6 +88,11 @@ private:
     //QAudioWidget _audioWidget;
 
     TimeControlWidget _timeControlWidget;
+
+    QDockWidget _userDataDockWidget;
+    UserDataWidget _userDataWidget;
+
+    QDockWidget _currentSelectionInfoDockWidget;
 
     // TODO:
     // Main gliltchlab process.

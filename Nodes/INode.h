@@ -72,6 +72,8 @@ private:
 
     // stats
     float _lastFrameProcessingTimeMs;
+
+    bool ReadSourceNodes();
 };
 
 #endif // INODE_H

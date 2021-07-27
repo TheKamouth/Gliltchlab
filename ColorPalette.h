@@ -10,5 +10,6 @@ static const QColor DARK_GREY = QColor( 75, 75, 75);
 static const QColor BLACK = QColor( 25, 25, 25);
 
 static const QColor RED = QColor( 180, 111, 111);
+static const QColor MAGENTA = QColor( 255, 0, 255);
 
 #endif // COLORPALETTE_H

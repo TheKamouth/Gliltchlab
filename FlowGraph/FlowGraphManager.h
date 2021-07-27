@@ -25,6 +25,9 @@ public:
 
     FlowGraphSceneView * GetFlowGraphSceneView();
 
+signals:
+    void FlowGraphProcessed();
+
    private:
     // Add a FlowGraphManager handling sceneView, flowgraph, .fgf
     // Here it is !

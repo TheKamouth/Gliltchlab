@@ -3,6 +3,8 @@
 
 #include "Nodes/NodeCommonWidget.h"
 
+#include "ColorPalette.h"
+
 #include <QDateTime>
 #include <QString>
 #include <QStringList>
@@ -235,7 +237,9 @@ bool DesaturateFilterNode::ProcessInternal()
 
     // Getting parameters
     // This could be done in BeforeProcessing()
-    _desaturationMode = (DesaturationMethod)GetDataPinAt<2>()->GetData()->GetInt();
+    float pin2 = GetDataPinAt<3>()->GetData()->GetFloat() * DesaturationMethodCount;
+    int pin2Int = (int) pin2;
+    _desaturationMode = (DesaturationMethod)(pin2Int);
 
     // ugly call
     _desaturationValue = GetDataPinAt<3>()->GetData()->GetFloat();
@@ -243,13 +247,24 @@ bool DesaturateFilterNode::ProcessInternal()
     // Setting uniforms/parameters
     _glShaderProgram->setUniformValue(textureVar.toLatin1().data(), 0);
     _glShaderProgram->setUniformValue(desaturationMode.toLatin1().data(), (int)_desaturationMode);
-    _glShaderProgram->setUniformValue(desaturationValue.toLatin1().data(), _desaturationValue);
+
+    //_glShaderProgram->setUniformValue(desaturationValue.toLatin1().data(), _desaturationValue);
+    _glShaderProgram->setUniformValue(desaturationValue.toLatin1().data(), 1.0f);
 
     _glContext.functions()->glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, Q_NULLPTR);
 
+    // This should be allocated once, when size is know, after pin connection
+    QImage * outputImage = new QImage( _glFrameBufferObject->toImage(false));
+    QImage * testImage = new QImage(256,256,QImage::Format_ARGB32);
+    //testImage->fill(RED);
 
-    IDataPin * outputDataPin = GetDataPinAt<1>();
-    outputDataPin->SetData( new FlowData( new QImage( _glFrameBufferObject->toImage(false))));
+    IDataPin * dataPin = GetDataPinAt<1>();
+    FlowData * outputImageData = dataPin->GetData();
+    outputImageData->SetImage(outputImage);
+
+    //outputDataPin->SetData( new FlowData( new QImage( _glFrameBufferObject->toImage(false))));
+
+    qDebug() << __FUNCTION__ << " " << _desaturationMode;
 
     return true;
 }

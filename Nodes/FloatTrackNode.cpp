@@ -34,7 +34,7 @@ bool FloatTrackNode::ProcessInternal()
     IDataPin * outputPin = GetDataPinAt<1>();
     outputPin->SetData(data);
 
-    qDebug() << QString::number(data->GetFloat());
+    //qDebug() << QString::number(data->GetFloat());
 
     return true;
 }

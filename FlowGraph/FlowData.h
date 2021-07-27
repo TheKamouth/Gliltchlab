@@ -10,12 +10,13 @@ const QString DEFAULT_IMAGE_PATH = ":/images/Resources/Images/default.png";
 
 enum FlowDataType
 {
+    Unassigned,
     Int,
     Float,
     String,
-    Image
-    //Audio,
-    //Video,
+    Image,
+    Audio,
+    Video,
 };
 
 // A struct that wraps data types handled by Nodes
@@ -77,6 +78,10 @@ struct FlowData
         return _type;
     }
 
+    void SetInt(int value)
+    {
+        _data.INT = value;
+    }
     int GetInt()
     {
         return _data.INT;
@@ -85,9 +90,14 @@ struct FlowData
     void SetFloat(float value) { _data.FLOAT = value; }
     float GetFloat() { return _data.FLOAT; }
     QString * GetString() { return _data.STRING; }
+    void SetImage(QImage *  image)
+    {
+        _data.IMAGE = image;
+    }
     QImage * GetImage()
     {
-        return _data.IMAGE; }
+        return _data.IMAGE;
+    }
 
     static QString TypeString(FlowDataType type)
     {

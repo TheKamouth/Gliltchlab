@@ -64,7 +64,9 @@ bool ImageInputNode::ProcessInternal()
     IDataPin * inputFileNamePin = GetDataPinAt<0>();
     QString * inputFilename = inputFileNamePin->GetData()->GetString();
 
-    if(inputFilename == nullptr || inputFilename->isEmpty())
+    if(inputFilename == nullptr
+            || inputFilename->isEmpty()
+            || inputFilename->compare("EmptyString") == 0)
     {
         *(inputFileNamePin->GetData()->GetString()) = QString(DEFAULT_IMAGE_PATH);
     }

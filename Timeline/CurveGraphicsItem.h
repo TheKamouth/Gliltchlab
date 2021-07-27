@@ -2,9 +2,12 @@
 #define CURVEGRAPHICSITEM_H
 
 #include "Curve.h"
-#include "TrackGraphicsItem.h"
 
 #include <QGraphicsItem>
+#include <QList>
+
+class TrackGraphicsItem;
+class ControlPointgraphicsItem;
 
 class CurveGraphicsItem : public QGraphicsItem
 {
@@ -14,12 +17,19 @@ public:
     virtual QRectF boundingRect() const override;
     virtual void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) override;
 
-    void AddPoint(QPointF scenePos);
+    ControlPoint * AddPoint(QPointF scenePos);
+    Curve * GetCurve();
+
+    QList<ControlPointgraphicsItem*> * GetControlPointsGraphicItem();
 
 private:
     Curve * _curve;
-    TrackGraphicsItem * _trackGraphicsItem;
 
+    // these are "child" items*
+    QList<ControlPointgraphicsItem*> _controlPointsGraphicItem;
+
+    // = it knows its "parent"
+    TrackGraphicsItem * _trackGraphicsItem;
 };
 
 #endif // CURVEGRAPHICSITEM_H

@@ -12,14 +12,16 @@ enum InterpolationMode
 class ControlPoint
 {
 public:
-    ControlPoint();
+    ControlPoint(int timeMs, float value);
 
     void SetValue(float value);
     float Value();
+    float Time();
     InterpolationMode Mode();
 
 private:
     float _value;
+    int _timeMs;
     InterpolationMode _interpolationMode;
 };
 

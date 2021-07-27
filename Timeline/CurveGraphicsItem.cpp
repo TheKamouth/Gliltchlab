@@ -2,6 +2,8 @@
 
 #include "TimelineConstants.h"
 #include "ColorPalette.h"
+#include "TimeManager.h"
+#include "TrackGraphicsItem.h"
 
 #include <QRect>
 #include <QPainter>
@@ -31,7 +33,7 @@ QRectF CurveGraphicsItem::boundingRect() const
     return curveRect;
 }
 
-void CurveGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void CurveGraphicsItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
 {
     int timelineTrackIndex = _trackGraphicsItem->TimelineTrackIndex();
 
@@ -147,9 +149,19 @@ void CurveGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem 
         controlPointsIt++;
     }
 
+    // Cursor rect
+    QRect cursorRect = QRect(TIMELINE_TRACK_INFO_WIDTH + TimeManager::Instance().Time(),
+                                TIMELINE_UPPER_RULE_HEIGHT + TIMELINE_TRACK_HEIGHT * _trackGraphicsItem->TimelineTrackIndex(),
+                                1,
+                                TIMELINE_TRACK_HEIGHT);
+
+    painter->setPen(QPen(BLACK, 1));
+    painterBrush.setColor(BLACK);
+    painterBrush.setStyle(Qt::SolidPattern);
+    painter->drawRect(cursorRect);
 }
 
-void CurveGraphicsItem::AddPoint(QPointF scenePos)
+ControlPoint * CurveGraphicsItem::AddPoint(QPointF scenePos)
 {
     float timeMs = scenePos.x() - TIMELINE_TRACK_INFO_WIDTH;
 
@@ -159,8 +171,18 @@ void CurveGraphicsItem::AddPoint(QPointF scenePos)
 
     float value = alpha * _curve->UpperBound() + ( 1.0f - alpha ) * _curve->LowerBound();
 
-    ControlPoint controlPoint = ControlPoint();
-    controlPoint.SetValue(value);
+    //weird call
+    ControlPoint * controlPoint = _curve->AddPoint(timeMs, ControlPoint(timeMs, value) );
 
-    _curve->AddPoint(timeMs, controlPoint);
+    return  controlPoint;
+}
+
+Curve * CurveGraphicsItem::GetCurve()
+{
+    return _curve;
+}
+
+QList<ControlPointgraphicsItem *> * CurveGraphicsItem::GetControlPointsGraphicItem()
+{
+    return &_controlPointsGraphicItem;
 }

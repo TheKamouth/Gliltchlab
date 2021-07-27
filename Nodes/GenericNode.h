@@ -128,7 +128,7 @@ public:
                 INode * connectedNode =  sourcePin->Node();
 
                 // if connected node has not been processed return false
-                if(connectedNode->HasBeenProcessedThisFrame() == false)
+                if(connectedNode != nullptr && connectedNode->HasBeenProcessedThisFrame() == false)
                 {
                     return false;
                 }

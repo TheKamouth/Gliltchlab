@@ -93,7 +93,7 @@ template <>
 class IInputDataPin<int> : public IDataPin
 {
 public:
-    IInputDataPin() { _flowData = new FlowData(); _flowData->SetType(Int);}
+    IInputDataPin() { _flowData = new FlowData(); _flowData->SetType(Int,false);}
     virtual void SetData(FlowData * data) override final { qDebug() << "Warning : Setting data on an input node. data: "; Q_UNUSED(data);};
     virtual FlowData * GetData() override final{ return _flowData;}
     virtual bool IsInput() override final { return true; };
@@ -103,7 +103,7 @@ template <>
 class IInputDataPin<QString> : public IDataPin
 {
 public:
-    IInputDataPin() { _flowData = new FlowData(); _flowData->SetType(String);}
+    IInputDataPin() { _flowData = new FlowData(); _flowData->SetType(String,false);}
     virtual void SetData(FlowData * data) override final { qDebug() << "Warning : Setting data on an input node. data: "; Q_UNUSED(data);};
     virtual FlowData * GetData() override final{ return _flowData;}
     virtual bool IsInput() override final { return true; };
@@ -113,7 +113,7 @@ template <>
 class IInputDataPin<QImage *> : public IDataPin
 {
 public:
-    IInputDataPin() { _flowData = new FlowData(); _flowData->SetType(Image);}
+    IInputDataPin() { _flowData = new FlowData(); _flowData->SetType(Image,false);}
     virtual void SetData(FlowData * data) override final { qDebug() << "Warning : Setting data on an input node. data: "; Q_UNUSED(data);};
     virtual FlowData * GetData() override final{ return _flowData;}
     virtual bool IsInput() override final { return true; };
@@ -123,7 +123,7 @@ template <>
 class IInputDataPin<float> : public IDataPin
 {
 public:
-    IInputDataPin() { _flowData = new FlowData(); _flowData->SetType(Float);}
+    IInputDataPin() { _flowData = new FlowData(); _flowData->SetType(Float,false);}
     virtual void SetData(FlowData * data) override final { qDebug() << "Warning : Setting data on an input node. data: "; Q_UNUSED(data);};
     virtual FlowData * GetData() override final{ return _flowData;}
     virtual bool IsInput() override final { return true; };

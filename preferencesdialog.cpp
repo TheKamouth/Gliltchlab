@@ -85,9 +85,9 @@ void PreferencesDialog::on_pushButton_2_clicked()
 
 void PreferencesDialog::UpdateUI(){
 
-    ui->textBrowserInputFolder->setText( _temporaryPreferences.InputFolder());
+    ui->le_dataFolder->setText( _temporaryPreferences.InputFolder());
 
-    ui->textBrowserOutputFolder->setText( _temporaryPreferences.OutputFolder());
+    ui->le_outputFolder->setText( _temporaryPreferences.OutputFolder());
 
     ui->checkBox_2->setChecked( _temporaryPreferences.FastSave());
 

@@ -13,8 +13,8 @@ public:
     void ResetDefaultPreferences();
     void SavePreferences();
 
-    QString InputFolder(){ return inputFolder;}
-    void SetInputFolder( QString folderName){ inputFolder = folderName;}
+    QString InputFolder(){ return dataFolder;}
+    void SetInputFolder( QString folderName){ dataFolder = folderName;}
 
     QString OutputFolder(){ return outputFolder;}
     void SetOutputFolder( QString folderName){ outputFolder = folderName;}
@@ -24,7 +24,7 @@ public:
 
 private:
 
-    QString inputFolder;
+    QString dataFolder;
     QString outputFolder;
 
     bool fastSave;

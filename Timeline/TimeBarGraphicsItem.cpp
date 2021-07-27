@@ -1,6 +1,8 @@
 #include "TimeBarGraphicsItem.h"
 
 #include "TimelineConstants.h"
+#include "TimeManager.h"
+#include "TimelineManager.h"
 
 #include "ColorPalette.h"
 
@@ -14,22 +16,27 @@ TimeBarGraphicsItem::TimeBarGraphicsItem(Timeline * timeline) :
     _selectionBeginTimeMs(0.0f),
     _selectionEndTimeMs(1000.0f),
     _cursorTimeMs(0.0f)
-{}
+{
+    setZValue(5.0);
+}
 
 QRectF TimeBarGraphicsItem::boundingRect() const
 {
-    QRect topBarRect = QRect(0,
-                             0,
-                             TIMELINE_TRACK_MAX_DURATION_MS + TIMELINE_TRACK_INFO_WIDTH,
+    //Always drawing
+    QRect topBarRect = QRect(0.0f,
+                             TimelineManager::Instance().GetViewPosition().y(),
+                             TIMELINE_TRACK_MAX_DURATION_MS + TIMELINE_TRACK_INFO_WIDTH + TimelineManager::Instance().GetViewPosition().x(),
                              TIMELINE_UPPER_RULE_HEIGHT);
     return topBarRect;
 }
 
 void TimeBarGraphicsItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
 {
+    //qDebug() << TimelineManager::Instance().GetViewPosition().y();
+
     // Background
-    QRect topBarRect = QRect(0,
-                             0,
+    QRect topBarRect = QRect(0.0f,
+                             TimelineManager::Instance().GetViewPosition().y(),
                              TIMELINE_TRACK_MAX_DURATION_MS + TIMELINE_TRACK_INFO_WIDTH,
                              TIMELINE_UPPER_RULE_HEIGHT);
 
@@ -41,7 +48,7 @@ void TimeBarGraphicsItem::paint(QPainter * painter, const QStyleOptionGraphicsIt
 
     // Selection
     QRect selectionRect = QRect(TIMELINE_TRACK_INFO_WIDTH + _selectionBeginTimeMs,
-                                0,
+                                TimelineManager::Instance().GetViewPosition().y(),
                                 _selectionEndTimeMs - _selectionBeginTimeMs,
                                 TIMELINE_UPPER_RULE_HEIGHT);
 
@@ -52,18 +59,14 @@ void TimeBarGraphicsItem::paint(QPainter * painter, const QStyleOptionGraphicsIt
 
     // Draw grid
     float minX = 0;
-    float maxX = 10000.0f;
+    float maxX = TIMELINE_TRACK_MAX_DURATION_MS;
     float minY = 0.0f;
-    float maxY = TIMELINE_UPPER_RULE_HEIGHT;
-    float interval = 20.0f;
-
-    //setForegroundBrush(QColor(5, 21, 21, 255));
+    float maxY = TIMELINE_UPPER_RULE_HEIGHT+ 10000;
+    float interval = 10.0f;
 
     QPen linePen = QPen();
     linePen.setWidth(1);
     linePen.setColor(BLACK);
-
-    //painter->drawText(QPointF(0.0f, 0.0f), "0");
 
     float currentX = minX;
     do
@@ -78,53 +81,65 @@ void TimeBarGraphicsItem::paint(QPainter * painter, const QStyleOptionGraphicsIt
         }
         else if((int)currentX % 1000 == 0)
         {
-            linePen.setWidth(2);
+            linePen.setWidth(4);
             linePen.setColor(BLACK);
 
-            QString timeSecString = QString::number(timeSec, 'g', 2);
+            QString timeSecString = QString::number(timeSec, 'g', 4);
             int charCount = timeSecString.count();
             float textRectWidth = charCount * 16.0f;
 
-            QRect timeValueTextRect = QRect(TIMELINE_TRACK_INFO_WIDTH + currentX - textRectWidth / 2.0f,
-                                            0.0f,
-                                            textRectWidth,
-                                            TIMELINE_UPPER_RULE_HEIGHT);
+            QRect timeValueTextRect = QRect( TIMELINE_TRACK_INFO_WIDTH + currentX - textRectWidth / 2.0f,
+                                             TimelineManager::Instance().GetViewPosition().y(),
+                                             textRectWidth,
+                                             TIMELINE_UPPER_RULE_HEIGHT);
 
             painter->drawText(timeValueTextRect, timeSecString, Qt::AlignVCenter | Qt::AlignHCenter);
-            painter->drawLine(TIMELINE_TRACK_INFO_WIDTH + currentX, minY, TIMELINE_TRACK_INFO_WIDTH + currentX, maxY);
+
+            painter->drawLine(TIMELINE_TRACK_INFO_WIDTH + currentX,
+                              TimelineManager::Instance().GetViewPosition().y() + TIMELINE_UPPER_RULE_HEIGHT / 2.0f,
+                              TIMELINE_TRACK_INFO_WIDTH + currentX,
+                              TimelineManager::Instance().GetViewPosition().y() + TIMELINE_UPPER_RULE_HEIGHT
+                              );
         }
         else if((int)currentX % 100 == 0)
         {
             linePen.setWidth(1);
             linePen.setColor(BLACK);
 
-            QString timeSecString = QString::number(timeSec, 'g', 2);
+            QString timeSecString = QString::number(timeSec, 'g', 4);
             int charCount = timeSecString.count();
             float textRectWidth = charCount * 8.0f;
 
-            QRect timeValueTextRect = QRect(TIMELINE_TRACK_INFO_WIDTH + currentX - textRectWidth / 2.0f,
-                                            0.0f,
-                                            textRectWidth,
-                                            TIMELINE_UPPER_RULE_HEIGHT);
+            QRect timeValueTextRect = QRect( TIMELINE_TRACK_INFO_WIDTH + currentX - textRectWidth / 2.0f,
+                                             TimelineManager::Instance().GetViewPosition().y(),
+                                             textRectWidth,
+                                             TIMELINE_UPPER_RULE_HEIGHT);
 
             painter->drawText(timeValueTextRect, timeSecString, Qt::AlignVCenter | Qt::AlignHCenter);
-            painter->drawLine(TIMELINE_TRACK_INFO_WIDTH + currentX, maxY / 2.0f, TIMELINE_TRACK_INFO_WIDTH + currentX, maxY);
+
+            painter->drawLine(TIMELINE_TRACK_INFO_WIDTH + currentX,
+                              TimelineManager::Instance().GetViewPosition().y() + TIMELINE_UPPER_RULE_HEIGHT / 2.0f,
+                              TIMELINE_TRACK_INFO_WIDTH + currentX,
+                              TimelineManager::Instance().GetViewPosition().y() + TIMELINE_UPPER_RULE_HEIGHT);
         }
         else
         {
             linePen.setWidth(1);
             linePen.setColor(GREY);
 
-            QString timeSecString = QString::number(timeSec, 'g', 2);
+            QString timeSecString = QString::number(timeSec, 'g', 4);
             int charCount = timeSecString.count();
             float textRectWidth = charCount * 8.0f;
 
             QRect timeValueTextRect = QRect(TIMELINE_TRACK_INFO_WIDTH + currentX - textRectWidth / 2.0f,
-                                            0.0f,
+                                            TimelineManager::Instance().GetViewPosition().y(),
                                             textRectWidth,
                                             TIMELINE_UPPER_RULE_HEIGHT);
 
-            painter->drawLine(TIMELINE_TRACK_INFO_WIDTH + currentX, 3.0 * maxY / 4.0f, TIMELINE_TRACK_INFO_WIDTH +currentX, maxY);
+            painter->drawLine(TIMELINE_TRACK_INFO_WIDTH + currentX,
+                              TimelineManager::Instance().GetViewPosition().y() + 4.0 * TIMELINE_UPPER_RULE_HEIGHT / 5.0f,
+                              TIMELINE_TRACK_INFO_WIDTH + currentX,
+                              TimelineManager::Instance().GetViewPosition().y() + TIMELINE_UPPER_RULE_HEIGHT);
         }
 
         currentX += interval;
@@ -132,15 +147,26 @@ void TimeBarGraphicsItem::paint(QPainter * painter, const QStyleOptionGraphicsIt
     }while(currentX <= maxX);
 
     // Cursor rect
-    QRect cursorRect = QRect(TIMELINE_TRACK_INFO_WIDTH + _cursorTimeMs,
-                                0,
-                                5,
-                                TIMELINE_UPPER_RULE_HEIGHT);
+    QRect cursorRect = QRect(TIMELINE_TRACK_INFO_WIDTH + TimeManager::Instance().Time(),
+                             TimelineManager::Instance().GetViewPosition().y(),
+                             1,
+                             TIMELINE_UPPER_RULE_HEIGHT);
 
-    brush.setColor(BLACK);
+    brush.setColor(GREY);
     brush.setStyle(Qt::SolidPattern);
     painter->setBrush(brush);
     painter->drawRect(cursorRect);
+
+    // Fixed position top left corner
+    QRect fixexTopLeftCornerRect = QRect(TimelineManager::Instance().GetViewPosition().x(),
+                                         TimelineManager::Instance().GetViewPosition().y(),
+                                         TIMELINE_TRACK_INFO_WIDTH,
+                                         TIMELINE_UPPER_RULE_HEIGHT);
+
+    brush.setColor(GREY);
+    brush.setStyle(Qt::SolidPattern);
+    painter->setBrush(brush);
+    painter->drawRect(fixexTopLeftCornerRect);
 }
 
 void TimeBarGraphicsItem::SetTime(float time)
@@ -177,5 +203,5 @@ void TimeBarGraphicsItem::SetSelectionTime(float time)
 
 std::pair<float, float> TimeBarGraphicsItem::GetSelectionBeginAndEndTimes()
 {
-    return std::pair<float,float>(_selectionBeginTimeMs,_selectionEndTimeMs);
+    return std::pair<float,float>(_selectionBeginTimeMs, _selectionEndTimeMs);
 }

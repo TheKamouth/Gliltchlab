@@ -27,6 +27,21 @@ void TimeManager::SetTime(float timeMs)
     _time = timeMs;
 }
 
+void TimeManager::PlayPause()
+{
+    if (_state == PLAY)
+    {
+        Pause();
+        qDebug() << "pause " << _time;
+    }
+    else
+    {
+        Play();
+        qDebug() << "play " << _time;
+    }
+
+}
+
 void TimeManager::Play()
 {
     if (_state == PLAY)
@@ -36,6 +51,7 @@ void TimeManager::Play()
     }
 
     _state = PLAY;
+    _updateTimer.start();
 }
 
 void TimeManager::Pause()
@@ -47,6 +63,7 @@ void TimeManager::Pause()
     }
 
     _state = PAUSE;
+    _updateTimer.stop();
 }
 
 void TimeManager::ForwardOneFrame()
@@ -67,7 +84,8 @@ void TimeManager::Update()
     }*/
 
     _updateTimer.stop();
-    _updateDurationTimer.start();
+    QElapsedTimer updateDurationTimer;
+    updateDurationTimer.start();
     _processingFrame = true;
 
     TimelineManager & timelineManager = TimelineManager::Instance();
@@ -76,17 +94,20 @@ void TimeManager::Update()
     FlowGraphManager & flowGraphManager = FlowGraphManager::Instance();
     flowGraphManager.Process();
 
-    qDebug() << _updateDurationTimer.elapsed() << " ms per frame";
-
-
+    qDebug() << updateDurationTimer.elapsed() << " ms per frame";
 
     _time += 1000.0f / _aimFps;
+
+    // If trying to keep up with actual time
+    //_time += updateDurationTimer.elapsed();
 
     std::pair<float,float> selectionBeginAndEndTimes = timelineManager.GetSectionBeginAndEndTimes();
     if(_time > selectionBeginAndEndTimes.second)
     {
         _time = selectionBeginAndEndTimes.first;
     }
+
+    emit TimeChanged(_time);
 
     _updateTimer.start();
 }

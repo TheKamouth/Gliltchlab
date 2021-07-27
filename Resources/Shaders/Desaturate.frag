@@ -38,7 +38,7 @@ void main(void)
 	case 0:
 		// Lightness
 		float lightness = hsvTexColor.b;
-		rgbDesaturatedColor.r = lightness;
+		rgbDesaturatedColor.r = 255;
 		rgbDesaturatedColor.g = lightness;
 		rgbDesaturatedColor.b = lightness;
 		break;

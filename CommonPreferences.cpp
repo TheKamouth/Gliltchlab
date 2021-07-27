@@ -22,7 +22,7 @@ void CommonPreferences::Init(){
 
     if( !settingsFound){
 
-        inputFolder = QDir::currentPath();
+        dataFolder = QDir::currentPath();
         outputFolder = QDir::currentPath();
         keepImageRatio = true;
         fastSave = false;
@@ -32,7 +32,7 @@ void CommonPreferences::Init(){
     }
     else{
 
-        inputFolder = settings.value( "inputFolder").toString();
+        dataFolder = settings.value( "inputFolder").toString();
         outputFolder = settings.value( "outputFolder").toString();
         keepImageRatio = settings.value( "keepImageRatio").toBool();
         fastSave = settings.value( "fastSave").toBool();
@@ -43,7 +43,7 @@ void CommonPreferences::Init(){
 
 void CommonPreferences::ResetDefaultPreferences(){
 
-    inputFolder = QDir::currentPath();
+    dataFolder = QDir::currentPath();
     outputFolder = QDir::currentPath();
     keepImageRatio = true;
     fastSave = false;
@@ -57,7 +57,7 @@ void CommonPreferences::SavePreferences(){
     QCoreApplication::setApplicationName("Gliltch Lab");
 
     QSettings settings;
-    settings.setValue("inputFolder", inputFolder);
+    settings.setValue("inputFolder", dataFolder);
     settings.setValue("outputFolder", outputFolder);
     settings.setValue("keepImageRatio", keepImageRatio);
     settings.setValue("fastSave", fastSave);

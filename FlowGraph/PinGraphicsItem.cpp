@@ -132,9 +132,8 @@ QPointF PinGraphicsItem::GetConnectionPosition()
 
 void PinGraphicsItem::SetConnection(ConnectionGraphicsItem * connectionTo)
 {
-
     _connection = connectionTo;
-    _connectedToPin = connectionTo->OtherEndPin(this);
+    _connectedToPin = _connection->OtherEndPin(this);
 
     _pin->SetConnectedPin(_connectedToPin->Pin());
 }

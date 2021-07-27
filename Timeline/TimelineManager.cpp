@@ -1,16 +1,16 @@
 #include "TimelineManager.h"
 
+#include "TimeManager.h"
+
 #include <QDebug>
+#include <QKeyEvent>
 
 TimelineManager::TimelineManager() :
     _timelineDockWidget(new TimelineWidget()),
-    _timeline(new Timeline()),
-    _timeBarGraphicsItem(_timeline)
-
+    _timeline(new Timeline())
 {
     _timelineView.SetTimeline(_timeline);
     _timelineDockWidget->SetTimeline(&_timelineView);
-    _timelineView.scene()->addItem( &_timeBarGraphicsItem);
 }
 
 QDockWidget * TimelineManager::TimelineDockWidget()
@@ -32,10 +32,18 @@ Track *TimelineManager::GetTrack(int index)
 
 void TimelineManager::SetTime(float time)
 {
-    _timeBarGraphicsItem.SetTime(time);
+    //_timeBarGraphicsItem.SetTime(time);
+    _timelineView.OnTimeChanged(time);
 }
 
 std::pair<float, float> TimelineManager::GetSectionBeginAndEndTimes()
 {
-    return _timeBarGraphicsItem.GetSelectionBeginAndEndTimes();
+    return _timelineView.GetSelectionBeginAndEndTimes();
 }
+
+QPointF TimelineManager::GetViewPosition()
+{
+    return _timelineView.GetViewPosition();
+}
+
+

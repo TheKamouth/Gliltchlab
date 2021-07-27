@@ -7,6 +7,8 @@
 #include "Timeline/TimelineManager.h"
 #include "FlowGraph/FlowGraphManager.h"
 
+#include "ColorPalette.h"
+
 #include <QDir>
 #include <QFileInfo>
 #include <QFileDialog>
@@ -28,6 +30,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    _floatPreviewImage = new QImage(256,256,QImage::Format_ARGB32);
+
     //    QString applicationName = QCoreApplication::applicationName();
     //    qint64 applicationPid = QCoreApplication::applicationPid();
     //    qDebug() << "Application name: " << applicationName << " (" << applicationPid << ")";
@@ -45,9 +49,21 @@ MainWindow::MainWindow(QWidget *parent) :
 
     _glWidget.setParent(&_previewWidget);
     _previewWidget.setWidget(&_glWidget);
-    _previewWidget.setWindowTitle("Preview");
+    _previewWidget.setWindowTitle("Output");
+    _previewWidget.setFeatures(QDockWidget::DockWidgetMovable| QDockWidget::DockWidgetFloatable);
     addDockWidget(Qt::RightDockWidgetArea, &_previewWidget);
     _glWidget.setMinimumWidth(300);
+    //_previewWidget.setParent(nullptr);
+    //_glWidget.setVisible(true);
+    //_previewWidget.setVisible(true);
+
+    _userDataWidget.setParent(&_userDataDockWidget);
+    _userDataDockWidget.setWidget(&_userDataWidget);
+    _userDataDockWidget.setWindowTitle("Data");
+    addDockWidget(Qt::LeftDockWidgetArea, &_userDataDockWidget);
+
+    _currentSelectionInfoDockWidget.setWindowTitle("Info");
+    addDockWidget(Qt::RightDockWidgetArea, &_currentSelectionInfoDockWidget);
 
     //_previewWidget.setFloating(false);
     //_previewWidget.setWindowFlags(Qt::Tool | Qt::WindowTitleHint);
@@ -55,6 +71,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     FlowGraphSceneView * view =  FlowGraphManager::Instance().GetFlowGraphSceneView();
     setCentralWidget(view);
+
+    QObject::connect(&FlowGraphManager::Instance(), &FlowGraphManager::FlowGraphProcessed, this , &MainWindow::OnProcessed);
 
     QDockWidget * timelineDockWidget = TimelineManager::Instance().TimelineDockWidget();
     timelineDockWidget = dynamic_cast<TimelineWidget*>(timelineDockWidget);
@@ -166,13 +184,35 @@ void MainWindow::OnReadTimerTimout()
 
 void MainWindow::OnNodeSelected(INode *node)
 {
-    if(node->MainOutput()->GetImage() == nullptr)
+    if(node == nullptr)
     {
-        qDebug() << __FUNCTION__ << " cannot display null image.";
+        qDebug() << "nullptr node selected...";
         return;
     }
 
-    _glWidget.SetDisplayedImage(node->MainOutput()->GetImage());
+    FlowDataType type = node->MainOutput()->GetType();
+    switch(type)
+    {
+        case Float:
+        {
+            float value = node->MainOutput()->GetFloat();
+
+            // value should be map to 0 , 255
+            value = std::abs(255.0f * value);
+
+            _floatPreviewImage->fill(QColor(value, value, value));
+            _glWidget.SetDisplayedImage(_floatPreviewImage);
+        }
+            break;
+        case Image:
+            _glWidget.SetDisplayedImage(node->MainOutput()->GetImage());
+            break;
+        default:
+            qDebug() << "Unhandled preview type";
+            break;
+    }
+
+
     _nodePeaked = node;
 }
 
@@ -241,4 +281,9 @@ void MainWindow::OnFlowGraphProcessed()
     }
 
     //_glWidget.SetDisplayedImage(_nodePeaked->Output());
+}
+
+void MainWindow::OnProcessed()
+{
+    OnNodeSelected(_nodePeaked);
 }

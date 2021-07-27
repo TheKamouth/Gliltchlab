@@ -1,7 +1,8 @@
 #include "ControlPoint.h"
 
-ControlPoint::ControlPoint() :
-    _value(0.0f),
+ControlPoint::ControlPoint(int timeMs, float value) :
+    _value(value),
+    _timeMs(timeMs),
     _interpolationMode(LinearInterp)
 {
 
@@ -15,6 +16,11 @@ void ControlPoint::SetValue(float value)
 float ControlPoint::Value()
 {
     return _value;
+}
+
+float ControlPoint::Time()
+{
+    return _timeMs;
 }
 
 InterpolationMode ControlPoint::Mode()

@@ -51,7 +51,10 @@ SOURCES += \
 	Nodes/TypeList.cpp \
 	TimeControlWidget.cpp \
 	TimeManager.cpp \
+	Timeline/AudioClip.cpp \
+	Timeline/ClipBase.cpp \
 	Timeline/ControlPoint.cpp \
+	Timeline/ControlPointgraphicsItem.cpp \
 	Timeline/Curve.cpp \
 	Timeline/CurveGraphicsItem.cpp \
 	Timeline/TimeBarGraphicsItem.cpp \
@@ -62,6 +65,8 @@ SOURCES += \
 	Timeline/TimelineWidget.cpp \
 	Timeline/Track.cpp \
 	Timeline/TrackGraphicsItem.cpp \
+	UserDataManager.cpp \
+	UserDataWidget.cpp \
 	main.cpp \
 	mainwindow.cpp \
 	openglwidget.cpp \
@@ -85,6 +90,7 @@ HEADERS += \
 	FlowGraph/PinConnectionGraphicsItem.h \
 	FlowGraph/PinGraphicsItem.h \
 	Loki/Sequence.h \
+	MathUtils.h \
 	Nodes/FilterNodes/Desaturate/DesaturateFilterNode.h \
 	Nodes/FilterNodes/DesaturateFilterNode.h \
 	Nodes/FilterNodes/ImageFilterExample.h \
@@ -122,9 +128,13 @@ HEADERS += \
 	Nodes/TypeTraits.h \
 	TimeControlWidget.h \
 	TimeManager.h \
+	Timeline/AudioClip.h \
+	Timeline/ClipBase.h \
 	Timeline/ControlPoint.h \
+	Timeline/ControlPointgraphicsItem.h \
 	Timeline/Curve.h \
 	Timeline/CurveGraphicsItem.h \
+	Timeline/ITrackDataSequence.h \
 	Timeline/TimeBarGraphicsItem.h \
 	Timeline/Timeline.h \
 	Timeline/TimelineConstants.h \
@@ -134,6 +144,8 @@ HEADERS += \
 	Timeline/TimelineWidget.h \
 	Timeline/Track.h \
 	Timeline/TrackGraphicsItem.h \
+	UserDataManager.h \
+	UserDataWidget.h \
 	mainwindow.h \
 	openglwidget.h \
 	preferencesdialog.h
@@ -151,6 +163,7 @@ FORMS += \
 	FlowGraph/ProcessorFlowDockWidget.ui \
 	TimeControlWidget.ui \
 	Timeline/TimelineWidget.ui \
+	UserDataWidget.ui \
 	mainwindow.ui \
 	preferencesdialog.ui \
 	Nodes/ImageInputNode.ui \

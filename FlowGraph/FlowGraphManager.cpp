@@ -9,6 +9,8 @@ FlowGraphManager::FlowGraphManager() :
 void FlowGraphManager::Process()
 {
     _flowGraph->Process();
+
+    emit FlowGraphProcessed();
 }
 
 FlowGraphSceneView * FlowGraphManager::GetFlowGraphSceneView()

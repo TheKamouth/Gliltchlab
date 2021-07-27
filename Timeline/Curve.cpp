@@ -4,13 +4,14 @@
 
 #include <QDebug>
 
-Curve::Curve() :
+Curve::Curve(QUrl url) :
+    ClipBase(url),
     _durationMs( 10000.0f),
-    _lowerBound( -1.0f),
+    _lowerBound( 0.0f),
     _upperBound( 1.0f)
 {
-    _controlPoints.insert(0.0f, ControlPoint());
-    _controlPoints.insert(_durationMs, ControlPoint());
+    _controlPoints.insert(0.0f, ControlPoint(0, 0.5f));
+    _controlPoints.insert(_durationMs, ControlPoint(_durationMs, 0.5f));
 }
 
 float Curve::Evaluate(float time)
@@ -84,11 +85,11 @@ float Curve::Evaluate(float time)
     }
 }
 
-void Curve::AddPoint(float time, ControlPoint controlPoint)
+ControlPoint * Curve::AddPoint(float time, ControlPoint controlPoint)
 {
     qDebug() << "Adding control point at " << time << "ms, value = " << controlPoint.Value();
 
-    _controlPoints.insert(time, controlPoint);
+    return  & ( _controlPoints.insert(time, controlPoint).value() );
 }
 
 float Curve::LowerBound()

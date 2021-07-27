@@ -4,6 +4,9 @@
 static const float TIMELINE_UPPER_RULE_HEIGHT = 20.0;
 static const float TIMELINE_TRACK_HEIGHT = 100.0;
 static const float TIMELINE_TRACK_INFO_WIDTH = 70.0;
-static const float TIMELINE_TRACK_MAX_DURATION_MS = 60000.0;
+static const float TIMELINE_TRACK_MAX_DURATION_MS = 120000.0;
+
+static const float TIMELINE_CONTROL_POINT_RADIUS = 3.0f;
+static const float TIMELINE_CONTROL_POINT_SELECTED_RADIUS = 5.0f;
 
 #endif // TIMELINECONSTANTS_H

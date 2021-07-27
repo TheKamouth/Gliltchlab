@@ -3,7 +3,9 @@
 
 #include "Timeline/TimelineWidget.h"
 #include "Timeline/TimelineView.h"
+
 #include "TimeBarGraphicsItem.h"
+#include "TrackGraphicsItem.h"
 
 #include <QObject>
 
@@ -26,6 +28,7 @@ public:
     Track * GetTrack(int index);
     void SetTime(float time);
     std::pair<float,float> GetSectionBeginAndEndTimes();
+    QPointF GetViewPosition();
 
     void EmitAddTrackNode(Track * track)
     {
@@ -40,7 +43,6 @@ private :
     TimelineView _timelineView;
     Timeline * _timeline;
 
-    TimeBarGraphicsItem _timeBarGraphicsItem;
 };
 
 #endif // TIMELINEMANAGER_H

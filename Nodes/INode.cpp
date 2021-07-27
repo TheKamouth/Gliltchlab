@@ -7,7 +7,9 @@ INode::INode() :
     _name("unnamed node"),
     _processedThisFrame(false),
     _lastFrameProcessingTimeMs(0.0f)
-{}
+{
+    //TryProcess();
+}
 
 QPointF INode::FlowGraphNodePosition()
 {
@@ -64,7 +66,9 @@ bool INode::TryProcess()
     // Does haveSourceNodesBeenProcessed suffices ?
     bool haveSourceNodesBeenProcessed = HaveSourceNodesBeenProcessed();
 
-    if( haveSourceNodesBeenProcessed == false || BeforeProcessing() == false)
+    if( haveSourceNodesBeenProcessed == false
+            || ReadSourceNodes() == false
+            || BeforeProcessing() == false)
     {
         qDebug() << "Failed to process " << __FUNCTION__;
         return false;
@@ -124,36 +128,34 @@ bool INode::BeforeProcessing()
 {
     // Read inputs, initialize outputs
 
-    //for( int i = 0; i < _imageFilterExamplePins.Count(); i++)
-    {
-        /*
-        GenericNodePin * nodePin; = _imageFilterExamplePins[i];
-        if( nodePin->IsInput())
-        {
-            QString pinName = nodePin->Name();
-            if(pinName == "sortingAngle")
-            {
-                // do something with nodePin->GetData();
-                //gliltchParam.SetSortingAngle(nodePin->GetData());
-            }
-            else if(pinName == "imageInput")
-            {
-                // do something with nodePin->GetData();
-            }
-            else
-            {
-                qDebug() << __FUNCTION__ << " this pin is not handled: " << pinName;
-            }
-        }
-        */
-    }
-
     return true;
 }
 
 bool INode::AfterProcessing() const
 {
     emit NodeOutputChanged(this);
+
+    return true;
+}
+
+bool INode::ReadSourceNodes()
+{
+    QList<IDataPin*> dataPinList = GetDataPinList();
+    for( int i = 0 ; i < GetPinCount() ; i++)
+    {
+        IDataPin * pinAtIndex = dataPinList[i];
+        if( pinAtIndex->IsInput() && pinAtIndex->IsConnected())
+        {
+            IDataPin * connectedPin = pinAtIndex->ConnectedPin();
+            if(connectedPin)
+            {
+                FlowData * localDataPoint = pinAtIndex->GetData();
+                FlowData * data = connectedPin->GetData();
+                localDataPoint = data;
+            }
+        }
+    }
+
 
     return true;
 }
